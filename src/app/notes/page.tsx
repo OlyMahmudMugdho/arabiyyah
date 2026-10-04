@@ -4,6 +4,8 @@ import { Footer } from "@/components/Footer";
 import { NoteFilterList } from "@/components/NoteFilterList";
 import { getNotesAction } from "@/actions/note-actions";
 
+export const dynamic = "force-dynamic";
+
 export default async function NotesPage() {
   const notes = await getNotesAction({ onlyPublished: true });
 

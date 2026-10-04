@@ -2,8 +2,7 @@
 
 import bcrypt from "bcryptjs";
 import { redirect } from "next/navigation";
-import { getDataSource } from "@/db/data-source";
-import { User } from "@/db/entities";
+import { getUserRepository } from "@/db/data-source";
 import {
   createSessionToken,
   setSessionCookie,
@@ -20,8 +19,7 @@ export async function loginAdminAction(formData: FormData) {
   }
 
   try {
-    const dataSource = await getDataSource();
-    const userRepo = dataSource.getRepository(User);
+    const userRepo = await getUserRepository();
 
     const user = await userRepo.findOne({ where: { email } });
     if (!user) {

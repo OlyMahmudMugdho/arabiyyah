@@ -1,7 +1,11 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { getDataSource } from "@/db/data-source";
+import {
+  getPathRepository,
+  getSectionRepository,
+  getPathCourseRepository,
+} from "@/db/data-source";
 import {
   LearningPath,
   PathSection,
@@ -16,8 +20,7 @@ export async function getPathsAction(filter?: {
   onlyPublished?: boolean;
 }) {
   try {
-    const dataSource = await getDataSource();
-    const pathRepo = dataSource.getRepository(LearningPath);
+    const pathRepo = await getPathRepository();
 
     const query = pathRepo
       .createQueryBuilder("path")
@@ -57,8 +60,7 @@ export async function getPathsAction(filter?: {
 
 export async function getPathBySlugAction(slug: string) {
   try {
-    const dataSource = await getDataSource();
-    const pathRepo = dataSource.getRepository(LearningPath);
+    const pathRepo = await getPathRepository();
 
     return await pathRepo
       .createQueryBuilder("path")
@@ -93,8 +95,7 @@ export async function createPathAction(data: {
   }
 
   try {
-    const dataSource = await getDataSource();
-    const pathRepo = dataSource.getRepository(LearningPath);
+    const pathRepo = await getPathRepository();
 
     const existing = await pathRepo.findOne({ where: { slug: data.slug } });
     if (existing) {
@@ -127,8 +128,7 @@ export async function updatePathAction(id: string, data: Partial<LearningPath>) 
   }
 
   try {
-    const dataSource = await getDataSource();
-    const pathRepo = dataSource.getRepository(LearningPath);
+    const pathRepo = await getPathRepository();
 
     const path = await pathRepo.findOne({ where: { id } });
     if (!path) return { error: "Path not found." };
@@ -153,8 +153,7 @@ export async function deletePathAction(id: string) {
   }
 
   try {
-    const dataSource = await getDataSource();
-    const pathRepo = dataSource.getRepository(LearningPath);
+    const pathRepo = await getPathRepository();
 
     await pathRepo.delete({ id });
     revalidatePath("/paths");
@@ -183,8 +182,7 @@ export async function createPathSectionAction(
   }
 
   try {
-    const dataSource = await getDataSource();
-    const sectionRepo = dataSource.getRepository(PathSection);
+    const sectionRepo = await getSectionRepository();
 
     const count = await sectionRepo.count({ where: { pathId } });
     const section = sectionRepo.create({
@@ -215,8 +213,7 @@ export async function updatePathSectionAction(
   }
 
   try {
-    const dataSource = await getDataSource();
-    const sectionRepo = dataSource.getRepository(PathSection);
+    const sectionRepo = await getSectionRepository();
 
     const section = await sectionRepo.findOne({ where: { id: sectionId } });
     if (!section) return { error: "Section not found." };
@@ -239,8 +236,7 @@ export async function deletePathSectionAction(sectionId: string) {
   }
 
   try {
-    const dataSource = await getDataSource();
-    const sectionRepo = dataSource.getRepository(PathSection);
+    const sectionRepo = await getSectionRepository();
 
     await sectionRepo.delete({ id: sectionId });
     revalidatePath("/paths");
@@ -266,8 +262,7 @@ export async function addCourseToSectionAction(data: {
   }
 
   try {
-    const dataSource = await getDataSource();
-    const pathCourseRepo = dataSource.getRepository(PathCourse);
+    const pathCourseRepo = await getPathCourseRepository();
 
     const count = await pathCourseRepo.count({
       where: { sectionId: data.sectionId },
@@ -298,8 +293,7 @@ export async function removeCourseFromSectionAction(pathCourseId: string) {
   }
 
   try {
-    const dataSource = await getDataSource();
-    const pathCourseRepo = dataSource.getRepository(PathCourse);
+    const pathCourseRepo = await getPathCourseRepository();
 
     await pathCourseRepo.delete({ id: pathCourseId });
     revalidatePath("/paths");

@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { getDataSource } from "@/db/data-source";
+import { getBookRepository } from "@/db/data-source";
 import { Book, AdminPermission } from "@/db/entities";
 import { getSession, hasPermission } from "@/lib/auth";
 
@@ -13,8 +13,7 @@ export async function getBooksAction(filter?: {
   onlyPublished?: boolean;
 }) {
   try {
-    const dataSource = await getDataSource();
-    const bookRepo = dataSource.getRepository(Book);
+    const bookRepo = await getBookRepository();
 
     const query = bookRepo.createQueryBuilder("book");
 
@@ -77,8 +76,7 @@ export async function createBookAction(data: {
   }
 
   try {
-    const dataSource = await getDataSource();
-    const bookRepo = dataSource.getRepository(Book);
+    const bookRepo = await getBookRepository();
 
     const book = bookRepo.create({
       ...data,
@@ -104,8 +102,7 @@ export async function updateBookAction(id: string, data: Partial<Book>) {
   }
 
   try {
-    const dataSource = await getDataSource();
-    const bookRepo = dataSource.getRepository(Book);
+    const bookRepo = await getBookRepository();
 
     const book = await bookRepo.findOne({ where: { id } });
     if (!book) return { error: "Book not found." };
@@ -129,8 +126,7 @@ export async function deleteBookAction(id: string) {
   }
 
   try {
-    const dataSource = await getDataSource();
-    const bookRepo = dataSource.getRepository(Book);
+    const bookRepo = await getBookRepository();
 
     await bookRepo.delete({ id });
     revalidatePath("/books");

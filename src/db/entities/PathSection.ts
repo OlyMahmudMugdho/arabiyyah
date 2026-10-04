@@ -8,8 +8,8 @@ import {
   OneToMany,
   JoinColumn,
 } from "typeorm";
-import type { LearningPath } from "./LearningPath";
-import type { PathCourse } from "./PathCourse";
+import { LearningPath } from "./LearningPath";
+import { PathCourse } from "./PathCourse";
 
 @Entity("path_sections")
 export class PathSection {
@@ -19,7 +19,7 @@ export class PathSection {
   @Column({ type: "uuid" })
   pathId!: string;
 
-  @ManyToOne("LearningPath", (path: LearningPath) => path.sections, {
+  @ManyToOne(() => LearningPath, (path: LearningPath) => path.sections, {
     onDelete: "CASCADE",
   })
   @JoinColumn({ name: "pathId" })
@@ -37,7 +37,7 @@ export class PathSection {
   @Column({ type: "int", default: 1 })
   orderIndex!: number;
 
-  @OneToMany("PathCourse", (pathCourse: PathCourse) => pathCourse.section, {
+  @OneToMany(() => PathCourse, (pathCourse: PathCourse) => pathCourse.section, {
     cascade: true,
   })
   pathCourses!: PathCourse[];

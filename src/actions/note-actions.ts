@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { getDataSource } from "@/db/data-source";
+import { getNoteRepository } from "@/db/data-source";
 import { Note, AdminPermission } from "@/db/entities";
 import { getSession, hasPermission } from "@/lib/auth";
 
@@ -13,8 +13,7 @@ export async function getNotesAction(filter?: {
   onlyPublished?: boolean;
 }) {
   try {
-    const dataSource = await getDataSource();
-    const noteRepo = dataSource.getRepository(Note);
+    const noteRepo = await getNoteRepository();
 
     const query = noteRepo.createQueryBuilder("note");
 
@@ -75,8 +74,7 @@ export async function createNoteAction(data: {
   }
 
   try {
-    const dataSource = await getDataSource();
-    const noteRepo = dataSource.getRepository(Note);
+    const noteRepo = await getNoteRepository();
 
     const note = noteRepo.create({
       ...data,
@@ -102,8 +100,7 @@ export async function updateNoteAction(id: string, data: Partial<Note>) {
   }
 
   try {
-    const dataSource = await getDataSource();
-    const noteRepo = dataSource.getRepository(Note);
+    const noteRepo = await getNoteRepository();
 
     const note = await noteRepo.findOne({ where: { id } });
     if (!note) return { error: "Note not found." };
@@ -127,8 +124,7 @@ export async function deleteNoteAction(id: string) {
   }
 
   try {
-    const dataSource = await getDataSource();
-    const noteRepo = dataSource.getRepository(Note);
+    const noteRepo = await getNoteRepository();
 
     await noteRepo.delete({ id });
     revalidatePath("/notes");

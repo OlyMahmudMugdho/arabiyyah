@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { getDataSource } from "@/db/data-source";
+import { getCourseRepository } from "@/db/data-source";
 import { Course, AdminPermission } from "@/db/entities";
 import { getSession, hasPermission } from "@/lib/auth";
 
@@ -15,13 +15,10 @@ export interface CourseFilter {
 
 export async function getCoursesAction(filter?: CourseFilter) {
   try {
-    const dataSource = await getDataSource();
-    const courseRepo = dataSource.getRepository(Course);
-
+    const courseRepo = await getCourseRepository();
     const query = courseRepo.createQueryBuilder("course");
 
     if (filter?.onlyPublished !== false) {
-      // By default show published courses for public queries unless explicitly disabled (e.g. admin)
       if (filter?.onlyPublished === true) {
         query.andWhere("course.isPublished = :isPublished", { isPublished: true });
       }
@@ -63,11 +60,16 @@ export async function getCoursesAction(filter?: CourseFilter) {
 
 export async function getCourseBySlugAction(slug: string) {
   try {
-    const dataSource = await getDataSource();
-    const courseRepo = dataSource.getRepository(Course);
+    const courseRepo = await getCourseRepository();
     return await courseRepo.findOne({
       where: { slug },
-      relations: ["pathCourses", "pathCourses.section", "pathCourses.section.path"],
+      relations: {
+        pathCourses: {
+          section: {
+            path: true,
+          },
+        },
+      },
     });
   } catch (err) {
     console.error("Failed to fetch course by slug:", err);
@@ -97,8 +99,7 @@ export async function createCourseAction(data: {
   }
 
   try {
-    const dataSource = await getDataSource();
-    const courseRepo = dataSource.getRepository(Course);
+    const courseRepo = await getCourseRepository();
 
     const existing = await courseRepo.findOne({ where: { slug: data.slug } });
     if (existing) {
@@ -133,8 +134,7 @@ export async function updateCourseAction(
   }
 
   try {
-    const dataSource = await getDataSource();
-    const courseRepo = dataSource.getRepository(Course);
+    const courseRepo = await getCourseRepository();
 
     const course = await courseRepo.findOne({ where: { id } });
     if (!course) {
@@ -161,8 +161,7 @@ export async function deleteCourseAction(id: string) {
   }
 
   try {
-    const dataSource = await getDataSource();
-    const courseRepo = dataSource.getRepository(Course);
+    const courseRepo = await getCourseRepository();
 
     await courseRepo.delete({ id });
     revalidatePath("/courses");

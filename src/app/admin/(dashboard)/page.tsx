@@ -10,19 +10,34 @@ import {
   Sparkles,
   Layers,
 } from "lucide-react";
-import { getDataSource } from "@/db/data-source";
-import { Course, LearningPath, Book, Note, User, UserRole } from "@/db/entities";
+import {
+  getCourseRepository,
+  getPathRepository,
+  getBookRepository,
+  getNoteRepository,
+  getUserRepository,
+} from "@/db/data-source";
+import { UserRole } from "@/db/entities";
 import { getSession } from "@/lib/auth";
+
+export const dynamic = "force-dynamic";
 
 export default async function AdminDashboardPage() {
   const session = await getSession();
-  const dataSource = await getDataSource();
 
-  const courseRepo = dataSource.getRepository(Course);
-  const pathRepo = dataSource.getRepository(LearningPath);
-  const bookRepo = dataSource.getRepository(Book);
-  const noteRepo = dataSource.getRepository(Note);
-  const userRepo = dataSource.getRepository(User);
+  const [
+    courseRepo,
+    pathRepo,
+    bookRepo,
+    noteRepo,
+    userRepo,
+  ] = await Promise.all([
+    getCourseRepository(),
+    getPathRepository(),
+    getBookRepository(),
+    getNoteRepository(),
+    getUserRepository(),
+  ]);
 
   const [
     coursesCount,
@@ -41,7 +56,7 @@ export default async function AdminDashboardPage() {
     courseRepo.find({ order: { createdAt: "DESC" }, take: 5 }),
     pathRepo.find({
       order: { createdAt: "DESC" },
-      relations: ["sections"],
+      relations: { sections: true },
       take: 4,
     }),
   ]);

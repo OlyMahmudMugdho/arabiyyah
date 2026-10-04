@@ -4,6 +4,8 @@ import { UserRole } from "@/db/entities";
 import { getAdminUsersAction } from "@/actions/user-actions";
 import { UserManager } from "./UserManager";
 
+export const dynamic = "force-dynamic";
+
 export default async function AdminUsersPage() {
   const session = await getSession();
 

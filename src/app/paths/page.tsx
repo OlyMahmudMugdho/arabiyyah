@@ -4,6 +4,8 @@ import { Footer } from "@/components/Footer";
 import { PathCard } from "@/components/PathCard";
 import { getPathsAction } from "@/actions/path-actions";
 
+export const dynamic = "force-dynamic";
+
 export default async function PathsPage() {
   const paths = await getPathsAction({ onlyPublished: true });
 

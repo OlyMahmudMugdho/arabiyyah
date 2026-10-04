@@ -1,7 +1,8 @@
 import { notFound } from "next/navigation";
-import { getDataSource } from "@/db/data-source";
-import { LearningPath, Course } from "@/db/entities";
+import { getPathRepository, getCourseRepository } from "@/db/data-source";
 import { PathSectionBuilder } from "./PathSectionBuilder";
+
+export const dynamic = "force-dynamic";
 
 export default async function AdminPathDetailPage({
   params,
@@ -9,10 +10,10 @@ export default async function AdminPathDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const dataSource = await getDataSource();
-
-  const pathRepo = dataSource.getRepository(LearningPath);
-  const courseRepo = dataSource.getRepository(Course);
+  const [pathRepo, courseRepo] = await Promise.all([
+    getPathRepository(),
+    getCourseRepository(),
+  ]);
 
   const [path, allCourses] = await Promise.all([
     pathRepo

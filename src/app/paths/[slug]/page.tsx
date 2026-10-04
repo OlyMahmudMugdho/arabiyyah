@@ -15,6 +15,8 @@ import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { getPathBySlugAction } from "@/actions/path-actions";
 
+export const dynamic = "force-dynamic";
+
 export default async function PathDetailPage({
   params,
 }: {

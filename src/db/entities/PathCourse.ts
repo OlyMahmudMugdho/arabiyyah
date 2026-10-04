@@ -6,8 +6,8 @@ import {
   ManyToOne,
   JoinColumn,
 } from "typeorm";
-import type { PathSection } from "./PathSection";
-import type { Course } from "./Course";
+import { PathSection } from "./PathSection";
+import { Course } from "./Course";
 
 @Entity("path_courses")
 export class PathCourse {
@@ -17,7 +17,7 @@ export class PathCourse {
   @Column({ type: "uuid" })
   sectionId!: string;
 
-  @ManyToOne("PathSection", (section: PathSection) => section.pathCourses, {
+  @ManyToOne(() => PathSection, (section: PathSection) => section.pathCourses, {
     onDelete: "CASCADE",
   })
   @JoinColumn({ name: "sectionId" })
@@ -26,7 +26,7 @@ export class PathCourse {
   @Column({ type: "uuid" })
   courseId!: string;
 
-  @ManyToOne("Course", (course: Course) => course.pathCourses, {
+  @ManyToOne(() => Course, (course: Course) => course.pathCourses, {
     onDelete: "CASCADE",
   })
   @JoinColumn({ name: "courseId" })

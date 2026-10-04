@@ -6,7 +6,7 @@ import {
   UpdateDateColumn,
   OneToMany,
 } from "typeorm";
-import type { PathSection } from "./PathSection";
+import { PathSection } from "./PathSection";
 
 @Entity("learning_paths")
 export class LearningPath {
@@ -43,7 +43,7 @@ export class LearningPath {
   @Column({ type: "boolean", default: false })
   isFeatured!: boolean;
 
-  @OneToMany("PathSection", (section: PathSection) => section.path, {
+  @OneToMany(() => PathSection, (section: PathSection) => section.path, {
     cascade: true,
   })
   sections!: PathSection[];

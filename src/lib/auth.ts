@@ -1,6 +1,6 @@
 import { SignJWT, jwtVerify } from "jose";
 import { cookies } from "next/headers";
-import { getDataSource } from "@/db/data-source";
+import { getUserRepository } from "@/db/data-source";
 import { User, UserRole, AdminPermission } from "@/db/entities";
 
 const JWT_SECRET = new TextEncoder().encode(
@@ -66,8 +66,7 @@ export async function getSession(): Promise<SessionPayload | null> {
 
   // Verify user still exists and is active in DB
   try {
-    const dataSource = await getDataSource();
-    const userRepo = dataSource.getRepository(User);
+    const userRepo = await getUserRepository();
     const user = await userRepo.findOne({
       where: { id: payload.userId, isActive: true },
     });

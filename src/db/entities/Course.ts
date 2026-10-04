@@ -6,7 +6,7 @@ import {
   UpdateDateColumn,
   OneToMany,
 } from "typeorm";
-import type { PathCourse } from "./PathCourse";
+import { PathCourse } from "./PathCourse";
 
 @Entity("courses")
 export class Course {
@@ -55,7 +55,7 @@ export class Course {
   @Column({ type: "boolean", default: false })
   isFeatured!: boolean;
 
-  @OneToMany("PathCourse", (pathCourse: PathCourse) => pathCourse.course)
+  @OneToMany(() => PathCourse, (pathCourse: PathCourse) => pathCourse.course)
   pathCourses!: PathCourse[];
 
   @CreateDateColumn()

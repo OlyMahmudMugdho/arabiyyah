@@ -2,7 +2,7 @@
 
 import bcrypt from "bcryptjs";
 import { revalidatePath } from "next/cache";
-import { getDataSource } from "@/db/data-source";
+import { getUserRepository } from "@/db/data-source";
 import { User, UserRole, AdminPermission } from "@/db/entities";
 import { getSession } from "@/lib/auth";
 
@@ -13,11 +13,19 @@ export async function getAdminUsersAction() {
   }
 
   try {
-    const dataSource = await getDataSource();
-    const userRepo = dataSource.getRepository(User);
+    const userRepo = await getUserRepository();
     const users = await userRepo.find({
       order: { createdAt: "ASC" },
-      select: ["id", "name", "email", "role", "permissions", "isActive", "createdAt", "updatedAt"],
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        role: true,
+        permissions: true,
+        isActive: true,
+        createdAt: true,
+        updatedAt: true,
+      },
     });
     return { users };
   } catch (err: unknown) {
@@ -44,8 +52,7 @@ export async function createAdminUserAction(data: {
   }
 
   try {
-    const dataSource = await getDataSource();
-    const userRepo = dataSource.getRepository(User);
+    const userRepo = await getUserRepository();
 
     const existing = await userRepo.findOne({ where: { email } });
     if (existing) {
@@ -98,8 +105,7 @@ export async function updateAdminUserAction(
   }
 
   try {
-    const dataSource = await getDataSource();
-    const userRepo = dataSource.getRepository(User);
+    const userRepo = await getUserRepository();
 
     const user = await userRepo.findOne({ where: { id } });
     if (!user) return { error: "User not found." };
@@ -144,8 +150,7 @@ export async function deleteAdminUserAction(id: string) {
   }
 
   try {
-    const dataSource = await getDataSource();
-    const userRepo = dataSource.getRepository(User);
+    const userRepo = await getUserRepository();
 
     const user = await userRepo.findOne({ where: { id } });
     if (!user) return { error: "User not found." };
