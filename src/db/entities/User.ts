@@ -17,6 +17,7 @@ export enum AdminPermission {
   MANAGE_BOOKS = "manage_books",
   MANAGE_NOTES = "manage_notes",
   MANAGE_USERS = "manage_users",
+  MANAGE_CATEGORIES = "manage_categories",
 }
 
 @Entity("users")

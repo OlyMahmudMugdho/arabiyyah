@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import {
   Plus,
   Search,
@@ -19,6 +19,7 @@ import {
   updateCourseAction,
   deleteCourseAction,
 } from "@/actions/course-actions";
+import { createCategoryAction } from "@/actions/category-actions";
 
 interface CourseManagerProps {
   initialCourses: Course[];
@@ -41,11 +42,30 @@ export function CourseManager({ initialCourses }: CourseManagerProps) {
   const [language, setLanguage] = useState("English");
   const [level, setLevel] = useState("Beginner");
   const [category, setCategory] = useState("Nahw (Syntax)");
+  const [isCustomCategory, setIsCustomCategory] = useState(false);
   const [duration, setDuration] = useState("20 hours");
   const [thumbnailUrl, setThumbnailUrl] = useState("");
   const [resourceUrl, setResourceUrl] = useState("");
   const [syllabusText, setSyllabusText] = useState("");
   const [isPublished, setIsPublished] = useState(true);
+
+  const existingCategories = useMemo(() => {
+    const defaultCats = [
+      "Nahw (Syntax)",
+      "Sarf (Morphology)",
+      "Balagha (Rhetoric)",
+      "Quranic Arabic",
+      "Conversational",
+      "Reading",
+      "Tajweed & Phonetics",
+      "Vocabulary & Lexicons",
+    ];
+    const set = new Set(defaultCats);
+    courses.forEach((c) => {
+      if (c.category) set.add(c.category);
+    });
+    return Array.from(set).sort();
+  }, [courses]);
 
   const openCreateModal = () => {
     setEditingCourse(null);
@@ -56,7 +76,8 @@ export function CourseManager({ initialCourses }: CourseManagerProps) {
     setInstructor("");
     setLanguage("English");
     setLevel("Beginner");
-    setCategory("Nahw (Syntax)");
+    setCategory(existingCategories[0] || "Nahw (Syntax)");
+    setIsCustomCategory(false);
     setDuration("20 hours");
     setThumbnailUrl("");
     setResourceUrl("");
@@ -76,6 +97,7 @@ export function CourseManager({ initialCourses }: CourseManagerProps) {
     setLanguage(c.language);
     setLevel(c.level);
     setCategory(c.category);
+    setIsCustomCategory(!existingCategories.includes(c.category));
     setDuration(c.duration);
     setThumbnailUrl(c.thumbnailUrl || "");
     setResourceUrl(c.resourceUrl || "");
@@ -111,6 +133,13 @@ export function CourseManager({ initialCourses }: CourseManagerProps) {
     setLoading(true);
     setError(null);
 
+    const finalCategory = category.trim();
+    if (!finalCategory) {
+      setError("Category is required.");
+      setLoading(false);
+      return;
+    }
+
     const syllabusArray = syllabusText
       .split("\n")
       .map((s) => s.trim())
@@ -127,7 +156,7 @@ export function CourseManager({ initialCourses }: CourseManagerProps) {
         instructor,
         language,
         level,
-        category,
+        category: finalCategory,
         duration,
         thumbnailUrl: thumbnailUrl || null,
         resourceUrl: resourceUrl || null,
@@ -139,6 +168,9 @@ export function CourseManager({ initialCourses }: CourseManagerProps) {
         setError(res.error);
         setLoading(false);
       } else if (res.course) {
+        if (!existingCategories.includes(finalCategory)) {
+          createCategoryAction({ name: finalCategory, itemType: "course" }).catch(() => {});
+        }
         setCourses(
           courses.map((c) => (c.id === editingCourse.id ? (res.course as Course) : c))
         );
@@ -154,7 +186,7 @@ export function CourseManager({ initialCourses }: CourseManagerProps) {
         instructor,
         language,
         level,
-        category,
+        category: finalCategory,
         duration,
         thumbnailUrl: thumbnailUrl || undefined,
         resourceUrl: resourceUrl || undefined,
@@ -166,6 +198,9 @@ export function CourseManager({ initialCourses }: CourseManagerProps) {
         setError(res.error);
         setLoading(false);
       } else if (res.course) {
+        if (!existingCategories.includes(finalCategory)) {
+          createCategoryAction({ name: finalCategory, itemType: "course" }).catch(() => {});
+        }
         setCourses([res.course as Course, ...courses]);
         setModalOpen(false);
         setLoading(false);
@@ -425,22 +460,55 @@ export function CourseManager({ initialCourses }: CourseManagerProps) {
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">
-                    Category *
-                  </label>
-                  <select
-                    value={category}
-                    onChange={(e) => setCategory(e.target.value)}
-                    className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 dark:bg-slate-900 dark:border-slate-700 dark:text-white text-xs focus:outline-none focus:border-emerald-500"
-                  >
-                    <option value="Nahw (Syntax)">Nahw (Syntax)</option>
-                    <option value="Sarf (Morphology)">Sarf (Morphology)</option>
-                    <option value="Balagha (Rhetoric)">Balagha (Rhetoric)</option>
-                    <option value="Quranic Arabic">Quranic Arabic</option>
-                    <option value="Conversational">Conversational</option>
-                    <option value="Reading">Reading</option>
-                    <option value="Tajweed & Phonetics">Tajweed & Phonetics</option>
-                  </select>
+                  <div className="flex items-center justify-between">
+                    <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+                      Category *
+                    </label>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setIsCustomCategory(!isCustomCategory);
+                        if (!isCustomCategory) {
+                          setCategory("");
+                        } else {
+                          setCategory(existingCategories[0] || "Nahw (Syntax)");
+                        }
+                      }}
+                      className="text-[11px] text-emerald-600 dark:text-emerald-400 hover:underline font-semibold"
+                    >
+                      {isCustomCategory ? "← Select existing" : "+ Add custom"}
+                    </button>
+                  </div>
+                  {isCustomCategory ? (
+                    <input
+                      type="text"
+                      required
+                      value={category}
+                      onChange={(e) => setCategory(e.target.value)}
+                      placeholder="e.g. Hadith, Usul al-Fiqh..."
+                      className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 dark:bg-slate-900 dark:border-slate-700 dark:text-white text-xs focus:outline-none focus:border-emerald-500"
+                    />
+                  ) : (
+                    <select
+                      value={category}
+                      onChange={(e) => {
+                        if (e.target.value === "__custom__") {
+                          setIsCustomCategory(true);
+                          setCategory("");
+                        } else {
+                          setCategory(e.target.value);
+                        }
+                      }}
+                      className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 dark:bg-slate-900 dark:border-slate-700 dark:text-white text-xs focus:outline-none focus:border-emerald-500"
+                    >
+                      {existingCategories.map((cat) => (
+                        <option key={cat} value={cat}>
+                          {cat}
+                        </option>
+                      ))}
+                      <option value="__custom__">+ Add Custom Category...</option>
+                    </select>
+                  )}
                 </div>
               </div>
 

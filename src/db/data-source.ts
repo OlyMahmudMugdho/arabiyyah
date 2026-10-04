@@ -8,6 +8,7 @@ import {
   PathCourseSchema,
   BookSchema,
   NoteSchema,
+  CategorySchema,
   User,
   Course,
   LearningPath,
@@ -15,6 +16,7 @@ import {
   PathCourse,
   Book,
   Note,
+  Category,
 } from "./entities";
 
 const globalForTypeOrm = globalThis as unknown as {
@@ -38,6 +40,7 @@ export const AppDataSource =
       PathCourseSchema,
       BookSchema,
       NoteSchema,
+      CategorySchema,
     ],
     subscribers: [],
     migrations: [],
@@ -90,4 +93,9 @@ export async function getNoteRepository(): Promise<Repository<Note>> {
 export async function getUserRepository(): Promise<Repository<User>> {
   const ds = await getDataSource();
   return ds.getRepository<User>("User");
+}
+
+export async function getCategoryRepository(): Promise<Repository<Category>> {
+  const ds = await getDataSource();
+  return ds.getRepository<Category>("Category");
 }

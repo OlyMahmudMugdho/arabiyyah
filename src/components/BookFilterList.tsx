@@ -14,13 +14,14 @@ export function BookFilterList({ initialBooks }: BookFilterListProps) {
   const [selectedLevel, setSelectedLevel] = useState<string>("All");
   const [searchQuery, setSearchQuery] = useState<string>("All");
 
-  const categories = [
-    "All",
-    "Grammar",
-    "Morphology",
-    "Dictionaries",
-    "Literature",
-  ];
+  const categories = useMemo(() => {
+    const set = new Set<string>();
+    initialBooks.forEach((b) => {
+      if (b.category) set.add(b.category);
+    });
+    return ["All", ...Array.from(set).sort()];
+  }, [initialBooks]);
+
   const levels = ["All", "Beginner", "Intermediate", "Advanced", "All Levels"];
 
   const filteredBooks = useMemo(() => {

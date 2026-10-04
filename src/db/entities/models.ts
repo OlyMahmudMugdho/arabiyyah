@@ -11,6 +11,7 @@ export enum AdminPermission {
   MANAGE_BOOKS = "manage_books",
   MANAGE_NOTES = "manage_notes",
   MANAGE_USERS = "manage_users",
+  MANAGE_CATEGORIES = "manage_categories",
 }
 
 export interface User {
@@ -297,6 +298,36 @@ export const NoteSchema = new EntitySchema<Note>({
     author: { type: "varchar", length: 150, default: "Community Scholar" },
     downloadCount: { type: "int", default: 0 },
     isPublished: { type: "boolean", default: true },
+    isFeatured: { type: "boolean", default: false },
+    createdAt: { type: "timestamp", createDate: true },
+    updatedAt: { type: "timestamp", updateDate: true },
+  },
+});
+
+export interface Category {
+  id: string;
+  name: string;
+  nameArabic: string | null;
+  slug: string;
+  description: string | null;
+  itemType: string;
+  color: string;
+  isFeatured: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export const CategorySchema = new EntitySchema<Category>({
+  name: "Category",
+  tableName: "categories",
+  columns: {
+    id: { type: "uuid", primary: true, generated: "uuid" },
+    name: { type: "varchar", length: 150, unique: true },
+    nameArabic: { type: "varchar", length: 150, nullable: true },
+    slug: { type: "varchar", length: 150, unique: true },
+    description: { type: "text", nullable: true },
+    itemType: { type: "varchar", length: 50, default: "all" },
+    color: { type: "varchar", length: 50, default: "emerald" },
     isFeatured: { type: "boolean", default: false },
     createdAt: { type: "timestamp", createDate: true },
     updatedAt: { type: "timestamp", updateDate: true },

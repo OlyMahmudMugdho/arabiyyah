@@ -8,6 +8,7 @@ import {
   getPathCourseRepository,
   getBookRepository,
   getNoteRepository,
+  getCategoryRepository,
 } from "./data-source";
 import { UserRole, AdminPermission } from "./entities";
 
@@ -19,6 +20,7 @@ export async function seedDatabase() {
   const pathCourseRepo = await getPathCourseRepository();
   const bookRepo = await getBookRepository();
   const noteRepo = await getNoteRepository();
+  const categoryRepo = await getCategoryRepository();
 
   console.log("🌱 Checking superadmin account...");
   const adminEmail =
@@ -713,6 +715,118 @@ export async function seedDatabase() {
       await noteRepo.save(noteRepo.create(n));
     }
     console.log(`✅ Seeded ${notesData.length} study notes`);
+  }
+
+  // Seed categories if empty
+  const categoryCount = await categoryRepo.count();
+  if (categoryCount === 0) {
+    console.log("🌱 Seeding curriculum categories...");
+    const categoriesData = [
+      {
+        name: "Nahw (Syntax)",
+        nameArabic: "علم النحو",
+        slug: "nahw-syntax",
+        description: "Classical Arabic syntax, sentence mechanics, case endings (I'rab), and grammatical structures.",
+        itemType: "all",
+        color: "emerald",
+        isFeatured: true,
+      },
+      {
+        name: "Sarf (Morphology)",
+        nameArabic: "علم الصرف",
+        slug: "sarf-morphology",
+        description: "Word derivation patterns, root systems, 10 verb forms, and noun templates.",
+        itemType: "all",
+        color: "amber",
+        isFeatured: true,
+      },
+      {
+        name: "Balagha (Rhetoric)",
+        nameArabic: "علم البلاغة",
+        slug: "balagha-rhetoric",
+        description: "Sciences of Bayan (metaphor), Ma'ani (semantics), and Badi' (literary ornamentation).",
+        itemType: "all",
+        color: "purple",
+        isFeatured: true,
+      },
+      {
+        name: "Quranic Arabic",
+        nameArabic: "العربية القرآنية",
+        slug: "quranic-arabic",
+        description: "Linguistic breakdown, vocabulary, and grammar applied directly to the Holy Quran.",
+        itemType: "all",
+        color: "teal",
+        isFeatured: true,
+      },
+      {
+        name: "Conversational",
+        nameArabic: "المحادثة والتواصل",
+        slug: "conversational",
+        description: "Active spoken Modern Standard Arabic for dialogues, media, and daily interactions.",
+        itemType: "course",
+        color: "blue",
+        isFeatured: false,
+      },
+      {
+        name: "Reading & Literature",
+        nameArabic: "القراءة والأدب",
+        slug: "reading-literature",
+        description: "Graded readers, classical stories, biographical collections, and anthologies.",
+        itemType: "all",
+        color: "emerald",
+        isFeatured: false,
+      },
+      {
+        name: "Tajweed & Phonetics",
+        nameArabic: "التجويد وعلم الأصوات",
+        slug: "tajweed-phonetics",
+        description: "Correct pronunciation, Makharij al-Huruf, characteristics of letters, and recitation rules.",
+        itemType: "all",
+        color: "cyan",
+        isFeatured: false,
+      },
+      {
+        name: "Dictionaries & Lexicons",
+        nameArabic: "المعاجم والقواميس",
+        slug: "dictionaries-lexicons",
+        description: "Comprehensive classical Arabic lexicons, root-based dictionaries, and student glossaries.",
+        itemType: "book",
+        color: "amber",
+        isFeatured: false,
+      },
+      {
+        name: "Grammar",
+        nameArabic: "قواعد اللغة",
+        slug: "grammar",
+        description: "Introductory and foundational grammar rules for early learners.",
+        itemType: "book",
+        color: "emerald",
+        isFeatured: false,
+      },
+      {
+        name: "Literature",
+        nameArabic: "الأدب العربي",
+        slug: "literature",
+        description: "Classical and modern literary treatises, poetry, and prose.",
+        itemType: "book",
+        color: "purple",
+        isFeatured: false,
+      },
+      {
+        name: "Vocabulary",
+        nameArabic: "المفردات",
+        slug: "vocabulary",
+        description: "Thematic vocabulary lists, flashcards, and frequency dictionaries.",
+        itemType: "book",
+        color: "blue",
+        isFeatured: false,
+      },
+    ];
+
+    for (const c of categoriesData) {
+      await categoryRepo.save(categoryRepo.create(c));
+    }
+    console.log(`✅ Seeded ${categoriesData.length} curriculum categories`);
   }
 
   console.log("🌟 Database initialization & seeding completed successfully!");

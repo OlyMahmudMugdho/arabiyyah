@@ -7,6 +7,7 @@ import {
   getBookRepository,
   getNoteRepository,
   getUserRepository,
+  getCategoryRepository,
 } from "@/db/data-source";
 
 export const dynamic = "force-dynamic";
@@ -46,13 +47,14 @@ export async function GET(req: NextRequest) {
   const resource = searchParams.get("resource") || "all";
   const format = (searchParams.get("format") || "json").toLowerCase();
 
-  const [courseRepo, pathRepo, bookRepo, noteRepo, userRepo] =
+  const [courseRepo, pathRepo, bookRepo, noteRepo, userRepo, categoryRepo] =
     await Promise.all([
       getCourseRepository(),
       getPathRepository(),
       getBookRepository(),
       getNoteRepository(),
       getUserRepository(),
+      getCategoryRepository(),
     ]);
 
   const timestamp = new Date().toISOString();
@@ -370,8 +372,58 @@ export async function GET(req: NextRequest) {
     );
   }
 
+  if (resource === "categories") {
+    const categories = await categoryRepo.find({ order: { name: "ASC" } });
+
+    if (format === "csv") {
+      const headers = [
+        "id",
+        "name",
+        "nameArabic",
+        "slug",
+        "itemType",
+        "color",
+        "isFeatured",
+        "description",
+        "createdAt",
+      ];
+      const csv = toCSV(headers, categories);
+      return new NextResponse(csv, {
+        headers: {
+          "Content-Type": "text/csv; charset=utf-8",
+          "Content-Disposition": `attachment; filename="bayan-categories-export-${dateStr}.csv"`,
+        },
+      });
+    }
+
+    return new NextResponse(
+      JSON.stringify(
+        {
+          platform: "Bayan Arabic Learning Platform",
+          resource: "categories",
+          exportTimestamp: timestamp,
+          exportedBy: {
+            id: session.userId,
+            name: session.name,
+            email: session.email,
+          },
+          count: categories.length,
+          data: categories,
+        },
+        null,
+        2
+      ),
+      {
+        headers: {
+          "Content-Type": "application/json; charset=utf-8",
+          "Content-Disposition": `attachment; filename="bayan-categories-export-${dateStr}.json"`,
+        },
+      }
+    );
+  }
+
   // Default: Full platform backup ("all")
-  const [courses, paths, books, notes, rawUsers] = await Promise.all([
+  const [courses, paths, books, notes, rawUsers, categories] = await Promise.all([
     courseRepo.find({ order: { createdAt: "DESC" } }),
     pathRepo.find({
       relations: {
@@ -386,6 +438,7 @@ export async function GET(req: NextRequest) {
     bookRepo.find({ order: { createdAt: "DESC" } }),
     noteRepo.find({ order: { createdAt: "DESC" } }),
     userRepo.find({ order: { createdAt: "DESC" } }),
+    categoryRepo.find({ order: { name: "ASC" } }),
   ]);
 
   const sanitizedUsers = rawUsers.map((u) => ({
@@ -463,6 +516,16 @@ export async function GET(req: NextRequest) {
         status: u.isActive ? "Active" : "Disabled",
         createdAt: u.createdAt,
       })),
+      ...categories.map((cat) => ({
+        resourceType: "Category",
+        id: cat.id,
+        titleOrName: cat.name,
+        categoryOrTopicOrRole: cat.itemType,
+        levelOrPermissions: cat.color,
+        authorOrInstructor: cat.slug,
+        status: cat.isFeatured ? "Featured" : "Standard",
+        createdAt: cat.createdAt,
+      })),
     ];
 
     const csv = toCSV(headers, rows);
@@ -491,12 +554,14 @@ export async function GET(req: NextRequest) {
       booksCount: books.length,
       notesCount: notes.length,
       usersCount: sanitizedUsers.length,
+      categoriesCount: categories.length,
       totalRecords:
         courses.length +
         paths.length +
         books.length +
         notes.length +
-        sanitizedUsers.length,
+        sanitizedUsers.length +
+        categories.length,
     },
     data: {
       courses,
@@ -504,6 +569,7 @@ export async function GET(req: NextRequest) {
       books,
       notes,
       users: sanitizedUsers,
+      categories,
     },
   };
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Plus, Search, Trash2, Edit, BookOpen, ExternalLink, X } from "lucide-react";
 import type { Book } from "@/db/entities";
 import {
@@ -8,6 +8,7 @@ import {
   updateBookAction,
   deleteBookAction,
 } from "@/actions/book-actions";
+import { createCategoryAction } from "@/actions/category-actions";
 
 interface BookManagerProps {
   initialBooks: Book[];
@@ -26,6 +27,7 @@ export function BookManager({ initialBooks }: BookManagerProps) {
   const [titleArabic, setTitleArabic] = useState("");
   const [author, setAuthor] = useState("");
   const [category, setCategory] = useState("Grammar");
+  const [isCustomCategory, setIsCustomCategory] = useState(false);
   const [level, setLevel] = useState("Beginner");
   const [language, setLanguage] = useState("Arabic");
   const [pages, setPages] = useState<number>(100);
@@ -34,12 +36,32 @@ export function BookManager({ initialBooks }: BookManagerProps) {
   const [description, setDescription] = useState("");
   const [isPublished, setIsPublished] = useState(true);
 
+  const existingCategories = useMemo(() => {
+    const defaultCats = [
+      "Grammar",
+      "Morphology",
+      "Dictionaries",
+      "Literature",
+      "Vocabulary",
+      "Tajweed & Phonetics",
+      "Quranic Arabic",
+      "Balagha (Rhetoric)",
+      "Reading & Literature",
+    ];
+    const set = new Set(defaultCats);
+    books.forEach((b) => {
+      if (b.category) set.add(b.category);
+    });
+    return Array.from(set).sort();
+  }, [books]);
+
   const openCreateModal = () => {
     setEditingBook(null);
     setTitle("");
     setTitleArabic("");
     setAuthor("");
-    setCategory("Grammar");
+    setCategory(existingCategories[0] || "Grammar");
+    setIsCustomCategory(false);
     setLevel("Beginner");
     setLanguage("Arabic");
     setPages(100);
@@ -57,6 +79,7 @@ export function BookManager({ initialBooks }: BookManagerProps) {
     setTitleArabic(b.titleArabic || "");
     setAuthor(b.author);
     setCategory(b.category);
+    setIsCustomCategory(!existingCategories.includes(b.category));
     setLevel(b.level);
     setLanguage(b.language);
     setPages(b.pages);
@@ -73,12 +96,19 @@ export function BookManager({ initialBooks }: BookManagerProps) {
     setLoading(true);
     setError(null);
 
+    const finalCategory = category.trim();
+    if (!finalCategory) {
+      setError("Category is required.");
+      setLoading(false);
+      return;
+    }
+
     if (editingBook) {
       const res = await updateBookAction(editingBook.id, {
         title,
         titleArabic: titleArabic || null,
         author,
-        category,
+        category: finalCategory,
         level,
         language,
         pages,
@@ -92,6 +122,9 @@ export function BookManager({ initialBooks }: BookManagerProps) {
         setError(res.error);
         setLoading(false);
       } else if (res.book) {
+        if (!existingCategories.includes(finalCategory)) {
+          createCategoryAction({ name: finalCategory, itemType: "book" }).catch(() => {});
+        }
         setBooks(
           books.map((b) => (b.id === editingBook.id ? (res.book as Book) : b))
         );
@@ -103,7 +136,7 @@ export function BookManager({ initialBooks }: BookManagerProps) {
         title,
         titleArabic: titleArabic || undefined,
         author,
-        category,
+        category: finalCategory,
         level,
         language,
         pages,
@@ -117,6 +150,9 @@ export function BookManager({ initialBooks }: BookManagerProps) {
         setError(res.error);
         setLoading(false);
       } else if (res.book) {
+        if (!existingCategories.includes(finalCategory)) {
+          createCategoryAction({ name: finalCategory, itemType: "book" }).catch(() => {});
+        }
         setBooks([res.book as Book, ...books]);
         setModalOpen(false);
         setLoading(false);
@@ -300,20 +336,55 @@ export function BookManager({ initialBooks }: BookManagerProps) {
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">
-                    Category *
-                  </label>
-                  <select
-                    value={category}
-                    onChange={(e) => setCategory(e.target.value)}
-                    className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 dark:bg-slate-900 dark:border-slate-700 dark:text-white text-xs focus:outline-none focus:border-emerald-500"
-                  >
-                    <option value="Grammar">Grammar (Nahw)</option>
-                    <option value="Morphology">Morphology (Sarf)</option>
-                    <option value="Dictionaries">Dictionaries & Lexicons</option>
-                    <option value="Literature">Literature & Graded Readers</option>
-                    <option value="Vocabulary">Vocabulary</option>
-                  </select>
+                  <div className="flex items-center justify-between">
+                    <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+                      Category *
+                    </label>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setIsCustomCategory(!isCustomCategory);
+                        if (!isCustomCategory) {
+                          setCategory("");
+                        } else {
+                          setCategory(existingCategories[0] || "Grammar");
+                        }
+                      }}
+                      className="text-[11px] text-emerald-600 dark:text-emerald-400 hover:underline font-semibold"
+                    >
+                      {isCustomCategory ? "← Select existing" : "+ Add custom"}
+                    </button>
+                  </div>
+                  {isCustomCategory ? (
+                    <input
+                      type="text"
+                      required
+                      value={category}
+                      onChange={(e) => setCategory(e.target.value)}
+                      placeholder="e.g. Fiqh, Hadith, Children..."
+                      className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 dark:bg-slate-900 dark:border-slate-700 dark:text-white text-xs focus:outline-none focus:border-emerald-500"
+                    />
+                  ) : (
+                    <select
+                      value={category}
+                      onChange={(e) => {
+                        if (e.target.value === "__custom__") {
+                          setIsCustomCategory(true);
+                          setCategory("");
+                        } else {
+                          setCategory(e.target.value);
+                        }
+                      }}
+                      className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 dark:bg-slate-900 dark:border-slate-700 dark:text-white text-xs focus:outline-none focus:border-emerald-500"
+                    >
+                      {existingCategories.map((cat) => (
+                        <option key={cat} value={cat}>
+                          {cat}
+                        </option>
+                      ))}
+                      <option value="__custom__">+ Add Custom Category...</option>
+                    </select>
+                  )}
                 </div>
               </div>
 

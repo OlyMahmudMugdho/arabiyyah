@@ -17,6 +17,7 @@ import {
   BookOpen,
   FileText,
   Users,
+  FolderKanban,
 } from "lucide-react";
 
 interface ExportDataCardProps {
@@ -94,6 +95,14 @@ export function ExportDataCard({ isSuperadmin, counts }: ExportDataCardProps) {
       count: counts.users,
       icon: Users,
       badge: `${counts.users} accounts`,
+    },
+    {
+      id: "categories",
+      name: "Curriculum Categories",
+      description: "Classical sciences, discipline taxonomies, and scopes",
+      count: 11,
+      icon: FolderKanban,
+      badge: "Taxonomy",
     },
   ];
 

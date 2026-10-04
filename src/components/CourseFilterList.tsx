@@ -21,15 +21,14 @@ export function CourseFilterList({
 
   const languages = ["All", "English", "Arabic", "Urdu", "Bangla"];
   const levels = ["All", "Beginner", "Intermediate", "Advanced"];
-  const categories = [
-    "All",
-    "Nahw (Syntax)",
-    "Sarf (Morphology)",
-    "Balagha (Rhetoric)",
-    "Quranic Arabic",
-    "Conversational",
-    "Reading",
-  ];
+
+  const categories = useMemo(() => {
+    const set = new Set<string>();
+    initialCourses.forEach((c) => {
+      if (c.category) set.add(c.category);
+    });
+    return ["All", ...Array.from(set).sort()];
+  }, [initialCourses]);
 
   const filteredCourses = useMemo(() => {
     return initialCourses.filter((course) => {
@@ -52,7 +51,8 @@ export function CourseFilterList({
       // Category filter
       if (
         selectedCategory !== "All" &&
-        !course.category.toLowerCase().includes(selectedCategory.toLowerCase().split(" ")[0])
+        course.category.toLowerCase() !== selectedCategory.toLowerCase() &&
+        !course.category.toLowerCase().includes(selectedCategory.toLowerCase())
       ) {
         return false;
       }

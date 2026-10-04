@@ -7,6 +7,7 @@ import {
   BookOpen,
   FileText,
   Users,
+  FolderKanban,
   LogOut,
   ExternalLink,
   Shield,
@@ -35,6 +36,7 @@ export default async function AdminDashboardLayout({
     { name: "Learning Paths", href: "/admin/paths", icon: Compass },
     { name: "Books", href: "/admin/books", icon: BookOpen },
     { name: "Notes & Guides", href: "/admin/notes", icon: FileText },
+    { name: "Categories", href: "/admin/categories", icon: FolderKanban },
   ];
 
   if (isSuperadmin) {
