@@ -131,7 +131,7 @@ async function verifyFullFlow() {
   if (!fullPath || !fullPath.sections || fullPath.sections.length === 0) {
     throw new Error("❌ Full path hierarchy verification failed!");
   }
-  const attachedCourseTitle = fullPath.sections[0].pathCourses[0]?.course?.title;
+  const attachedCourseTitle = (fullPath.sections as any[])[0]?.pathCourses?.[0]?.course?.title;
   console.log(`✅ 8. Verified full multi-stage hierarchy: Path "${fullPath.title}" -> Section "${fullPath.sections[0].title}" -> Course "${attachedCourseTitle}"`);
 
   // Cleanup test artifacts

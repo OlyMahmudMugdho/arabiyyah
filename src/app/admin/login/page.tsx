@@ -16,14 +16,27 @@ export default function AdminLoginPage() {
     setLoading(true);
 
     const formData = new FormData(e.currentTarget);
-    const res = await loginAdminAction(formData);
+    const email = formData.get("email");
+    const password = formData.get("password");
 
-    if (res.error) {
-      setError(res.error);
+    try {
+      const response = await fetch("/api/admin/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const res = await response.json();
+
+      if (!response.ok || res.error) {
+        setError(res.error || "Login failed");
+        setLoading(false);
+      } else {
+        window.location.href = "/admin";
+      }
+    } catch {
+      setError("Network error occurred during login. Please try again.");
       setLoading(false);
-    } else {
-      router.push("/admin");
-      router.refresh();
     }
   }
 

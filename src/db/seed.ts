@@ -1,28 +1,24 @@
 import "reflect-metadata";
 import bcrypt from "bcryptjs";
-import { getDataSource } from "./data-source";
 import {
-  User,
-  UserRole,
-  AdminPermission,
-  Course,
-  LearningPath,
-  PathSection,
-  PathCourse,
-  Book,
-  Note,
-} from "./entities";
+  getUserRepository,
+  getCourseRepository,
+  getPathRepository,
+  getSectionRepository,
+  getPathCourseRepository,
+  getBookRepository,
+  getNoteRepository,
+} from "./data-source";
+import { UserRole, AdminPermission } from "./entities";
 
 export async function seedDatabase() {
-  const dataSource = await getDataSource();
-
-  const userRepo = dataSource.getRepository(User);
-  const courseRepo = dataSource.getRepository(Course);
-  const pathRepo = dataSource.getRepository(LearningPath);
-  const sectionRepo = dataSource.getRepository(PathSection);
-  const pathCourseRepo = dataSource.getRepository(PathCourse);
-  const bookRepo = dataSource.getRepository(Book);
-  const noteRepo = dataSource.getRepository(Note);
+  const userRepo = await getUserRepository();
+  const courseRepo = await getCourseRepository();
+  const pathRepo = await getPathRepository();
+  const sectionRepo = await getSectionRepository();
+  const pathCourseRepo = await getPathCourseRepository();
+  const bookRepo = await getBookRepository();
+  const noteRepo = await getNoteRepository();
 
   console.log("🌱 Checking superadmin account...");
   const adminEmail =
@@ -49,7 +45,7 @@ export async function seedDatabase() {
 
   // Seed courses if empty
   const courseCount = await courseRepo.count();
-  let createdCourses: Record<string, Course> = {};
+  let createdCourses: Record<string, any> = {};
 
   if (courseCount === 0) {
     console.log("🌱 Seeding initial courses...");

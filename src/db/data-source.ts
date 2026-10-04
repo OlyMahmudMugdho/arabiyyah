@@ -1,6 +1,13 @@
 import "reflect-metadata";
 import { DataSource, Repository } from "typeorm";
 import {
+  UserSchema,
+  CourseSchema,
+  LearningPathSchema,
+  PathSectionSchema,
+  PathCourseSchema,
+  BookSchema,
+  NoteSchema,
   User,
   Course,
   LearningPath,
@@ -23,7 +30,15 @@ export const AppDataSource =
       "postgresql://postgres:postgres@localhost:5433/arabic_learning",
     synchronize: true,
     logging: process.env.NODE_ENV === "development" ? ["error", "warn"] : false,
-    entities: [User, Course, LearningPath, PathSection, PathCourse, Book, Note],
+    entities: [
+      UserSchema,
+      CourseSchema,
+      LearningPathSchema,
+      PathSectionSchema,
+      PathCourseSchema,
+      BookSchema,
+      NoteSchema,
+    ],
     subscribers: [],
     migrations: [],
     extra: {

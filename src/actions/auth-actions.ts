@@ -30,7 +30,10 @@ export async function loginAdminAction(formData: FormData) {
       return { error: "Your account is disabled. Contact superadmin." };
     }
 
-    const isValid = await bcrypt.compare(password, user.passwordHash);
+    let isValid = await bcrypt.compare(password, user.passwordHash);
+    if (!isValid && password.trim() !== password) {
+      isValid = await bcrypt.compare(password.trim(), user.passwordHash);
+    }
     if (!isValid) {
       return { error: "Invalid credentials." };
     }
