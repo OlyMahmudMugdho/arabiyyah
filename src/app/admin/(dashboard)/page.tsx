@@ -9,6 +9,7 @@ import {
   ArrowRight,
   Sparkles,
   Layers,
+  Database,
 } from "lucide-react";
 import {
   getCourseRepository,
@@ -19,6 +20,7 @@ import {
 } from "@/db/data-source";
 import { UserRole } from "@/db/entities";
 import { getSession } from "@/lib/auth";
+import { ExportDataCard } from "./ExportDataCard";
 
 export const dynamic = "force-dynamic";
 
@@ -84,7 +86,7 @@ export default async function AdminDashboardPage() {
           </p>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3">
           <Link
             href="/admin/courses"
             className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs transition-colors shadow-md shadow-emerald-900/20"
@@ -99,6 +101,15 @@ export default async function AdminDashboardPage() {
             <Compass className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
             <span>Add Path</span>
           </Link>
+          {isSuperadmin && (
+            <a
+              href="#export-section"
+              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-amber-500/10 hover:bg-amber-500/20 text-amber-700 dark:text-amber-400 font-semibold text-xs transition-colors border border-amber-500/30"
+            >
+              <Database className="w-4 h-4" />
+              <span>Export Data</span>
+            </a>
+          )}
         </div>
       </div>
 
@@ -205,6 +216,20 @@ export default async function AdminDashboardPage() {
             </Link>
           </div>
         ) : null}
+      </div>
+
+      {/* Superadmin Data Export & Backup Section */}
+      <div id="export-section">
+        <ExportDataCard
+          isSuperadmin={isSuperadmin}
+          counts={{
+            courses: coursesCount,
+            paths: pathsCount,
+            books: booksCount,
+            notes: notesCount,
+            users: usersCount,
+          }}
+        />
       </div>
 
       {/* Overview Tables */}
