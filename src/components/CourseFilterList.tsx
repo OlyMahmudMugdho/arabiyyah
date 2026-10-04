@@ -109,10 +109,10 @@ export function CourseFilterList({
             <span className="text-xs font-semibold tracking-wider text-emerald-400 uppercase">
               Curated Curriculum
             </span>
-            <h2 className="text-2xl md:text-3xl font-bold text-white mt-1">
+            <h2 className="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white mt-1">
               Arabic Video Courses
             </h2>
-            <p className="text-sm text-slate-400 mt-1">
+            <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
               Explore systematic lectures across grammar, morphology, rhetoric, and conversational fluency.
             </p>
           </div>
@@ -120,7 +120,7 @@ export function CourseFilterList({
       )}
 
       {/* Filter Controls Box */}
-      <div className="bg-[#0f172a]/80 backdrop-blur-sm p-4 md:p-6 rounded-2xl border border-slate-800 space-y-4">
+      <div className="bg-white/90 border border-slate-200 shadow-sm dark:bg-[#0f172a]/80 dark:border-slate-800 backdrop-blur-sm p-4 md:p-6 rounded-2xl space-y-4 transition-colors">
         {/* Search Bar */}
         <div className="relative">
           <Search className="w-5 h-5 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
@@ -129,7 +129,7 @@ export function CourseFilterList({
             placeholder="Search courses by title, instructor, or topic..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-11 pr-4 py-2.5 rounded-xl bg-slate-900 border border-slate-700/80 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-colors"
+            className="w-full pl-11 pr-4 py-2.5 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 placeholder-slate-400 dark:bg-slate-900 dark:border-slate-700/80 dark:text-white dark:placeholder-slate-500 text-sm focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-colors"
           />
         </div>
 
@@ -137,8 +137,8 @@ export function CourseFilterList({
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pt-1">
           {/* Language Filter */}
           <div className="space-y-1.5">
-            <label className="text-xs font-semibold text-slate-300 flex items-center gap-1.5">
-              <Filter className="w-3 h-3 text-emerald-400" />
+            <label className="text-xs font-semibold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
+              <Filter className="w-3 h-3 text-emerald-600 dark:text-emerald-400" />
               <span>Language Medium:</span>
             </label>
             <div className="flex flex-wrap gap-1.5">
@@ -150,7 +150,7 @@ export function CourseFilterList({
                   className={`px-3 py-1 text-xs rounded-lg font-medium transition-all ${
                     selectedLanguage === lang
                       ? "bg-emerald-600 text-white shadow-sm shadow-emerald-900/40"
-                      : "bg-slate-800/80 text-slate-300 hover:bg-slate-700 hover:text-white"
+                      : "bg-slate-100 text-slate-700 hover:bg-slate-200 hover:text-slate-900 dark:bg-slate-800/80 dark:text-slate-300 dark:hover:bg-slate-700 dark:hover:text-white"
                   }`}
                 >
                   {lang}
@@ -161,8 +161,8 @@ export function CourseFilterList({
 
           {/* Level Filter */}
           <div className="space-y-1.5">
-            <label className="text-xs font-semibold text-slate-300 flex items-center gap-1.5">
-              <Filter className="w-3 h-3 text-amber-400" />
+            <label className="text-xs font-semibold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
+              <Filter className="w-3 h-3 text-amber-600 dark:text-amber-400" />
               <span>Proficiency Level:</span>
             </label>
             <div className="flex flex-wrap gap-1.5">
@@ -174,7 +174,7 @@ export function CourseFilterList({
                   className={`px-3 py-1 text-xs rounded-lg font-medium transition-all ${
                     selectedLevel === lvl
                       ? "bg-amber-600 text-white shadow-sm shadow-amber-900/40"
-                      : "bg-slate-800/80 text-slate-300 hover:bg-slate-700 hover:text-white"
+                      : "bg-slate-100 text-slate-700 hover:bg-slate-200 hover:text-slate-900 dark:bg-slate-800/80 dark:text-slate-300 dark:hover:bg-slate-700 dark:hover:text-white"
                   }`}
                 >
                   {lvl}
@@ -185,14 +185,14 @@ export function CourseFilterList({
 
           {/* Category Filter */}
           <div className="space-y-1.5 md:col-span-2 lg:col-span-1">
-            <label className="text-xs font-semibold text-slate-300 flex items-center gap-1.5">
-              <Filter className="w-3 h-3 text-cyan-400" />
+            <label className="text-xs font-semibold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
+              <Filter className="w-3 h-3 text-cyan-600 dark:text-cyan-400" />
               <span>Subject Category:</span>
             </label>
             <select
               value={selectedCategory}
               onChange={(e) => setSelectedCategory(e.target.value)}
-              className="w-full py-1.5 px-3 rounded-lg bg-slate-900 border border-slate-700 text-slate-200 text-xs focus:outline-none focus:border-emerald-500"
+              className="w-full py-1.5 px-3 rounded-lg bg-slate-50 border border-slate-300 text-slate-800 dark:bg-slate-900 dark:border-slate-700 dark:text-slate-200 text-xs focus:outline-none focus:border-emerald-500"
             >
               {categories.map((cat) => (
                 <option key={cat} value={cat}>
@@ -204,16 +204,16 @@ export function CourseFilterList({
         </div>
 
         {/* Status bar */}
-        <div className="flex items-center justify-between text-xs text-slate-400 pt-2 border-t border-slate-800">
+        <div className="flex items-center justify-between text-xs text-slate-600 dark:text-slate-400 pt-2 border-t border-slate-200 dark:border-slate-800">
           <span>
-            Showing <strong className="text-emerald-400">{filteredCourses.length}</strong>{" "}
+            Showing <strong className="text-emerald-600 dark:text-emerald-400">{filteredCourses.length}</strong>{" "}
             courses
           </span>
           {isFiltered && (
             <button
               type="button"
               onClick={resetFilters}
-              className="flex items-center gap-1 text-xs text-rose-400 hover:text-rose-300 transition-colors font-medium"
+              className="flex items-center gap-1 text-xs text-rose-500 hover:text-rose-400 transition-colors font-medium"
             >
               <RotateCcw className="w-3 h-3" />
               <span>Reset Filters</span>
@@ -230,8 +230,8 @@ export function CourseFilterList({
           ))}
         </div>
       ) : (
-        <div className="py-16 text-center bg-[#0f172a]/40 border border-dashed border-slate-800 rounded-3xl p-8 space-y-3">
-          <p className="text-slate-300 font-medium">
+        <div className="py-16 text-center bg-white/60 border border-dashed border-slate-300 dark:bg-[#0f172a]/40 dark:border-slate-800 rounded-3xl p-8 space-y-3">
+          <p className="text-slate-800 dark:text-slate-300 font-medium">
             No courses found matching your current filter criteria.
           </p>
           <p className="text-xs text-slate-500">

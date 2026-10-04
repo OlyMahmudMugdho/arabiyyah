@@ -222,36 +222,36 @@ export function PathSectionBuilder({
       <div className="space-y-4">
         <Link
           href="/admin/paths"
-          className="inline-flex items-center gap-2 text-xs font-semibold text-emerald-400 hover:text-emerald-300"
+          className="inline-flex items-center gap-2 text-xs font-semibold text-emerald-600 hover:text-emerald-500 dark:text-emerald-400 dark:hover:text-emerald-300 transition-colors"
         >
           <ArrowLeft className="w-4 h-4" />
           <span>Back to All Paths</span>
         </Link>
 
-        <div className="p-6 md:p-8 rounded-3xl bg-[#0d1322] border border-slate-800 flex flex-col md:flex-row md:items-center justify-between gap-6">
+        <div className="p-6 md:p-8 rounded-3xl bg-white border border-slate-200 shadow-xs dark:bg-[#0d1322] dark:border-slate-800 flex flex-col md:flex-row md:items-center justify-between gap-6 transition-colors">
           <div className="space-y-2">
             <div className="flex items-center gap-2 flex-wrap">
-              <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-300 border border-emerald-500/20">
+              <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800 border border-emerald-300 dark:bg-emerald-500/10 dark:text-emerald-300 dark:border-emerald-500/20">
                 {path.level}
               </span>
-              <span className="text-xs text-slate-400">
+              <span className="text-xs text-slate-500 dark:text-slate-400">
                 Duration: {path.estimatedHours}
               </span>
             </div>
-            <h1 className="text-2xl font-extrabold text-white">{path.title}</h1>
+            <h1 className="text-2xl font-extrabold text-slate-900 dark:text-white">{path.title}</h1>
             {path.titleArabic && (
-              <p className="font-arabic text-emerald-400 text-sm font-semibold">
+              <p className="font-arabic text-emerald-700 dark:text-emerald-400 text-sm font-semibold">
                 {path.titleArabic}
               </p>
             )}
-            <p className="text-xs text-slate-400 max-w-2xl">
+            <p className="text-xs text-slate-600 dark:text-slate-400 max-w-2xl">
               {path.description}
             </p>
           </div>
 
           <button
             onClick={openAddSection}
-            className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs shadow-lg shadow-emerald-950/40 transition-colors shrink-0"
+            className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs shadow-lg shadow-emerald-950/20 transition-colors shrink-0"
           >
             <Plus className="w-4 h-4" />
             <span>Add Roadmap Stage / Section</span>
@@ -262,8 +262,8 @@ export function PathSectionBuilder({
       {/* Sections and Course Pipeline */}
       <div className="space-y-6">
         <div className="flex items-center justify-between">
-          <h2 className="text-lg font-bold text-white flex items-center gap-2">
-            <Layers className="w-5 h-5 text-cyan-400" />
+          <h2 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
+            <Layers className="w-5 h-5 text-teal-600 dark:text-cyan-400" />
             <span>Roadmap Stages ({path.sections?.length || 0})</span>
           </h2>
         </div>
@@ -273,25 +273,25 @@ export function PathSectionBuilder({
             {path.sections.map((section, sIndex) => (
               <div
                 key={section.id}
-                className="rounded-3xl bg-[#0d1322] border border-slate-800 p-6 space-y-5"
+                className="rounded-3xl bg-white border border-slate-200 shadow-xs dark:bg-[#0d1322] dark:border-slate-800 p-6 space-y-5 transition-colors"
               >
                 {/* Section Header */}
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex items-start gap-3">
-                    <div className="w-7 h-7 rounded-xl bg-emerald-500/20 text-emerald-300 font-bold text-xs flex items-center justify-center border border-emerald-500/30 mt-0.5">
+                    <div className="w-7 h-7 rounded-xl bg-emerald-100 text-emerald-800 border border-emerald-300 dark:bg-emerald-500/20 dark:text-emerald-300 font-bold text-xs flex items-center justify-center dark:border-emerald-500/30 mt-0.5">
                       {sIndex + 1}
                     </div>
                     <div>
-                      <h3 className="text-base font-bold text-white">
+                      <h3 className="text-base font-bold text-slate-900 dark:text-white">
                         {section.title}
                       </h3>
                       {section.titleArabic && (
-                        <p className="font-arabic text-xs font-semibold text-emerald-400">
+                        <p className="font-arabic text-xs font-semibold text-emerald-700 dark:text-emerald-400">
                           {section.titleArabic}
                         </p>
                       )}
                       {section.description && (
-                        <p className="text-xs text-slate-400 mt-1">
+                        <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">
                           {section.description}
                         </p>
                       )}
@@ -301,7 +301,7 @@ export function PathSectionBuilder({
                   <div className="flex items-center gap-2">
                     <button
                       onClick={() => openEditSection(section)}
-                      className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors"
+                      className="p-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 dark:bg-slate-800 dark:hover:bg-slate-700 dark:text-slate-300 dark:hover:text-white transition-colors border border-slate-200 dark:border-transparent"
                       title="Edit Section Details"
                     >
                       <Edit className="w-3.5 h-3.5" />
@@ -310,7 +310,7 @@ export function PathSectionBuilder({
                       onClick={() =>
                         handleDeleteSection(section.id, section.title)
                       }
-                      className="p-1.5 rounded-lg bg-slate-800 hover:bg-rose-950/60 text-slate-300 hover:text-rose-300 transition-colors"
+                      className="p-1.5 rounded-lg bg-slate-100 hover:bg-rose-50 text-slate-700 hover:text-rose-600 dark:bg-slate-800 dark:hover:bg-rose-950/60 dark:text-slate-300 dark:hover:text-rose-300 transition-colors border border-slate-200 dark:border-transparent"
                       title="Delete Section"
                     >
                       <Trash2 className="w-3.5 h-3.5" />
@@ -319,10 +319,10 @@ export function PathSectionBuilder({
                 </div>
 
                 {/* Courses in this section */}
-                <div className="pt-2 border-t border-slate-800/80 space-y-3">
+                <div className="pt-2 border-t border-slate-200 dark:border-slate-800/80 space-y-3">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
-                      <GraduationCap className="w-3.5 h-3.5 text-amber-400" />
+                    <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
+                      <GraduationCap className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
                       <span>
                         Stage Courses ({section.pathCourses?.length || 0})
                       </span>
@@ -330,7 +330,7 @@ export function PathSectionBuilder({
 
                     <button
                       onClick={() => openAddCourse(section.id)}
-                      className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-slate-800 hover:bg-emerald-600 text-slate-200 hover:text-white text-xs font-medium transition-colors border border-slate-700"
+                      className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-slate-100 hover:bg-emerald-600 text-slate-700 hover:text-white dark:bg-slate-800 dark:hover:bg-emerald-600 dark:text-slate-200 text-xs font-medium transition-colors border border-slate-300 dark:border-slate-700"
                     >
                       <Plus className="w-3 h-3" />
                       <span>Add Course to Stage</span>
@@ -344,35 +344,35 @@ export function PathSectionBuilder({
                         return (
                           <div
                             key={pc.id}
-                            className="p-3.5 rounded-2xl bg-slate-900/80 border border-slate-800 flex items-center justify-between gap-4"
+                            className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 dark:bg-slate-900/80 dark:border-slate-800 flex items-center justify-between gap-4 transition-colors"
                           >
                             <div className="flex items-center gap-3 min-w-0">
-                              <span className="text-xs font-bold text-slate-500">
+                              <span className="text-xs font-bold text-slate-400 dark:text-slate-500">
                                 #{cIndex + 1}
                               </span>
                               <div className="min-w-0">
-                                <div className="text-sm font-semibold text-white truncate">
+                                <div className="text-sm font-semibold text-slate-900 dark:text-white truncate">
                                   {course?.title || "Unknown Course"}
                                 </div>
-                                <div className="flex items-center gap-2 text-xs text-slate-400 mt-0.5">
+                                <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400 mt-0.5">
                                   <span>{course?.instructor}</span>
                                   <span>•</span>
-                                  <span className="text-emerald-400">
+                                  <span className="text-emerald-600 dark:text-emerald-400">
                                     {course?.language}
                                   </span>
                                   <span>•</span>
                                   <span
                                     className={`px-1.5 py-0.2 rounded text-[10px] ${
                                       pc.isMandatory
-                                        ? "text-emerald-400 bg-emerald-500/10"
-                                        : "text-amber-400 bg-amber-500/10"
+                                        ? "text-emerald-800 bg-emerald-100 dark:text-emerald-400 dark:bg-emerald-500/10"
+                                        : "text-amber-800 bg-amber-100 dark:text-amber-400 dark:bg-amber-500/10"
                                     }`}
                                   >
                                     {pc.isMandatory ? "Mandatory" : "Optional"}
                                   </span>
                                 </div>
                                 {pc.customNotes && (
-                                  <p className="text-[11px] text-amber-300/80 mt-1 italic flex items-center gap-1">
+                                  <p className="text-[11px] text-amber-700 dark:text-amber-300/80 mt-1 italic flex items-center gap-1">
                                     <Info className="w-3 h-3 shrink-0" />
                                     <span>{pc.customNotes}</span>
                                   </p>
@@ -388,7 +388,7 @@ export function PathSectionBuilder({
                                   course?.title || "Course"
                                 )
                               }
-                              className="p-1.5 rounded-lg text-slate-400 hover:text-rose-400 hover:bg-slate-800 transition-colors shrink-0"
+                              className="p-1.5 rounded-lg text-slate-400 hover:text-rose-500 hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors shrink-0"
                               title="Remove from Section"
                             >
                               <Trash2 className="w-4 h-4" />
@@ -398,7 +398,7 @@ export function PathSectionBuilder({
                       })}
                     </div>
                   ) : (
-                    <div className="p-4 rounded-xl bg-slate-900/40 text-center text-xs text-slate-500">
+                    <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-900/40 text-center text-xs text-slate-500 border border-slate-200 dark:border-transparent">
                       No courses attached to this stage yet. Click &quot;Add Course to Stage&quot; above.
                     </div>
                   )}
@@ -407,9 +407,9 @@ export function PathSectionBuilder({
             ))}
           </div>
         ) : (
-          <div className="p-12 text-center rounded-3xl bg-[#0d1322] border border-dashed border-slate-800 space-y-3">
-            <Layers className="w-10 h-10 text-slate-600 mx-auto" />
-            <p className="text-sm text-slate-300 font-medium">
+          <div className="p-12 text-center rounded-3xl bg-white border border-dashed border-slate-300 dark:bg-[#0d1322] dark:border-slate-800 space-y-3">
+            <Layers className="w-10 h-10 text-slate-400 dark:text-slate-600 mx-auto" />
+            <p className="text-sm text-slate-800 dark:text-slate-300 font-medium">
               This path has no milestone stages yet.
             </p>
             <p className="text-xs text-slate-500 max-w-md mx-auto">
@@ -428,28 +428,28 @@ export function PathSectionBuilder({
       {/* Section Modal */}
       {sectionModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-[#0f172a] border border-slate-800 rounded-3xl max-w-lg w-full p-6 space-y-5">
+          <div className="bg-white border border-slate-200 shadow-2xl dark:bg-[#0f172a] dark:border-slate-800 rounded-3xl max-w-lg w-full p-6 space-y-5 transition-colors">
             <div className="flex items-center justify-between">
-              <h3 className="text-lg font-bold text-white">
+              <h3 className="text-lg font-bold text-slate-900 dark:text-white">
                 {editingSectionId ? "Edit Stage / Section" : "Add Stage / Section"}
               </h3>
               <button
                 onClick={() => setSectionModalOpen(false)}
-                className="p-1 rounded-lg text-slate-400 hover:text-white"
+                className="p-1 rounded-lg text-slate-400 hover:text-slate-700 dark:hover:text-white"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
             {error && (
-              <div className="p-3 rounded-xl bg-rose-500/15 border border-rose-500/30 text-rose-300 text-xs">
+              <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 dark:bg-rose-500/15 dark:border-rose-500/30 dark:text-rose-300 text-xs">
                 {error}
               </div>
             )}
 
             <form onSubmit={handleSaveSection} className="space-y-4">
               <div className="space-y-1">
-                <label className="text-xs font-semibold text-slate-300">
+                <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">
                   Section Title *
                 </label>
                 <input
@@ -458,12 +458,12 @@ export function PathSectionBuilder({
                   value={secTitle}
                   onChange={(e) => setSecTitle(e.target.value)}
                   placeholder="e.g. Stage 1: Alphabet & Phonetics"
-                  className="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-white text-xs focus:outline-none focus:border-emerald-500"
+                  className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 dark:bg-slate-900 dark:border-slate-700 dark:text-white text-xs focus:outline-none focus:border-emerald-500"
                 />
               </div>
 
               <div className="space-y-1">
-                <label className="text-xs font-semibold text-slate-300">
+                <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">
                   Arabic Title
                 </label>
                 <input
@@ -472,12 +472,12 @@ export function PathSectionBuilder({
                   onChange={(e) => setSecTitleArabic(e.target.value)}
                   placeholder="المرحلة الأولى: أصول الحروف"
                   dir="rtl"
-                  className="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-white text-xs font-arabic focus:outline-none focus:border-emerald-500"
+                  className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 dark:bg-slate-900 dark:border-slate-700 dark:text-white text-xs font-arabic focus:outline-none focus:border-emerald-500"
                 />
               </div>
 
               <div className="space-y-1">
-                <label className="text-xs font-semibold text-slate-300">
+                <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">
                   Description / Milestone Goal
                 </label>
                 <textarea
@@ -485,12 +485,12 @@ export function PathSectionBuilder({
                   value={secDesc}
                   onChange={(e) => setSecDesc(e.target.value)}
                   placeholder="What will the student master by the end of this stage?"
-                  className="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-white text-xs focus:outline-none focus:border-emerald-500"
+                  className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 dark:bg-slate-900 dark:border-slate-700 dark:text-white text-xs focus:outline-none focus:border-emerald-500"
                 />
               </div>
 
               <div className="space-y-1">
-                <label className="text-xs font-semibold text-slate-300">
+                <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">
                   Stage Sequence Order Index
                 </label>
                 <input
@@ -498,22 +498,22 @@ export function PathSectionBuilder({
                   min={1}
                   value={secOrder}
                   onChange={(e) => setSecOrder(parseInt(e.target.value) || 1)}
-                  className="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-white text-xs focus:outline-none focus:border-emerald-500"
+                  className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 dark:bg-slate-900 dark:border-slate-700 dark:text-white text-xs focus:outline-none focus:border-emerald-500"
                 />
               </div>
 
-              <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-800">
+              <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-200 dark:border-slate-800">
                 <button
                   type="button"
                   onClick={() => setSectionModalOpen(false)}
-                  className="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 text-xs font-semibold"
+                  className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 dark:bg-slate-800 dark:hover:bg-slate-700 dark:text-slate-300 text-xs font-semibold transition-colors"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={loading}
-                  className="px-5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold disabled:opacity-50"
+                  className="px-5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold disabled:opacity-50 shadow-md shadow-emerald-950/20"
                 >
                   {loading ? "Saving..." : "Save Section"}
                 </button>
@@ -526,34 +526,34 @@ export function PathSectionBuilder({
       {/* Course Linking Modal */}
       {courseModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-[#0f172a] border border-slate-800 rounded-3xl max-w-lg w-full p-6 space-y-5">
+          <div className="bg-white border border-slate-200 shadow-2xl dark:bg-[#0f172a] dark:border-slate-800 rounded-3xl max-w-lg w-full p-6 space-y-5 transition-colors">
             <div className="flex items-center justify-between">
-              <h3 className="text-lg font-bold text-white">
+              <h3 className="text-lg font-bold text-slate-900 dark:text-white">
                 Add Course to Stage
               </h3>
               <button
                 onClick={() => setCourseModalOpen(false)}
-                className="p-1 rounded-lg text-slate-400 hover:text-white"
+                className="p-1 rounded-lg text-slate-400 hover:text-slate-700 dark:hover:text-white"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
             {error && (
-              <div className="p-3 rounded-xl bg-rose-500/15 border border-rose-500/30 text-rose-300 text-xs">
+              <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 dark:bg-rose-500/15 dark:border-rose-500/30 dark:text-rose-300 text-xs">
                 {error}
               </div>
             )}
 
             <form onSubmit={handleSaveCourse} className="space-y-4">
               <div className="space-y-1">
-                <label className="text-xs font-semibold text-slate-300">
+                <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">
                   Select Course to Assign *
                 </label>
                 <select
                   value={selectedCourseId}
                   onChange={(e) => setSelectedCourseId(e.target.value)}
-                  className="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-white text-xs focus:outline-none focus:border-emerald-500"
+                  className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 dark:bg-slate-900 dark:border-slate-700 dark:text-white text-xs focus:outline-none focus:border-emerald-500"
                 >
                   {allCourses.map((c) => (
                     <option key={c.id} value={c.id}>
@@ -565,7 +565,7 @@ export function PathSectionBuilder({
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1">
-                  <label className="text-xs font-semibold text-slate-300">
+                  <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">
                     Order in this Stage
                   </label>
                   <input
@@ -573,7 +573,7 @@ export function PathSectionBuilder({
                     min={1}
                     value={courseOrder}
                     onChange={(e) => setCourseOrder(parseInt(e.target.value) || 1)}
-                    className="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-white text-xs focus:outline-none focus:border-emerald-500"
+                    className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 dark:bg-slate-900 dark:border-slate-700 dark:text-white text-xs focus:outline-none focus:border-emerald-500"
                   />
                 </div>
 
@@ -585,14 +585,14 @@ export function PathSectionBuilder({
                     onChange={(e) => setIsMandatory(e.target.checked)}
                     className="rounded text-emerald-600 focus:ring-emerald-500"
                   />
-                  <label htmlFor="isMandatory" className="text-xs text-slate-300 font-medium">
+                  <label htmlFor="isMandatory" className="text-xs text-slate-700 dark:text-slate-300 font-medium">
                     Mandatory Course
                   </label>
                 </div>
               </div>
 
               <div className="space-y-1">
-                <label className="text-xs font-semibold text-slate-300">
+                <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">
                   Advice / Guidance Notes for Student
                 </label>
                 <textarea
@@ -600,22 +600,22 @@ export function PathSectionBuilder({
                   value={customNotes}
                   onChange={(e) => setCustomNotes(e.target.value)}
                   placeholder="e.g. Focus on exercises 1-5; write full Harakat."
-                  className="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-white text-xs focus:outline-none focus:border-emerald-500"
+                  className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 dark:bg-slate-900 dark:border-slate-700 dark:text-white text-xs focus:outline-none focus:border-emerald-500"
                 />
               </div>
 
-              <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-800">
+              <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-200 dark:border-slate-800">
                 <button
                   type="button"
                   onClick={() => setCourseModalOpen(false)}
-                  className="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 text-xs font-semibold"
+                  className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 dark:bg-slate-800 dark:hover:bg-slate-700 dark:text-slate-300 text-xs font-semibold transition-colors"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={loading}
-                  className="px-5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold disabled:opacity-50"
+                  className="px-5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold disabled:opacity-50 shadow-md shadow-emerald-950/20"
                 >
                   {loading ? "Linking..." : "Attach Course"}
                 </button>

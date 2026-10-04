@@ -204,22 +204,22 @@ export function UserManager({ initialUsers, currentUserId }: UserManagerProps) {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 text-amber-400 text-xs font-semibold mb-2 border border-amber-500/20">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-400 text-xs font-semibold mb-2 border border-amber-500/20">
             <ShieldCheck className="w-3.5 h-3.5" />
             <span>Superadmin Restricted Control</span>
           </div>
-          <h1 className="text-2xl font-extrabold text-white flex items-center gap-2">
-            <Users className="w-6 h-6 text-amber-400" />
+          <h1 className="text-2xl font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
+            <Users className="w-6 h-6 text-amber-500 dark:text-amber-400" />
             <span>Administrators & Permissions</span>
           </h1>
-          <p className="text-sm text-slate-400">
+          <p className="text-sm text-slate-600 dark:text-slate-400">
             Only Superadmins can invite new curators and delegate role permissions. Public registration is permanently closed.
           </p>
         </div>
 
         <button
           onClick={openCreateModal}
-          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-500 hover:to-amber-400 text-slate-950 font-bold text-xs transition-all shadow-md shadow-amber-950/40"
+          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-white dark:text-slate-950 font-bold text-xs transition-all shadow-md shadow-amber-950/20"
         >
           <UserPlus className="w-4 h-4" />
           <span>Create New Admin</span>
@@ -227,10 +227,10 @@ export function UserManager({ initialUsers, currentUserId }: UserManagerProps) {
       </div>
 
       {/* Table */}
-      <div className="rounded-3xl bg-[#0d1322] border border-slate-800 overflow-hidden">
+      <div className="rounded-3xl bg-white dark:bg-[#0d1322] border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm dark:shadow-none">
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs text-slate-300">
-            <thead className="bg-slate-900/80 text-slate-400 font-semibold uppercase tracking-wider border-b border-slate-800">
+          <table className="w-full text-left text-xs text-slate-700 dark:text-slate-300">
+            <thead className="bg-slate-50 dark:bg-slate-900/80 text-slate-600 dark:text-slate-400 font-semibold uppercase tracking-wider border-b border-slate-200 dark:border-slate-800">
               <tr>
                 <th className="py-3.5 px-4">User</th>
                 <th className="py-3.5 px-4">Role</th>
@@ -239,7 +239,7 @@ export function UserManager({ initialUsers, currentUserId }: UserManagerProps) {
                 <th className="py-3.5 px-4 text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-800/80">
+            <tbody className="divide-y divide-slate-200 dark:divide-slate-800/80">
               {users.map((u) => {
                 const isSelf = u.id === currentUserId;
                 const isSuper = u.role === UserRole.SUPERADMIN;
@@ -247,26 +247,26 @@ export function UserManager({ initialUsers, currentUserId }: UserManagerProps) {
                 return (
                   <tr
                     key={u.id}
-                    className="hover:bg-slate-800/40 transition-colors"
+                    className="hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors"
                   >
                     <td className="py-3.5 px-4">
-                      <div className="font-bold text-white flex items-center gap-2">
+                      <div className="font-bold text-slate-900 dark:text-white flex items-center gap-2">
                         <span>{u.name}</span>
                         {isSelf && (
-                          <span className="text-[10px] text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">
+                          <span className="text-[10px] text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">
                             (You)
                           </span>
                         )}
                       </div>
-                      <div className="text-slate-400 text-xs">{u.email}</div>
+                      <div className="text-slate-500 dark:text-slate-400 text-xs">{u.email}</div>
                     </td>
 
                     <td className="py-3.5 px-4 whitespace-nowrap">
                       <span
                         className={`px-2.5 py-1 rounded-full text-[11px] font-bold ${
                           isSuper
-                            ? "bg-amber-500/15 text-amber-300 border border-amber-500/30"
-                            : "bg-blue-500/15 text-blue-300 border border-blue-500/30"
+                            ? "bg-amber-500/15 text-amber-700 dark:text-amber-300 border border-amber-500/30"
+                            : "bg-blue-500/15 text-blue-700 dark:text-blue-300 border border-blue-500/30"
                         }`}
                       >
                         {u.role}
@@ -275,7 +275,7 @@ export function UserManager({ initialUsers, currentUserId }: UserManagerProps) {
 
                     <td className="py-3.5 px-4">
                       {isSuper ? (
-                        <span className="text-xs text-amber-300/90 font-medium">
+                        <span className="text-xs text-amber-700 dark:text-amber-300/90 font-medium">
                           Full Superadmin Authorization (All Permissions)
                         </span>
                       ) : (
@@ -284,13 +284,13 @@ export function UserManager({ initialUsers, currentUserId }: UserManagerProps) {
                             u.permissions.map((perm) => (
                               <span
                                 key={perm}
-                                className="px-2 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700 text-[10px]"
+                                className="px-2 py-0.5 rounded bg-slate-100 text-slate-700 border border-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700 text-[10px]"
                               >
                                 {perm.replace("manage_", "")}
                               </span>
                             ))
                           ) : (
-                            <span className="text-[11px] text-slate-500">
+                            <span className="text-[11px] text-slate-400 dark:text-slate-500">
                               No permissions assigned
                             </span>
                           )}
@@ -302,8 +302,8 @@ export function UserManager({ initialUsers, currentUserId }: UserManagerProps) {
                       <span
                         className={`px-2 py-0.5 rounded-full text-[10px] font-semibold ${
                           u.isActive
-                            ? "bg-emerald-500/15 text-emerald-300 border border-emerald-500/30"
-                            : "bg-rose-500/15 text-rose-300 border border-rose-500/30"
+                            ? "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30"
+                            : "bg-rose-500/15 text-rose-700 dark:text-rose-300 border border-rose-500/30"
                         }`}
                       >
                         {u.isActive ? "Active" : "Disabled"}
@@ -313,7 +313,7 @@ export function UserManager({ initialUsers, currentUserId }: UserManagerProps) {
                     <td className="py-3.5 px-4 whitespace-nowrap text-right space-x-2">
                       <button
                         onClick={() => openEditModal(u)}
-                        className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors"
+                        className="p-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-600 hover:text-slate-900 dark:bg-slate-800 dark:hover:bg-slate-700 dark:text-slate-300 dark:hover:text-white transition-colors"
                         title="Edit Permissions"
                       >
                         <Edit className="w-3.5 h-3.5" />
@@ -321,7 +321,7 @@ export function UserManager({ initialUsers, currentUserId }: UserManagerProps) {
                       {!isSelf && (
                         <button
                           onClick={() => handleDelete(u.id, u.name)}
-                          className="p-1.5 rounded-lg bg-slate-800 hover:bg-rose-950/60 text-slate-300 hover:text-rose-300 transition-colors"
+                          className="p-1.5 rounded-lg bg-slate-100 hover:bg-rose-50 text-slate-600 hover:text-rose-600 dark:bg-slate-800 dark:hover:bg-rose-950/60 dark:text-slate-300 dark:hover:text-rose-300 transition-colors"
                           title="Delete User"
                         >
                           <Trash2 className="w-3.5 h-3.5" />
@@ -339,24 +339,24 @@ export function UserManager({ initialUsers, currentUserId }: UserManagerProps) {
       {/* Create / Edit Modal */}
       {modalOpen && (
         <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
-          <div className="bg-[#0f172a] border border-slate-800 rounded-3xl max-w-xl w-full p-6 md:p-8 space-y-6">
+          <div className="bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800 rounded-3xl max-w-xl w-full p-6 md:p-8 space-y-6 shadow-2xl">
             <div className="flex items-center justify-between">
-              <h2 className="text-xl font-bold text-white flex items-center gap-2">
-                <Shield className="w-5 h-5 text-amber-400" />
+              <h2 className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                <Shield className="w-5 h-5 text-amber-500 dark:text-amber-400" />
                 <span>
                   {editingUser ? "Edit Admin & Permissions" : "Add New Admin User"}
                 </span>
               </h2>
               <button
                 onClick={() => setModalOpen(false)}
-                className="p-1 rounded-lg text-slate-400 hover:text-white"
+                className="p-1 rounded-lg text-slate-400 hover:text-slate-700 dark:hover:text-white transition-colors"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
             {error && (
-              <div className="p-3 rounded-xl bg-rose-500/15 border border-rose-500/30 text-rose-300 text-xs">
+              <div className="p-3 rounded-xl bg-rose-500/15 border border-rose-500/30 text-rose-600 dark:text-rose-300 text-xs">
                 {error}
               </div>
             )}
@@ -364,7 +364,7 @@ export function UserManager({ initialUsers, currentUserId }: UserManagerProps) {
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-1">
-                  <label className="text-xs font-semibold text-slate-300">
+                  <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">
                     Full Name *
                   </label>
                   <input
@@ -373,12 +373,12 @@ export function UserManager({ initialUsers, currentUserId }: UserManagerProps) {
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     placeholder="e.g. Shaykh Zayd"
-                    className="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-white text-xs focus:outline-none focus:border-amber-500"
+                    className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 dark:bg-slate-900 dark:border-slate-700 dark:text-white text-xs placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-amber-500"
                   />
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-xs font-semibold text-slate-300">
+                  <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">
                     Email Address *
                   </label>
                   <input
@@ -387,14 +387,14 @@ export function UserManager({ initialUsers, currentUserId }: UserManagerProps) {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="admin@bayan.org"
-                    className="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-white text-xs focus:outline-none focus:border-amber-500"
+                    className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 dark:bg-slate-900 dark:border-slate-700 dark:text-white text-xs placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-amber-500"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-1">
-                  <label className="text-xs font-semibold text-slate-300 flex items-center justify-between">
+                  <label className="text-xs font-semibold text-slate-700 dark:text-slate-300 flex items-center justify-between">
                     <span>Password {editingUser ? "(Leave blank to keep)" : "*"}</span>
                   </label>
                   <input
@@ -403,18 +403,18 @@ export function UserManager({ initialUsers, currentUserId }: UserManagerProps) {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder={editingUser ? "••••••••" : "Enter password"}
-                    className="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-white text-xs focus:outline-none focus:border-amber-500"
+                    className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 dark:bg-slate-900 dark:border-slate-700 dark:text-white text-xs placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-amber-500"
                   />
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-xs font-semibold text-slate-300">
+                  <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">
                     Role *
                   </label>
                   <select
                     value={role}
                     onChange={(e) => setRole(e.target.value as UserRole)}
-                    className="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-white text-xs focus:outline-none focus:border-amber-500"
+                    className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 dark:bg-slate-900 dark:border-slate-700 dark:text-white text-xs focus:outline-none focus:border-amber-500"
                   >
                     <option value={UserRole.ADMIN}>ADMIN (Custom Permissions)</option>
                     <option value={UserRole.SUPERADMIN}>SUPERADMIN (Full Access)</option>
@@ -423,13 +423,13 @@ export function UserManager({ initialUsers, currentUserId }: UserManagerProps) {
               </div>
 
               {/* Granular Permissions Section */}
-              <div className="space-y-2 pt-2 border-t border-slate-800">
-                <label className="text-xs font-bold text-white uppercase tracking-wider block">
+              <div className="space-y-2 pt-2 border-t border-slate-200 dark:border-slate-800">
+                <label className="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider block">
                   Assign Granular Permissions:
                 </label>
 
                 {role === UserRole.SUPERADMIN ? (
-                  <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/20 text-xs text-amber-300">
+                  <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/20 text-xs text-amber-700 dark:text-amber-300">
                     Superadmins implicitly possess all permissions across courses, paths, books, notes, and user accounts.
                   </div>
                 ) : (
@@ -442,8 +442,8 @@ export function UserManager({ initialUsers, currentUserId }: UserManagerProps) {
                           onClick={() => togglePermission(perm.key)}
                           className={`p-3 rounded-xl border cursor-pointer flex items-start gap-3 transition-colors ${
                             checked
-                              ? "bg-slate-800/80 border-emerald-500/40 text-white"
-                              : "bg-slate-900/60 border-slate-800 text-slate-400 hover:border-slate-700"
+                              ? "bg-amber-50/60 border-amber-500/40 text-slate-900 dark:bg-slate-800/80 dark:border-emerald-500/40 dark:text-white"
+                              : "bg-slate-50 border-slate-200 text-slate-600 hover:border-slate-300 dark:bg-slate-900/60 dark:border-slate-800 dark:text-slate-400 dark:hover:border-slate-700"
                           }`}
                         >
                           <input
@@ -453,10 +453,10 @@ export function UserManager({ initialUsers, currentUserId }: UserManagerProps) {
                             className="mt-0.5 rounded text-emerald-600 focus:ring-emerald-500"
                           />
                           <div>
-                            <div className="font-semibold text-xs text-slate-200">
+                            <div className="font-semibold text-xs text-slate-800 dark:text-slate-200">
                               {perm.label}
                             </div>
-                            <div className="text-[11px] text-slate-400">
+                            <div className="text-[11px] text-slate-500 dark:text-slate-400">
                               {perm.description}
                             </div>
                           </div>
@@ -477,24 +477,24 @@ export function UserManager({ initialUsers, currentUserId }: UserManagerProps) {
                     onChange={(e) => setIsActive(e.target.checked)}
                     className="rounded text-emerald-600 focus:ring-emerald-500"
                   />
-                  <label htmlFor="isActive" className="text-xs text-slate-300 font-medium">
+                  <label htmlFor="isActive" className="text-xs text-slate-700 dark:text-slate-300 font-medium">
                     Account is Active
                   </label>
                 </div>
               )}
 
-              <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-800">
+              <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-200 dark:border-slate-800">
                 <button
                   type="button"
                   onClick={() => setModalOpen(false)}
-                  className="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 text-xs font-semibold"
+                  className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 dark:bg-slate-800 dark:hover:bg-slate-700 dark:text-slate-300 text-xs font-semibold transition-colors"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={loading}
-                  className="px-5 py-2 rounded-xl bg-amber-600 hover:bg-amber-500 text-slate-950 font-bold text-xs disabled:opacity-50 transition-colors"
+                  className="px-5 py-2 rounded-xl bg-amber-600 hover:bg-amber-500 text-white dark:text-slate-950 font-bold text-xs disabled:opacity-50 transition-colors shadow-md shadow-amber-950/20"
                 >
                   {loading ? "Saving..." : editingUser ? "Update User" : "Create Admin"}
                 </button>

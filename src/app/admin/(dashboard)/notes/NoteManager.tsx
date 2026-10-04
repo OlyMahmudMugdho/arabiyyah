@@ -137,26 +137,26 @@ export function NoteManager({ initialNotes }: NoteManagerProps) {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-extrabold text-white flex items-center gap-2">
-            <FileText className="w-6 h-6 text-purple-400" />
+          <h1 className="text-2xl font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
+            <FileText className="w-6 h-6 text-purple-600 dark:text-purple-400" />
             <span>Manage Notes & Cheat Sheets</span>
           </h1>
-          <p className="text-sm text-slate-400">
+          <p className="text-sm text-slate-600 dark:text-slate-400">
             Publish concise grammar matrices, particle cheatsheets, and mindmaps.
           </p>
         </div>
 
         <button
           onClick={openCreateModal}
-          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs transition-colors shadow-md shadow-emerald-950/40"
+          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs transition-colors shadow-md shadow-emerald-950/20"
         >
           <Plus className="w-4 h-4" />
           <span>Add Study Note</span>
         </button>
       </div>
 
-      <div className="rounded-3xl bg-[#0d1322] border border-slate-800 overflow-hidden">
-        <div className="p-4 border-b border-slate-800">
+      <div className="rounded-3xl bg-white dark:bg-[#0d1322] border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm dark:shadow-none">
+        <div className="p-4 border-b border-slate-200 dark:border-slate-800">
           <div className="relative max-w-md">
             <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
             <input
@@ -164,14 +164,14 @@ export function NoteManager({ initialNotes }: NoteManagerProps) {
               placeholder="Search notes..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 rounded-xl bg-slate-900 border border-slate-700 text-white text-xs placeholder-slate-500 focus:outline-none focus:border-emerald-500"
+              className="w-full pl-10 pr-4 py-2 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 dark:bg-slate-900 dark:border-slate-700 dark:text-white text-xs placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-emerald-500"
             />
           </div>
         </div>
 
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs text-slate-300">
-            <thead className="bg-slate-900/80 text-slate-400 font-semibold uppercase tracking-wider border-b border-slate-800">
+          <table className="w-full text-left text-xs text-slate-700 dark:text-slate-300">
+            <thead className="bg-slate-50 dark:bg-slate-900/80 text-slate-600 dark:text-slate-400 font-semibold uppercase tracking-wider border-b border-slate-200 dark:border-slate-800">
               <tr>
                 <th className="py-3.5 px-4">Title</th>
                 <th className="py-3.5 px-4">Topic</th>
@@ -181,31 +181,31 @@ export function NoteManager({ initialNotes }: NoteManagerProps) {
                 <th className="py-3.5 px-4 text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-800/80">
+            <tbody className="divide-y divide-slate-200 dark:divide-slate-800/80">
               {filtered.map((n) => (
-                <tr key={n.id} className="hover:bg-slate-800/40 transition-colors">
-                  <td className="py-3.5 px-4 font-bold text-white max-w-xs truncate">
+                <tr key={n.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors">
+                  <td className="py-3.5 px-4 font-bold text-slate-900 dark:text-white max-w-xs truncate">
                     {n.title}
                   </td>
-                  <td className="py-3.5 px-4 text-amber-300">{n.topic}</td>
+                  <td className="py-3.5 px-4 text-amber-600 dark:text-amber-300 font-medium">{n.topic}</td>
                   <td className="py-3.5 px-4">
-                    <span className="px-2 py-0.5 rounded-full bg-slate-800 text-purple-300 border border-slate-700">
+                    <span className="px-2 py-0.5 rounded-full bg-purple-50 text-purple-700 border border-purple-200 dark:bg-slate-800 dark:text-purple-300 dark:border-slate-700">
                       {n.format}
                     </span>
                   </td>
-                  <td className="py-3.5 px-4 text-emerald-400">{n.level}</td>
-                  <td className="py-3.5 px-4 text-slate-400">{n.author}</td>
+                  <td className="py-3.5 px-4 text-emerald-600 dark:text-emerald-400 font-medium">{n.level}</td>
+                  <td className="py-3.5 px-4 text-slate-600 dark:text-slate-400">{n.author}</td>
                   <td className="py-3.5 px-4 text-right space-x-2">
                     <button
                       onClick={() => openEditModal(n)}
-                      className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors"
+                      className="p-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-600 hover:text-slate-900 dark:bg-slate-800 dark:hover:bg-slate-700 dark:text-slate-300 dark:hover:text-white transition-colors"
                       title="Edit Note"
                     >
                       <Edit className="w-3.5 h-3.5" />
                     </button>
                     <button
                       onClick={() => handleDelete(n.id, n.title)}
-                      className="p-1.5 rounded-lg bg-slate-800 hover:bg-rose-950/60 text-slate-300 hover:text-rose-300 transition-colors"
+                      className="p-1.5 rounded-lg bg-slate-100 hover:bg-rose-50 text-slate-600 hover:text-rose-600 dark:bg-slate-800 dark:hover:bg-rose-950/60 dark:text-slate-300 dark:hover:text-rose-300 transition-colors"
                       title="Delete Note"
                     >
                       <Trash2 className="w-3.5 h-3.5" />
@@ -220,28 +220,28 @@ export function NoteManager({ initialNotes }: NoteManagerProps) {
 
       {modalOpen && (
         <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
-          <div className="bg-[#0f172a] border border-slate-800 rounded-3xl max-w-xl w-full p-6 md:p-8 space-y-5">
+          <div className="bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800 rounded-3xl max-w-xl w-full p-6 md:p-8 space-y-5 shadow-2xl">
             <div className="flex items-center justify-between">
-              <h2 className="text-xl font-bold text-white">
+              <h2 className="text-xl font-bold text-slate-900 dark:text-white">
                 {editingNote ? "Edit Study Note" : "Add Study Note"}
               </h2>
               <button
                 onClick={() => setModalOpen(false)}
-                className="p-1 rounded-lg text-slate-400 hover:text-white"
+                className="p-1 rounded-lg text-slate-400 hover:text-slate-700 dark:hover:text-white transition-colors"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
             {error && (
-              <div className="p-3 rounded-xl bg-rose-500/15 border border-rose-500/30 text-rose-300 text-xs">
+              <div className="p-3 rounded-xl bg-rose-500/15 border border-rose-500/30 text-rose-600 dark:text-rose-300 text-xs">
                 {error}
               </div>
             )}
 
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-1">
-                <label className="text-xs font-semibold text-slate-300">
+                <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">
                   Note Title *
                 </label>
                 <input
@@ -250,13 +250,13 @@ export function NoteManager({ initialNotes }: NoteManagerProps) {
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
                   placeholder="e.g. All 10 Verb Forms Matrix"
-                  className="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-white text-xs focus:outline-none focus:border-emerald-500"
+                  className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 dark:bg-slate-900 dark:border-slate-700 dark:text-white text-xs focus:outline-none focus:border-emerald-500"
                 />
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-1">
-                  <label className="text-xs font-semibold text-slate-300">
+                  <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">
                     Topic / Concept *
                   </label>
                   <input
@@ -265,18 +265,18 @@ export function NoteManager({ initialNotes }: NoteManagerProps) {
                     value={topic}
                     onChange={(e) => setTopic(e.target.value)}
                     placeholder="e.g. Verb Conjugation, Case Markers"
-                    className="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-white text-xs focus:outline-none focus:border-emerald-500"
+                    className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 dark:bg-slate-900 dark:border-slate-700 dark:text-white text-xs focus:outline-none focus:border-emerald-500"
                   />
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-xs font-semibold text-slate-300">
+                  <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">
                     Format *
                   </label>
                   <select
                     value={format}
                     onChange={(e) => setFormat(e.target.value)}
-                    className="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-white text-xs focus:outline-none focus:border-emerald-500"
+                    className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 dark:bg-slate-900 dark:border-slate-700 dark:text-white text-xs focus:outline-none focus:border-emerald-500"
                   >
                     <option value="PDF">PDF Document</option>
                     <option value="Infographic">Infographic / Diagram</option>
@@ -287,13 +287,13 @@ export function NoteManager({ initialNotes }: NoteManagerProps) {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-1">
-                  <label className="text-xs font-semibold text-slate-300">
+                  <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">
                     Target Level
                   </label>
                   <select
                     value={level}
                     onChange={(e) => setLevel(e.target.value)}
-                    className="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-white text-xs focus:outline-none focus:border-emerald-500"
+                    className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 dark:bg-slate-900 dark:border-slate-700 dark:text-white text-xs focus:outline-none focus:border-emerald-500"
                   >
                     <option value="Beginner">Beginner</option>
                     <option value="Intermediate">Intermediate</option>
@@ -303,7 +303,7 @@ export function NoteManager({ initialNotes }: NoteManagerProps) {
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-xs font-semibold text-slate-300">
+                  <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">
                     Author / Contributor
                   </label>
                   <input
@@ -311,13 +311,13 @@ export function NoteManager({ initialNotes }: NoteManagerProps) {
                     value={author}
                     onChange={(e) => setAuthor(e.target.value)}
                     placeholder="e.g. Ustadh Farhan"
-                    className="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-white text-xs focus:outline-none focus:border-emerald-500"
+                    className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 dark:bg-slate-900 dark:border-slate-700 dark:text-white text-xs focus:outline-none focus:border-emerald-500"
                   />
                 </div>
               </div>
 
               <div className="space-y-1">
-                <label className="text-xs font-semibold text-slate-300">
+                <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">
                   File Download URL
                 </label>
                 <input
@@ -325,12 +325,12 @@ export function NoteManager({ initialNotes }: NoteManagerProps) {
                   value={fileUrl}
                   onChange={(e) => setFileUrl(e.target.value)}
                   placeholder="https://example.com/notes/sample.pdf"
-                  className="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-white text-xs focus:outline-none focus:border-emerald-500"
+                  className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 dark:bg-slate-900 dark:border-slate-700 dark:text-white text-xs focus:outline-none focus:border-emerald-500"
                 />
               </div>
 
               <div className="space-y-1">
-                <label className="text-xs font-semibold text-slate-300">
+                <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">
                   Description *
                 </label>
                 <textarea
@@ -338,22 +338,22 @@ export function NoteManager({ initialNotes }: NoteManagerProps) {
                   rows={3}
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
-                  className="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-white text-xs focus:outline-none focus:border-emerald-500"
+                  className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 dark:bg-slate-900 dark:border-slate-700 dark:text-white text-xs focus:outline-none focus:border-emerald-500"
                 />
               </div>
 
-              <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-800">
+              <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-200 dark:border-slate-800">
                 <button
                   type="button"
                   onClick={() => setModalOpen(false)}
-                  className="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 text-xs font-semibold"
+                  className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 dark:bg-slate-800 dark:hover:bg-slate-700 dark:text-slate-300 text-xs font-semibold transition-colors"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={loading}
-                  className="px-5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold disabled:opacity-50"
+                  className="px-5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold disabled:opacity-50 shadow-md shadow-emerald-950/20"
                 >
                   {loading ? "Saving..." : editingNote ? "Update Note" : "Create Note"}
                 </button>

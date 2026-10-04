@@ -147,26 +147,26 @@ export function BookManager({ initialBooks }: BookManagerProps) {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-extrabold text-white flex items-center gap-2">
-            <BookOpen className="w-6 h-6 text-cyan-400" />
+          <h1 className="text-2xl font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
+            <BookOpen className="w-6 h-6 text-teal-600 dark:text-cyan-400" />
             <span>Manage Books & Primers</span>
           </h1>
-          <p className="text-sm text-slate-400">
+          <p className="text-sm text-slate-500 dark:text-slate-400">
             Upload and organize classical mutun, commentaries, lexicons, and readers.
           </p>
         </div>
 
         <button
           onClick={openCreateModal}
-          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs transition-colors shadow-md shadow-emerald-950/40"
+          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs transition-colors shadow-md shadow-emerald-950/20"
         >
           <Plus className="w-4 h-4" />
           <span>Add New Book</span>
         </button>
       </div>
 
-      <div className="rounded-3xl bg-[#0d1322] border border-slate-800 overflow-hidden">
-        <div className="p-4 border-b border-slate-800">
+      <div className="rounded-3xl bg-white border border-slate-200 shadow-xs dark:bg-[#0d1322] dark:border-slate-800 overflow-hidden transition-colors">
+        <div className="p-4 border-b border-slate-200 dark:border-slate-800">
           <div className="relative max-w-md">
             <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
             <input
@@ -174,14 +174,14 @@ export function BookManager({ initialBooks }: BookManagerProps) {
               placeholder="Search books by title, author..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 rounded-xl bg-slate-900 border border-slate-700 text-white text-xs placeholder-slate-500 focus:outline-none focus:border-emerald-500"
+              className="w-full pl-10 pr-4 py-2 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 dark:bg-slate-900 dark:border-slate-700 dark:text-white text-xs placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-emerald-500"
             />
           </div>
         </div>
 
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs text-slate-300">
-            <thead className="bg-slate-900/80 text-slate-400 font-semibold uppercase tracking-wider border-b border-slate-800">
+          <table className="w-full text-left text-xs text-slate-600 dark:text-slate-300">
+            <thead className="bg-slate-50 text-slate-500 dark:bg-slate-900/80 dark:text-slate-400 font-semibold uppercase tracking-wider border-b border-slate-200 dark:border-slate-800">
               <tr>
                 <th className="py-3.5 px-4">Title</th>
                 <th className="py-3.5 px-4">Author</th>
@@ -191,38 +191,38 @@ export function BookManager({ initialBooks }: BookManagerProps) {
                 <th className="py-3.5 px-4 text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-800/80">
+            <tbody className="divide-y divide-slate-200 dark:divide-slate-800/80">
               {filtered.map((b) => (
-                <tr key={b.id} className="hover:bg-slate-800/40 transition-colors">
+                <tr key={b.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors">
                   <td className="py-3.5 px-4 max-w-xs">
-                    <div className="font-bold text-white line-clamp-1">
+                    <div className="font-bold text-slate-900 dark:text-white line-clamp-1">
                       {b.title}
                     </div>
                     {b.titleArabic && (
-                      <div className="font-arabic text-emerald-400 text-xs font-semibold">
+                      <div className="font-arabic text-emerald-600 dark:text-emerald-400 text-xs font-semibold">
                         {b.titleArabic}
                       </div>
                     )}
                   </td>
-                  <td className="py-3.5 px-4 text-slate-300">{b.author}</td>
+                  <td className="py-3.5 px-4 text-slate-700 dark:text-slate-300">{b.author}</td>
                   <td className="py-3.5 px-4">
-                    <span className="px-2 py-0.5 rounded-full bg-slate-800 text-cyan-300 border border-slate-700">
+                    <span className="px-2 py-0.5 rounded-full bg-slate-100 text-teal-800 border border-slate-200 dark:bg-slate-800 dark:text-cyan-300 dark:border-slate-700">
                       {b.category}
                     </span>
                   </td>
-                  <td className="py-3.5 px-4 text-amber-300">{b.level}</td>
-                  <td className="py-3.5 px-4 text-slate-400">{b.pages}</td>
+                  <td className="py-3.5 px-4 text-amber-700 dark:text-amber-300 font-medium">{b.level}</td>
+                  <td className="py-3.5 px-4 text-slate-500 dark:text-slate-400">{b.pages}</td>
                   <td className="py-3.5 px-4 text-right space-x-2">
                     <button
                       onClick={() => openEditModal(b)}
-                      className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors"
+                      className="p-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 dark:bg-slate-800 dark:hover:bg-slate-700 dark:text-slate-300 dark:hover:text-white transition-colors border border-slate-200 dark:border-transparent"
                       title="Edit Book"
                     >
                       <Edit className="w-3.5 h-3.5" />
                     </button>
                     <button
                       onClick={() => handleDelete(b.id, b.title)}
-                      className="p-1.5 rounded-lg bg-slate-800 hover:bg-rose-950/60 text-slate-300 hover:text-rose-300 transition-colors"
+                      className="p-1.5 rounded-lg bg-slate-100 hover:bg-rose-50 text-slate-700 hover:text-rose-600 dark:bg-slate-800 dark:hover:bg-rose-950/60 dark:text-slate-300 dark:hover:text-rose-300 transition-colors border border-slate-200 dark:border-transparent"
                       title="Delete Book"
                     >
                       <Trash2 className="w-3.5 h-3.5" />
@@ -237,21 +237,21 @@ export function BookManager({ initialBooks }: BookManagerProps) {
 
       {modalOpen && (
         <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
-          <div className="bg-[#0f172a] border border-slate-800 rounded-3xl max-w-xl w-full p-6 md:p-8 space-y-5">
+          <div className="bg-white border border-slate-200 shadow-2xl dark:bg-[#0f172a] dark:border-slate-800 rounded-3xl max-w-xl w-full p-6 md:p-8 space-y-5 transition-colors">
             <div className="flex items-center justify-between">
-              <h2 className="text-xl font-bold text-white">
+              <h2 className="text-xl font-bold text-slate-900 dark:text-white">
                 {editingBook ? "Edit Book" : "Add New Book"}
               </h2>
               <button
                 onClick={() => setModalOpen(false)}
-                className="p-1 rounded-lg text-slate-400 hover:text-white"
+                className="p-1 rounded-lg text-slate-400 hover:text-slate-700 dark:hover:text-white"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
             {error && (
-              <div className="p-3 rounded-xl bg-rose-500/15 border border-rose-500/30 text-rose-300 text-xs">
+              <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 dark:bg-rose-500/15 dark:border-rose-500/30 dark:text-rose-300 text-xs">
                 {error}
               </div>
             )}
@@ -259,7 +259,7 @@ export function BookManager({ initialBooks }: BookManagerProps) {
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-1">
-                  <label className="text-xs font-semibold text-slate-300">
+                  <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">
                     Book Title *
                   </label>
                   <input
@@ -267,12 +267,12 @@ export function BookManager({ initialBooks }: BookManagerProps) {
                     required
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
-                    className="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-white text-xs focus:outline-none focus:border-emerald-500"
+                    className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 dark:bg-slate-900 dark:border-slate-700 dark:text-white text-xs focus:outline-none focus:border-emerald-500"
                   />
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-xs font-semibold text-slate-300">
+                  <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">
                     Arabic Title
                   </label>
                   <input
@@ -280,14 +280,14 @@ export function BookManager({ initialBooks }: BookManagerProps) {
                     value={titleArabic}
                     onChange={(e) => setTitleArabic(e.target.value)}
                     dir="rtl"
-                    className="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-white text-xs font-arabic focus:outline-none focus:border-emerald-500"
+                    className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 dark:bg-slate-900 dark:border-slate-700 dark:text-white text-xs font-arabic focus:outline-none focus:border-emerald-500"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-1">
-                  <label className="text-xs font-semibold text-slate-300">
+                  <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">
                     Author / Scholar *
                   </label>
                   <input
@@ -295,18 +295,18 @@ export function BookManager({ initialBooks }: BookManagerProps) {
                     required
                     value={author}
                     onChange={(e) => setAuthor(e.target.value)}
-                    className="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-white text-xs focus:outline-none focus:border-emerald-500"
+                    className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 dark:bg-slate-900 dark:border-slate-700 dark:text-white text-xs focus:outline-none focus:border-emerald-500"
                   />
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-xs font-semibold text-slate-300">
+                  <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">
                     Category *
                   </label>
                   <select
                     value={category}
                     onChange={(e) => setCategory(e.target.value)}
-                    className="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-white text-xs focus:outline-none focus:border-emerald-500"
+                    className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 dark:bg-slate-900 dark:border-slate-700 dark:text-white text-xs focus:outline-none focus:border-emerald-500"
                   >
                     <option value="Grammar">Grammar (Nahw)</option>
                     <option value="Morphology">Morphology (Sarf)</option>
@@ -319,13 +319,13 @@ export function BookManager({ initialBooks }: BookManagerProps) {
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="space-y-1">
-                  <label className="text-xs font-semibold text-slate-300">
+                  <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">
                     Level
                   </label>
                   <select
                     value={level}
                     onChange={(e) => setLevel(e.target.value)}
-                    className="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-white text-xs focus:outline-none focus:border-emerald-500"
+                    className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 dark:bg-slate-900 dark:border-slate-700 dark:text-white text-xs focus:outline-none focus:border-emerald-500"
                   >
                     <option value="Beginner">Beginner</option>
                     <option value="Intermediate">Intermediate</option>
@@ -335,7 +335,7 @@ export function BookManager({ initialBooks }: BookManagerProps) {
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-xs font-semibold text-slate-300">
+                  <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">
                     Language
                   </label>
                   <input
@@ -343,12 +343,12 @@ export function BookManager({ initialBooks }: BookManagerProps) {
                     value={language}
                     onChange={(e) => setLanguage(e.target.value)}
                     placeholder="e.g. Arabic or Arabic / English"
-                    className="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-white text-xs focus:outline-none focus:border-emerald-500"
+                    className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 dark:bg-slate-900 dark:border-slate-700 dark:text-white text-xs focus:outline-none focus:border-emerald-500"
                   />
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-xs font-semibold text-slate-300">
+                  <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">
                     Page Count
                   </label>
                   <input
@@ -356,14 +356,14 @@ export function BookManager({ initialBooks }: BookManagerProps) {
                     min={1}
                     value={pages}
                     onChange={(e) => setPages(parseInt(e.target.value) || 0)}
-                    className="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-white text-xs focus:outline-none focus:border-emerald-500"
+                    className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 dark:bg-slate-900 dark:border-slate-700 dark:text-white text-xs focus:outline-none focus:border-emerald-500"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-1">
-                  <label className="text-xs font-semibold text-slate-300">
+                  <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">
                     File Download URL (PDF)
                   </label>
                   <input
@@ -371,12 +371,12 @@ export function BookManager({ initialBooks }: BookManagerProps) {
                     value={fileUrl}
                     onChange={(e) => setFileUrl(e.target.value)}
                     placeholder="https://ia800204.us.archive.org/..."
-                    className="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-white text-xs focus:outline-none focus:border-emerald-500"
+                    className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 dark:bg-slate-900 dark:border-slate-700 dark:text-white text-xs focus:outline-none focus:border-emerald-500"
                   />
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-xs font-semibold text-slate-300">
+                  <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">
                     Cover Image URL
                   </label>
                   <input
@@ -384,13 +384,13 @@ export function BookManager({ initialBooks }: BookManagerProps) {
                     value={coverUrl}
                     onChange={(e) => setCoverUrl(e.target.value)}
                     placeholder="https://images.unsplash.com/..."
-                    className="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-white text-xs focus:outline-none focus:border-emerald-500"
+                    className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 dark:bg-slate-900 dark:border-slate-700 dark:text-white text-xs focus:outline-none focus:border-emerald-500"
                   />
                 </div>
               </div>
 
               <div className="space-y-1">
-                <label className="text-xs font-semibold text-slate-300">
+                <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">
                   Description *
                 </label>
                 <textarea
@@ -398,22 +398,22 @@ export function BookManager({ initialBooks }: BookManagerProps) {
                   rows={3}
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
-                  className="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-white text-xs focus:outline-none focus:border-emerald-500"
+                  className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 dark:bg-slate-900 dark:border-slate-700 dark:text-white text-xs focus:outline-none focus:border-emerald-500"
                 />
               </div>
 
-              <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-800">
+              <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-200 dark:border-slate-800">
                 <button
                   type="button"
                   onClick={() => setModalOpen(false)}
-                  className="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 text-xs font-semibold"
+                  className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 dark:bg-slate-800 dark:hover:bg-slate-700 dark:text-slate-300 text-xs font-semibold transition-colors"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={loading}
-                  className="px-5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold disabled:opacity-50"
+                  className="px-5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold disabled:opacity-50 shadow-md shadow-emerald-950/20"
                 >
                   {loading ? "Saving..." : editingBook ? "Update Book" : "Create Book"}
                 </button>
