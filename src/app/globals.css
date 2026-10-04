@@ -1,6 +1,7 @@
 @import "tailwindcss";
 
 @custom-variant dark (&:where(.dark, .dark *));
+@custom-variant sepia (&:where(.sepia, .sepia *));
 
 :root {
   --background: #f8fafc;
@@ -14,6 +15,13 @@
   --foreground: #f1f5f9;
   --primary-emerald: #10b981;
   --primary-amber: #f59e0b;
+}
+
+.sepia {
+  --background: #f5ecd7;
+  --foreground: #382b20;
+  --primary-emerald: #15803d;
+  --primary-amber: #b45309;
 }
 
 @theme inline {
@@ -47,6 +55,10 @@ body {
 .dark ::-webkit-scrollbar-track {
   background: #0f172a;
 }
+.sepia ::-webkit-scrollbar-track {
+  background: #ebe0c8;
+}
+
 ::-webkit-scrollbar-thumb {
   background: #cbd5e1;
   border-radius: 4px;
@@ -54,11 +66,18 @@ body {
 .dark ::-webkit-scrollbar-thumb {
   background: #334155;
 }
+.sepia ::-webkit-scrollbar-thumb {
+  background: #cbbba0;
+}
+
 ::-webkit-scrollbar-thumb:hover {
   background: #94a3b8;
 }
 .dark ::-webkit-scrollbar-thumb:hover {
   background: #475569;
+}
+.sepia ::-webkit-scrollbar-thumb:hover {
+  background: #b5a385;
 }
 
 /* Islamic arabesque subtle pattern overlay */
@@ -75,10 +94,113 @@ body {
                     radial-gradient(rgba(245, 158, 11, 0.05) 1px, transparent 1px);
 }
 
+.sepia .bg-arabesque,
+.sepia.bg-arabesque {
+  background-image: radial-gradient(rgba(180, 83, 9, 0.09) 1px, transparent 1px),
+                    radial-gradient(rgba(21, 128, 61, 0.07) 1px, transparent 1px);
+}
+
 .bg-glow-emerald {
   background: radial-gradient(circle at 50% 20%, rgba(5, 150, 105, 0.1), transparent 70%);
 }
 
 .dark .bg-glow-emerald {
   background: radial-gradient(circle at 50% 20%, rgba(16, 185, 129, 0.15), transparent 70%);
+}
+
+.sepia .bg-glow-emerald {
+  background: radial-gradient(circle at 50% 20%, rgba(21, 128, 61, 0.12), transparent 70%);
+}
+
+/* ============================================================
+   SEPIA THEME RULES (Parchment & Classical Manuscript Mode)
+   ============================================================ */
+
+.sepia,
+.sepia body {
+  background-color: #f5ecd7 !important;
+  color: #382b20 !important;
+}
+
+/* Background surfaces */
+.sepia .bg-white,
+.sepia .bg-slate-50,
+.sepia .bg-slate-100 {
+  background-color: #fbf4e2 !important;
+}
+
+.sepia .bg-\[\#0d1322\],
+.sepia .bg-\[\#0f172a\],
+.sepia .bg-\[\#070b13\],
+.sepia .bg-\[\#090e1a\],
+.sepia .bg-\[\#0b101b\] {
+  background-color: #f2e6cb !important;
+}
+
+.sepia .bg-slate-900,
+.sepia .bg-slate-800,
+.sepia .bg-slate-800\/80,
+.sepia .bg-slate-900\/80,
+.sepia .bg-slate-900\/60 {
+  background-color: #ede0c6 !important;
+}
+
+/* Borders and dividers */
+.sepia .border-slate-200,
+.sepia .border-slate-300,
+.sepia .border-slate-700,
+.sepia .border-slate-800 {
+  border-color: #dfd0b5 !important;
+}
+
+.sepia .divide-slate-200 > :not([hidden]) ~ :not([hidden]),
+.sepia .divide-slate-800\/80 > :not([hidden]) ~ :not([hidden]) {
+  border-color: #dfd0b5 !important;
+}
+
+/* Text hierarchy */
+.sepia .text-slate-900,
+.sepia .text-white {
+  color: #332418 !important;
+}
+
+.sepia .text-slate-700,
+.sepia .text-slate-600 {
+  color: #645341 !important;
+}
+
+.sepia .text-slate-500,
+.sepia .text-slate-400,
+.sepia .text-slate-300 {
+  color: #7d6b57 !important;
+}
+
+.sepia .text-slate-100,
+.sepia .text-slate-200 {
+  color: #3a2b1f !important;
+}
+
+/* Form controls */
+.sepia input,
+.sepia select,
+.sepia textarea {
+  background-color: #fdf8eb !important;
+  border-color: #d6c5a8 !important;
+  color: #332418 !important;
+}
+
+.sepia input::placeholder,
+.sepia textarea::placeholder {
+  color: #9c8973 !important;
+}
+
+/* Interactive hovers */
+.sepia .hover\:bg-slate-50:hover,
+.sepia .hover\:bg-slate-100:hover,
+.sepia .hover\:bg-slate-200:hover,
+.sepia .hover\:bg-slate-700:hover,
+.sepia .hover\:bg-slate-800:hover,
+.sepia .hover\:bg-slate-800\/40:hover,
+.sepia .hover\:bg-slate-800\/80:hover {
+  background-color: #eee1c7 !important;
 }

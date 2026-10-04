@@ -32,11 +32,14 @@ const themeScript = `
       var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
       var theme = stored || 'dark';
       var resolved = theme === 'system' ? (prefersDark ? 'dark' : 'light') : theme;
+      document.documentElement.classList.remove('dark', 'sepia');
       if (resolved === 'dark') {
         document.documentElement.classList.add('dark');
         document.documentElement.setAttribute('data-theme', 'dark');
+      } else if (resolved === 'sepia') {
+        document.documentElement.classList.add('sepia');
+        document.documentElement.setAttribute('data-theme', 'sepia');
       } else {
-        document.documentElement.classList.remove('dark');
         document.documentElement.setAttribute('data-theme', 'light');
       }
     } catch (e) {}

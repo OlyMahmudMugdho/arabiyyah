@@ -2,8 +2,8 @@
 
 import React, { createContext, useContext, useEffect, useState } from "react";
 
-export type Theme = "light" | "dark" | "system";
-export type ResolvedTheme = "light" | "dark";
+export type Theme = "light" | "sepia" | "dark" | "system";
+export type ResolvedTheme = "light" | "sepia" | "dark";
 
 interface ThemeContextType {
   theme: Theme;
@@ -22,7 +22,13 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     try {
       const stored = localStorage.getItem("bayan_theme") as Theme | null;
-      if (stored && (stored === "light" || stored === "dark" || stored === "system")) {
+      if (
+        stored &&
+        (stored === "light" ||
+          stored === "sepia" ||
+          stored === "dark" ||
+          stored === "system")
+      ) {
         setThemeState(stored);
       } else {
         setThemeState("dark");
@@ -50,11 +56,15 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     const currentResolved = resolveCurrentTheme(theme);
     setResolvedTheme(currentResolved);
 
+    // Synchronize HTML classes and data-theme attribute
+    root.classList.remove("dark", "sepia");
     if (currentResolved === "dark") {
       root.classList.add("dark");
       root.setAttribute("data-theme", "dark");
+    } else if (currentResolved === "sepia") {
+      root.classList.add("sepia");
+      root.setAttribute("data-theme", "sepia");
     } else {
-      root.classList.remove("dark");
       root.setAttribute("data-theme", "light");
     }
 
@@ -67,13 +77,13 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     if (theme === "system") {
       const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
       const handler = (e: MediaQueryListEvent) => {
-        const newResolved = e.matches ? "dark" : "light";
+        const newResolved: ResolvedTheme = e.matches ? "dark" : "light";
         setResolvedTheme(newResolved);
+        root.classList.remove("dark", "sepia");
         if (newResolved === "dark") {
           root.classList.add("dark");
           root.setAttribute("data-theme", "dark");
         } else {
-          root.classList.remove("dark");
           root.setAttribute("data-theme", "light");
         }
       };
@@ -88,8 +98,11 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
   const toggleTheme = () => {
     setThemeState((prev) => {
-      const nextTheme = resolvedTheme === "dark" ? "light" : "dark";
-      return nextTheme;
+      // Cycle: light -> sepia -> dark -> light
+      const current = resolvedTheme;
+      if (current === "light") return "sepia";
+      if (current === "sepia") return "dark";
+      return "light";
     });
   };
 
