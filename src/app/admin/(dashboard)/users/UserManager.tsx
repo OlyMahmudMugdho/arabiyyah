@@ -386,7 +386,7 @@ export function UserManager({ initialUsers, currentUserId }: UserManagerProps) {
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    placeholder="admin@bayan.org"
+                    placeholder="admin@arabiyyah.org"
                     className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 dark:bg-slate-900 dark:border-slate-700 dark:text-white text-xs placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-amber-500"
                   />
                 </div>

@@ -24,7 +24,7 @@ export async function seedDatabase() {
 
   console.log("🌱 Checking superadmin account...");
   const adminEmail =
-    process.env.INITIAL_SUPERADMIN_EMAIL || "superadmin@bayan.org";
+    process.env.INITIAL_SUPERADMIN_EMAIL || "superadmin@arabiyyah.org";
   let superadmin = await userRepo.findOne({ where: { email: adminEmail } });
 
   if (!superadmin) {

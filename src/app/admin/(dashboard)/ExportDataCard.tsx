@@ -128,7 +128,7 @@ export function ExportDataCard({ isSuperadmin, counts }: ExportDataCardProps) {
 
       // Extract filename from Content-Disposition if present
       const disposition = res.headers.get("Content-Disposition");
-      let filename = `bayan-${resource}-export.${format}`;
+      let filename = `arabiyyah-${resource}-export.${format}`;
       if (disposition && disposition.includes("filename=")) {
         const match = disposition.match(/filename="?([^"]+)"?/);
         if (match && match[1]) {

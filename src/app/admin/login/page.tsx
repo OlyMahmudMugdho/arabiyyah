@@ -61,13 +61,13 @@ export default function AdminLoginPage() {
 
             <div className="pt-2">
               <span className="font-arabic text-emerald-600 dark:text-emerald-400 text-lg font-bold">
-                لوحة التحكم الإدارية
+                لوحة التحكم الإدارية • العربية
               </span>
               <h1 className="text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight">
-                Admin Portal Login
+                Arabiyyah Admin Portal
               </h1>
               <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-                Restricted gateway for platform curators and administrators.
+                Restricted gateway for Arabiyyah curators and administrators.
               </p>
             </div>
           </div>
@@ -103,7 +103,7 @@ export default function AdminLoginPage() {
                   type="email"
                   name="email"
                   required
-                  placeholder="admin@bayan.org"
+                  placeholder="admin@arabiyyah.org"
                   className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 placeholder-slate-400 dark:bg-slate-900 dark:border-slate-700/80 dark:text-white dark:placeholder-slate-500 text-sm focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-colors"
                 />
               </div>
@@ -145,8 +145,9 @@ export default function AdminLoginPage() {
           <div className="pt-4 border-t border-slate-200 dark:border-slate-800 text-center">
             <div className="inline-flex items-center gap-1.5 text-[11px] text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-slate-900/60 px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-800/80">
               <Sparkles className="w-3.5 h-3.5 text-amber-500 dark:text-amber-400" />
-              <span>Initial Superadmin: </span>
-              <strong className="text-emerald-700 dark:text-emerald-400">superadmin@bayan.org</strong>
+              <span>Superadmin: </span>
+              <strong className="text-emerald-700 dark:text-emerald-400">superadmin@arabiyyah.org</strong>
+              <span className="text-slate-400">(or @bayan.org)</span>
               <span> / </span>
               <strong className="text-emerald-700 dark:text-emerald-400">SuperAdmin123!</strong>
             </div>

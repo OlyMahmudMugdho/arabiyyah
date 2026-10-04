@@ -22,15 +22,15 @@ export function Navbar() {
           {/* Logo */}
           <Link href="/" className="flex items-center gap-3 group">
             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-700 flex items-center justify-center text-white shadow-lg shadow-emerald-900/20 group-hover:scale-105 transition-transform">
-              <span className="font-arabic font-bold text-2xl leading-none">ب</span>
+              <span className="font-arabic font-bold text-2xl leading-none">ع</span>
             </div>
             <div className="flex flex-col">
               <div className="flex items-center gap-2">
                 <span className="font-bold text-xl tracking-tight text-slate-900 dark:text-white group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
-                  Bayan
+                  Arabiyyah
                 </span>
                 <span className="font-arabic text-emerald-600 dark:text-emerald-400 text-lg font-bold">
-                  بيان
+                  العربية
                 </span>
               </div>
               <span className="text-[11px] text-slate-500 dark:text-slate-400 font-medium">

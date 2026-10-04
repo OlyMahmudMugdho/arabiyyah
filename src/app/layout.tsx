@@ -20,7 +20,7 @@ const amiri = Amiri({
 });
 
 export const metadata: Metadata = {
-  title: "Bayan (بيان) | Arabic Learning Resource Platform",
+  title: "Arabiyyah (العربية) | Arabic Learning Resource Platform",
   description:
     "An open treasury of structured learning paths, grammar courses, classical books, and cheat sheets for students of the Arabic language.",
 };
@@ -28,7 +28,7 @@ export const metadata: Metadata = {
 const themeScript = `
   (function() {
     try {
-      var stored = localStorage.getItem('bayan_theme');
+      var stored = localStorage.getItem('arabiyyah_theme') || localStorage.getItem('bayan_theme');
       var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
       var theme = stored || 'dark';
       var resolved = theme === 'system' ? (prefersDark ? 'dark' : 'light') : theme;

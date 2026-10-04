@@ -21,7 +21,8 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     try {
-      const stored = localStorage.getItem("bayan_theme") as Theme | null;
+      const stored = (localStorage.getItem("arabiyyah_theme") ||
+        localStorage.getItem("bayan_theme")) as Theme | null;
       if (
         stored &&
         (stored === "light" ||
@@ -69,6 +70,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     }
 
     try {
+      localStorage.setItem("arabiyyah_theme", theme);
       localStorage.setItem("bayan_theme", theme);
     } catch {
       // Ignore write errors

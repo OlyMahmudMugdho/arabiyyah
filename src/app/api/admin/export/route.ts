@@ -85,7 +85,7 @@ export async function GET(req: NextRequest) {
       return new NextResponse(csv, {
         headers: {
           "Content-Type": "text/csv; charset=utf-8",
-          "Content-Disposition": `attachment; filename="bayan-courses-export-${dateStr}.csv"`,
+          "Content-Disposition": `attachment; filename="arabiyyah-courses-export-${dateStr}.csv"`,
         },
       });
     }
@@ -93,7 +93,7 @@ export async function GET(req: NextRequest) {
     return new NextResponse(
       JSON.stringify(
         {
-          platform: "Bayan Arabic Learning Platform",
+          platform: "Arabiyyah Arabic Learning Platform",
           resource: "courses",
           exportTimestamp: timestamp,
           exportedBy: {
@@ -110,7 +110,7 @@ export async function GET(req: NextRequest) {
       {
         headers: {
           "Content-Type": "application/json; charset=utf-8",
-          "Content-Disposition": `attachment; filename="bayan-courses-export-${dateStr}.json"`,
+          "Content-Disposition": `attachment; filename="arabiyyah-courses-export-${dateStr}.json"`,
         },
       }
     );
@@ -173,7 +173,7 @@ export async function GET(req: NextRequest) {
       return new NextResponse(csv, {
         headers: {
           "Content-Type": "text/csv; charset=utf-8",
-          "Content-Disposition": `attachment; filename="bayan-paths-export-${dateStr}.csv"`,
+          "Content-Disposition": `attachment; filename="arabiyyah-paths-export-${dateStr}.csv"`,
         },
       });
     }
@@ -181,7 +181,7 @@ export async function GET(req: NextRequest) {
     return new NextResponse(
       JSON.stringify(
         {
-          platform: "Bayan Arabic Learning Platform",
+          platform: "Arabiyyah Arabic Learning Platform",
           resource: "paths",
           exportTimestamp: timestamp,
           exportedBy: {
@@ -198,7 +198,7 @@ export async function GET(req: NextRequest) {
       {
         headers: {
           "Content-Type": "application/json; charset=utf-8",
-          "Content-Disposition": `attachment; filename="bayan-paths-export-${dateStr}.json"`,
+          "Content-Disposition": `attachment; filename="arabiyyah-paths-export-${dateStr}.json"`,
         },
       }
     );
@@ -228,7 +228,7 @@ export async function GET(req: NextRequest) {
       return new NextResponse(csv, {
         headers: {
           "Content-Type": "text/csv; charset=utf-8",
-          "Content-Disposition": `attachment; filename="bayan-books-export-${dateStr}.csv"`,
+          "Content-Disposition": `attachment; filename="arabiyyah-books-export-${dateStr}.csv"`,
         },
       });
     }
@@ -236,7 +236,7 @@ export async function GET(req: NextRequest) {
     return new NextResponse(
       JSON.stringify(
         {
-          platform: "Bayan Arabic Learning Platform",
+          platform: "Arabiyyah Arabic Learning Platform",
           resource: "books",
           exportTimestamp: timestamp,
           exportedBy: {
@@ -253,7 +253,7 @@ export async function GET(req: NextRequest) {
       {
         headers: {
           "Content-Type": "application/json; charset=utf-8",
-          "Content-Disposition": `attachment; filename="bayan-books-export-${dateStr}.json"`,
+          "Content-Disposition": `attachment; filename="arabiyyah-books-export-${dateStr}.json"`,
         },
       }
     );
@@ -282,7 +282,7 @@ export async function GET(req: NextRequest) {
       return new NextResponse(csv, {
         headers: {
           "Content-Type": "text/csv; charset=utf-8",
-          "Content-Disposition": `attachment; filename="bayan-notes-export-${dateStr}.csv"`,
+          "Content-Disposition": `attachment; filename="arabiyyah-notes-export-${dateStr}.csv"`,
         },
       });
     }
@@ -290,7 +290,7 @@ export async function GET(req: NextRequest) {
     return new NextResponse(
       JSON.stringify(
         {
-          platform: "Bayan Arabic Learning Platform",
+          platform: "Arabiyyah Arabic Learning Platform",
           resource: "notes",
           exportTimestamp: timestamp,
           exportedBy: {
@@ -307,7 +307,7 @@ export async function GET(req: NextRequest) {
       {
         headers: {
           "Content-Type": "application/json; charset=utf-8",
-          "Content-Disposition": `attachment; filename="bayan-notes-export-${dateStr}.json"`,
+          "Content-Disposition": `attachment; filename="arabiyyah-notes-export-${dateStr}.json"`,
         },
       }
     );
@@ -341,7 +341,7 @@ export async function GET(req: NextRequest) {
       return new NextResponse(csv, {
         headers: {
           "Content-Type": "text/csv; charset=utf-8",
-          "Content-Disposition": `attachment; filename="bayan-users-export-${dateStr}.csv"`,
+          "Content-Disposition": `attachment; filename="arabiyyah-users-export-${dateStr}.csv"`,
         },
       });
     }
@@ -349,7 +349,7 @@ export async function GET(req: NextRequest) {
     return new NextResponse(
       JSON.stringify(
         {
-          platform: "Bayan Arabic Learning Platform",
+          platform: "Arabiyyah Arabic Learning Platform",
           resource: "users",
           exportTimestamp: timestamp,
           exportedBy: {
@@ -366,7 +366,7 @@ export async function GET(req: NextRequest) {
       {
         headers: {
           "Content-Type": "application/json; charset=utf-8",
-          "Content-Disposition": `attachment; filename="bayan-users-export-${dateStr}.json"`,
+          "Content-Disposition": `attachment; filename="arabiyyah-users-export-${dateStr}.json"`,
         },
       }
     );
@@ -391,7 +391,7 @@ export async function GET(req: NextRequest) {
       return new NextResponse(csv, {
         headers: {
           "Content-Type": "text/csv; charset=utf-8",
-          "Content-Disposition": `attachment; filename="bayan-categories-export-${dateStr}.csv"`,
+          "Content-Disposition": `attachment; filename="arabiyyah-categories-export-${dateStr}.csv"`,
         },
       });
     }
@@ -399,7 +399,7 @@ export async function GET(req: NextRequest) {
     return new NextResponse(
       JSON.stringify(
         {
-          platform: "Bayan Arabic Learning Platform",
+          platform: "Arabiyyah Arabic Learning Platform",
           resource: "categories",
           exportTimestamp: timestamp,
           exportedBy: {
@@ -416,7 +416,7 @@ export async function GET(req: NextRequest) {
       {
         headers: {
           "Content-Type": "application/json; charset=utf-8",
-          "Content-Disposition": `attachment; filename="bayan-categories-export-${dateStr}.json"`,
+          "Content-Disposition": `attachment; filename="arabiyyah-categories-export-${dateStr}.json"`,
         },
       }
     );
@@ -532,14 +532,14 @@ export async function GET(req: NextRequest) {
     return new NextResponse(csv, {
       headers: {
         "Content-Type": "text/csv; charset=utf-8",
-        "Content-Disposition": `attachment; filename="bayan-full-platform-backup-${dateStr}.csv"`,
+        "Content-Disposition": `attachment; filename="arabiyyah-full-platform-backup-${dateStr}.csv"`,
       },
     });
   }
 
   // Full platform JSON backup bundle
   const payload = {
-    platform: "Bayan Arabic Learning Platform",
+    platform: "Arabiyyah Arabic Learning Platform",
     version: "1.0.0",
     exportTimestamp: timestamp,
     exportedBy: {
@@ -576,7 +576,7 @@ export async function GET(req: NextRequest) {
   return new NextResponse(JSON.stringify(payload, null, 2), {
     headers: {
       "Content-Type": "application/json; charset=utf-8",
-      "Content-Disposition": `attachment; filename="bayan-full-platform-backup-${dateStr}.json"`,
+      "Content-Disposition": `attachment; filename="arabiyyah-full-platform-backup-${dateStr}.json"`,
     },
   });
 }

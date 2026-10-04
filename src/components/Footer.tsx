@@ -10,9 +10,9 @@ export function Footer() {
           <div className="md:col-span-1 space-y-4">
             <div className="flex items-center gap-3">
               <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-700 flex items-center justify-center text-white font-arabic font-bold text-xl shadow-md shadow-emerald-900/30">
-                ب
+                ع
               </div>
-              <span className="font-bold text-xl text-slate-900 dark:text-white">Bayan بيان</span>
+              <span className="font-bold text-xl text-slate-900 dark:text-white">Arabiyyah العربية</span>
             </div>
             <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
               An open-access platform dedicated to preserving and disseminating classical and modern Arabic learning resources, textbooks, and structured educational paths.
@@ -107,7 +107,7 @@ export function Footer() {
         </div>
 
         <div className="mt-12 pt-8 border-t border-slate-200 dark:border-slate-800/80 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
-          <p>© {new Date().getFullYear()} Bayan Platform. All resources are shared for educational and non-commercial benefit.</p>
+          <p>© {new Date().getFullYear()} Arabiyyah Platform. All resources are shared for educational and non-commercial benefit.</p>
           <p className="flex items-center gap-1">
             Dedicated with <Heart className="w-3.5 h-3.5 text-rose-500 fill-rose-500" /> to seekers of sacred Arabic knowledge.
           </p>

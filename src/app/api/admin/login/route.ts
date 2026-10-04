@@ -3,7 +3,7 @@ import bcrypt from "bcryptjs";
 import { getUserRepository } from "@/db/data-source";
 import { createSessionToken } from "@/lib/auth";
 
-const COOKIE_NAME = "bayan_admin_token";
+const COOKIE_NAME = "arabiyyah_admin_token";
 
 export async function POST(req: Request) {
   try {
@@ -59,6 +59,9 @@ export async function POST(req: Request) {
     const cookieHeader = `${COOKIE_NAME}=${token}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${
       60 * 60 * 24 * 7
     }${isSecure ? "; Secure" : ""}`;
+    const legacyCookieHeader = `bayan_admin_token=${token}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${
+      60 * 60 * 24 * 7
+    }${isSecure ? "; Secure" : ""}`;
 
     const response = NextResponse.json({
       success: true,
@@ -71,6 +74,7 @@ export async function POST(req: Request) {
     });
 
     response.headers.append("Set-Cookie", cookieHeader);
+    response.headers.append("Set-Cookie", legacyCookieHeader);
     return response;
   } catch (err) {
     console.error("Login API route error:", err);

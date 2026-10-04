@@ -4,10 +4,10 @@ import { getUserRepository } from "@/db/data-source";
 import { User, UserRole, AdminPermission } from "@/db/entities";
 
 const JWT_SECRET = new TextEncoder().encode(
-  process.env.JWT_SECRET || "super-secret-jwt-bayan-arabic-platform-key-2026-secure!"
+  process.env.JWT_SECRET || "super-secret-jwt-arabiyyah-arabic-platform-key-2026-secure!"
 );
 
-const COOKIE_NAME = "bayan_admin_token";
+const COOKIE_NAME = "arabiyyah_admin_token";
 
 export interface SessionPayload {
   userId: string;
@@ -54,11 +54,14 @@ export async function setSessionCookie(token: string) {
 export async function clearSessionCookie() {
   const cookieStore = await cookies();
   cookieStore.delete(COOKIE_NAME);
+  cookieStore.delete("bayan_admin_token");
 }
 
 export async function getSession(): Promise<SessionPayload | null> {
   const cookieStore = await cookies();
-  const token = cookieStore.get(COOKIE_NAME)?.value;
+  const token =
+    cookieStore.get(COOKIE_NAME)?.value ||
+    cookieStore.get("bayan_admin_token")?.value;
   if (!token) return null;
 
   const payload = await verifySessionToken(token);

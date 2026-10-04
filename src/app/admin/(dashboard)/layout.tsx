@@ -55,13 +55,13 @@ export default async function AdminDashboardLayout({
         <div className="p-6 border-b border-slate-200 dark:border-slate-800">
           <Link href="/admin" className="flex items-center gap-3">
             <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-700 flex items-center justify-center text-white font-arabic font-bold text-xl shadow-md shadow-emerald-950/20">
-              ب
+              ع
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <span className="font-bold text-base text-slate-900 dark:text-white">Bayan Admin</span>
+                <span className="font-bold text-base text-slate-900 dark:text-white">Arabiyyah Admin</span>
                 <span className="font-arabic text-emerald-600 dark:text-emerald-400 text-xs font-bold">
-                  بيان
+                  العربية
                 </span>
               </div>
               <span className="text-[10px] text-slate-500 dark:text-slate-400 block">
@@ -149,7 +149,7 @@ export default async function AdminDashboardLayout({
           <div className="flex items-center gap-2">
             <Shield className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
             <span className="text-xs font-medium text-slate-500 dark:text-slate-400">
-              Admin Gateway • Connected to PostgreSQL 18
+              Arabiyyah Gateway • Connected to PostgreSQL 18
             </span>
           </div>
 

@@ -1,6 +1,6 @@
-# Bayan (بيان) - Arabic Learning Resource Sharing Platform
+# Arabiyyah (العربية) - Arabic Learning Resource Sharing Platform
 
-> **منصة بيان لمشاركة الموارد التعليمية للغة العربية**
+> **منصة العربية لمشاركة الموارد التعليمية للغة العربية**
 > An open-access platform for curated learning paths, grammar courses, classical books, and study cheat sheets for seekers of the Arabic language.
 
 ---
@@ -74,7 +74,7 @@
 
 For initial testing, the database is pre-seeded with an initial Superadmin account:
 
-- **Email**: `superadmin@bayan.org`
+- **Email**: `superadmin@arabiyyah.org` (or `superadmin@bayan.org`)
 - **Password**: `SuperAdmin123!`
 - **Role**: `SUPERADMIN` (Possesses all permissions)
 - **Login URL**: `http://localhost:3001/admin/login`
@@ -103,9 +103,9 @@ DB_USER=postgres
 DB_PASSWORD=postgres
 DB_NAME=arabic_learning
 
-JWT_SECRET=super-secret-jwt-bayan-arabic-platform-key-2026-secure!
+JWT_SECRET=super-secret-jwt-arabiyyah-arabic-platform-key-2026-secure!
 INITIAL_SUPERADMIN_NAME=Super Admin
-INITIAL_SUPERADMIN_EMAIL=superadmin@bayan.org
+INITIAL_SUPERADMIN_EMAIL=superadmin@arabiyyah.org
 INITIAL_SUPERADMIN_PASSWORD=SuperAdmin123!
 ```
 
