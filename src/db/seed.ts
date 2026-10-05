@@ -25,24 +25,30 @@ export async function seedDatabase() {
   console.log("🌱 Checking superadmin account...");
   const adminEmail =
     process.env.INITIAL_SUPERADMIN_EMAIL || "superadmin@arabiyyah.org";
-  let superadmin = await userRepo.findOne({ where: { email: adminEmail } });
+  const defaultPassword =
+    process.env.INITIAL_SUPERADMIN_PASSWORD || "SuperAdmin123!";
+  const passwordHash = await bcrypt.hash(defaultPassword, 10);
 
-  if (!superadmin) {
-    const defaultPassword =
-      process.env.INITIAL_SUPERADMIN_PASSWORD || "SuperAdmin123!";
-    const passwordHash = await bcrypt.hash(defaultPassword, 10);
-    superadmin = userRepo.create({
-      name: process.env.INITIAL_SUPERADMIN_NAME || "Super Admin",
-      email: adminEmail,
-      passwordHash,
-      role: UserRole.SUPERADMIN,
-      permissions: Object.values(AdminPermission),
-      isActive: true,
-    });
-    await userRepo.save(superadmin);
-    console.log(`✅ Created default superadmin: ${adminEmail} (password: ${defaultPassword})`);
-  } else {
-    console.log(`ℹ️ Superadmin already exists: ${adminEmail}`);
+  const initialEmails = Array.from(
+    new Set([adminEmail, "superadmin@arabiyyah.org", "superadmin@bayan.org"])
+  );
+
+  for (const email of initialEmails) {
+    let admin = await userRepo.findOne({ where: { email } });
+    if (!admin) {
+      admin = userRepo.create({
+        name: process.env.INITIAL_SUPERADMIN_NAME || "Super Admin",
+        email,
+        passwordHash,
+        role: UserRole.SUPERADMIN,
+        permissions: Object.values(AdminPermission),
+        isActive: true,
+      });
+      await userRepo.save(admin);
+      console.log(`✅ Created default superadmin: ${email} (password: ${defaultPassword})`);
+    } else {
+      console.log(`ℹ️ Superadmin already exists: ${email}`);
+    }
   }
 
   // Seed courses if empty
@@ -832,7 +838,10 @@ export async function seedDatabase() {
   console.log("🌟 Database initialization & seeding completed successfully!");
 }
 
-if (require.main === module) {
+if (
+  (typeof require !== "undefined" && require.main === module) ||
+  process.argv[1]?.endsWith("seed.ts")
+) {
   seedDatabase()
     .then(() => {
       console.log("Done seeding.");

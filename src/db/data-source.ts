@@ -1,4 +1,5 @@
 import "reflect-metadata";
+import net from "node:net";
 import { DataSource, Repository } from "typeorm";
 import {
   UserSchema,
@@ -19,17 +20,26 @@ import {
   Category,
 } from "./entities";
 
+// Ensure Node network stack doesn't fail on IPv6 when connecting to cloud DBs like Neon
+if (typeof net.setDefaultAutoSelectFamily === "function") {
+  net.setDefaultAutoSelectFamily(false);
+}
+
 const globalForTypeOrm = globalThis as unknown as {
   appDataSource?: DataSource;
 };
+
+const dbUrl =
+  process.env.DATABASE_URL ||
+  "postgresql://postgres:postgres@localhost:5433/arabic_learning";
+const isSsl = dbUrl.includes("sslmode=require") || dbUrl.includes("neon.tech");
 
 export const AppDataSource =
   globalForTypeOrm.appDataSource ||
   new DataSource({
     type: "postgres",
-    url:
-      process.env.DATABASE_URL ||
-      "postgresql://postgres:postgres@localhost:5433/arabic_learning",
+    url: dbUrl,
+    ssl: isSsl ? { rejectUnauthorized: false } : false,
     synchronize: true,
     logging: process.env.NODE_ENV === "development" ? ["error", "warn"] : false,
     entities: [
@@ -46,6 +56,7 @@ export const AppDataSource =
     migrations: [],
     extra: {
       max: 10,
+      ssl: isSsl ? { rejectUnauthorized: false } : undefined,
     },
   });
 
