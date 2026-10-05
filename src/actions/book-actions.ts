@@ -5,6 +5,7 @@ import { getBookRepository } from "@/db/data-source";
 import { Book, AdminPermission } from "@/db/entities";
 import { getSession, hasPermission } from "@/lib/auth";
 import { getOrSetCache, invalidateCache, CacheTags } from "@/lib/cache";
+import { logActivity } from "@/lib/activity-logger";
 
 export async function getBooksAction(filter?: {
   category?: string;
@@ -97,6 +98,15 @@ export async function createBookAction(data: {
     revalidatePath("/books");
     revalidatePath("/admin/books");
     revalidatePath("/");
+
+    await logActivity({
+      action: "book_create",
+      userId: session?.userId,
+      userName: session?.name,
+      userEmail: session?.email,
+      details: { id: saved.id, title: saved.title, author: saved.author },
+    });
+
     return { success: true, book: saved };
   } catch (err: unknown) {
     console.error("Failed to create book:", err);
@@ -122,6 +132,15 @@ export async function updateBookAction(id: string, data: Partial<Book>) {
     revalidatePath("/books");
     revalidatePath("/admin/books");
     revalidatePath("/");
+
+    await logActivity({
+      action: "book_update",
+      userId: session?.userId,
+      userName: session?.name,
+      userEmail: session?.email,
+      details: { id: updated.id, title: updated.title, author: updated.author },
+    });
+
     return { success: true, book: updated };
   } catch (err: unknown) {
     console.error("Failed to update book:", err);
@@ -138,11 +157,21 @@ export async function deleteBookAction(id: string) {
   try {
     const bookRepo = await getBookRepository();
 
+    const book = await bookRepo.findOne({ where: { id } });
     await bookRepo.delete({ id });
     invalidateCache([CacheTags.BOOKS, CacheTags.DASHBOARD]);
     revalidatePath("/books");
     revalidatePath("/admin/books");
     revalidatePath("/");
+
+    await logActivity({
+      action: "book_delete",
+      userId: session?.userId,
+      userName: session?.name,
+      userEmail: session?.email,
+      details: { id, title: book?.title },
+    });
+
     return { success: true };
   } catch (err: unknown) {
     console.error("Failed to delete book:", err);

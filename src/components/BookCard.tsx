@@ -1,5 +1,8 @@
+"use client";
+
 import { BookOpen, Download, FileText, Globe } from "lucide-react";
 import type { Book } from "@/db/entities";
+import { trackClientEvent } from "@/components/AnalyticsTracker";
 
 interface BookCardProps {
   book: Book;
@@ -69,6 +72,20 @@ export function BookCard({ book }: BookCardProps) {
             href={book.fileUrl}
             target="_blank"
             rel="noopener noreferrer"
+            onClick={() => {
+              trackClientEvent({
+                eventType: "book_download",
+                resourceType: "book",
+                resourceId: book.id,
+                resourceTitle: book.title,
+                path: book.fileUrl,
+                metadata: {
+                  author: book.author,
+                  category: book.category,
+                  level: book.level,
+                },
+              });
+            }}
             className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-medium text-xs shadow-xs transition-colors"
           >
             <Download className="w-3.5 h-3.5" />

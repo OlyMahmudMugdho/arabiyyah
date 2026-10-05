@@ -333,3 +333,80 @@ export const CategorySchema = new EntitySchema<Category>({
     updatedAt: { type: "timestamp", updateDate: true },
   },
 });
+
+export interface AnalyticsEvent {
+  id: string;
+  eventType: string; // "page_view", "course_view", "path_view", "book_download", "note_view", "search", "filter", "theme_change", "outbound_click"
+  resourceType: string | null; // "course", "path", "book", "note", "category", "page"
+  resourceId: string | null;
+  resourceTitle: string | null;
+  path: string;
+  referrer: string | null;
+  searchQuery: string | null;
+  metadata: string | null;
+  ipHash: string | null;
+  userAgent: string | null;
+  device: string | null;
+  browser: string | null;
+  os: string | null;
+  country: string | null;
+  createdAt: Date;
+}
+
+export const AnalyticsEventSchema = new EntitySchema<AnalyticsEvent>({
+  name: "AnalyticsEvent",
+  tableName: "analytics_events",
+  columns: {
+    id: { type: "uuid", primary: true, generated: "uuid" },
+    eventType: { type: "varchar", length: 100 },
+    resourceType: { type: "varchar", length: 100, nullable: true },
+    resourceId: { type: "varchar", length: 255, nullable: true },
+    resourceTitle: { type: "varchar", length: 255, nullable: true },
+    path: { type: "varchar", length: 500 },
+    referrer: { type: "varchar", length: 500, nullable: true },
+    searchQuery: { type: "varchar", length: 255, nullable: true },
+    metadata: { type: "text", nullable: true },
+    ipHash: { type: "varchar", length: 64, nullable: true },
+    userAgent: { type: "text", nullable: true },
+    device: { type: "varchar", length: 50, nullable: true },
+    browser: { type: "varchar", length: 50, nullable: true },
+    os: { type: "varchar", length: 50, nullable: true },
+    country: { type: "varchar", length: 100, nullable: true },
+    createdAt: { type: "timestamp", createDate: true },
+  },
+  indices: [
+    { name: "idx_analytics_created_at", columns: ["createdAt"] },
+    { name: "idx_analytics_event_type", columns: ["eventType"] },
+    { name: "idx_analytics_path", columns: ["path"] },
+  ],
+});
+
+export interface ActivityLog {
+  id: string;
+  action: string;
+  userId: string | null;
+  userName: string | null;
+  userEmail: string | null;
+  details: string | null;
+  ipAddress: string | null;
+  createdAt: Date;
+}
+
+export const ActivityLogSchema = new EntitySchema<ActivityLog>({
+  name: "ActivityLog",
+  tableName: "activity_logs",
+  columns: {
+    id: { type: "uuid", primary: true, generated: "uuid" },
+    action: { type: "varchar", length: 100 },
+    userId: { type: "varchar", length: 255, nullable: true },
+    userName: { type: "varchar", length: 255, nullable: true },
+    userEmail: { type: "varchar", length: 255, nullable: true },
+    details: { type: "text", nullable: true },
+    ipAddress: { type: "varchar", length: 100, nullable: true },
+    createdAt: { type: "timestamp", createDate: true },
+  },
+  indices: [
+    { name: "idx_activity_created_at", columns: ["createdAt"] },
+    { name: "idx_activity_action", columns: ["action"] },
+  ],
+});

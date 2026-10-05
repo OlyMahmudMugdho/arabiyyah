@@ -5,6 +5,7 @@ import { getNoteRepository } from "@/db/data-source";
 import { Note, AdminPermission } from "@/db/entities";
 import { getSession, hasPermission } from "@/lib/auth";
 import { getOrSetCache, invalidateCache, CacheTags } from "@/lib/cache";
+import { logActivity } from "@/lib/activity-logger";
 
 export async function getNotesAction(filter?: {
   topic?: string;
@@ -95,6 +96,15 @@ export async function createNoteAction(data: {
     revalidatePath("/notes");
     revalidatePath("/admin/notes");
     revalidatePath("/");
+
+    await logActivity({
+      action: "note_create",
+      userId: session?.userId,
+      userName: session?.name,
+      userEmail: session?.email,
+      details: { id: saved.id, title: saved.title, topic: saved.topic },
+    });
+
     return { success: true, note: saved };
   } catch (err: unknown) {
     console.error("Failed to create note:", err);
@@ -120,6 +130,15 @@ export async function updateNoteAction(id: string, data: Partial<Note>) {
     revalidatePath("/notes");
     revalidatePath("/admin/notes");
     revalidatePath("/");
+
+    await logActivity({
+      action: "note_update",
+      userId: session?.userId,
+      userName: session?.name,
+      userEmail: session?.email,
+      details: { id: updated.id, title: updated.title, topic: updated.topic },
+    });
+
     return { success: true, note: updated };
   } catch (err: unknown) {
     console.error("Failed to update note:", err);
@@ -136,11 +155,21 @@ export async function deleteNoteAction(id: string) {
   try {
     const noteRepo = await getNoteRepository();
 
+    const note = await noteRepo.findOne({ where: { id } });
     await noteRepo.delete({ id });
     invalidateCache([CacheTags.NOTES, CacheTags.DASHBOARD]);
     revalidatePath("/notes");
     revalidatePath("/admin/notes");
     revalidatePath("/");
+
+    await logActivity({
+      action: "note_delete",
+      userId: session?.userId,
+      userName: session?.name,
+      userEmail: session?.email,
+      details: { id, title: note?.title },
+    });
+
     return { success: true };
   } catch (err: unknown) {
     console.error("Failed to delete note:", err);

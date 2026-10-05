@@ -14,6 +14,7 @@ import {
 } from "@/db/entities";
 import { getSession, hasPermission } from "@/lib/auth";
 import { getOrSetCache, invalidateCache, CacheTags } from "@/lib/cache";
+import { logActivity } from "@/lib/activity-logger";
 
 export async function getPathsAction(filter?: {
   level?: string;
@@ -130,6 +131,15 @@ export async function createPathAction(data: {
     revalidatePath("/paths");
     revalidatePath("/admin/paths");
     revalidatePath("/");
+
+    await logActivity({
+      action: "path_create",
+      userId: session?.userId,
+      userName: session?.name,
+      userEmail: session?.email,
+      details: { id: saved.id, title: saved.title, slug: saved.slug },
+    });
+
     return { success: true, path: saved };
   } catch (err: unknown) {
     console.error("Failed to create path:", err);
@@ -156,6 +166,15 @@ export async function updatePathAction(id: string, data: Partial<LearningPath>) 
     revalidatePath(`/paths/${path.slug}`);
     revalidatePath("/admin/paths");
     revalidatePath("/");
+
+    await logActivity({
+      action: "path_update",
+      userId: session?.userId,
+      userName: session?.name,
+      userEmail: session?.email,
+      details: { id: updated.id, title: updated.title, slug: updated.slug },
+    });
+
     return { success: true, path: updated };
   } catch (err: unknown) {
     console.error("Failed to update path:", err);
@@ -172,11 +191,21 @@ export async function deletePathAction(id: string) {
   try {
     const pathRepo = await getPathRepository();
 
+    const path = await pathRepo.findOne({ where: { id } });
     await pathRepo.delete({ id });
     invalidateCache([CacheTags.PATHS, CacheTags.DASHBOARD]);
     revalidatePath("/paths");
     revalidatePath("/admin/paths");
     revalidatePath("/");
+
+    await logActivity({
+      action: "path_delete",
+      userId: session?.userId,
+      userName: session?.name,
+      userEmail: session?.email,
+      details: { id, title: path?.title, slug: path?.slug },
+    });
+
     return { success: true };
   } catch (err: unknown) {
     console.error("Failed to delete path:", err);

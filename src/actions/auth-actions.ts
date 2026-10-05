@@ -9,6 +9,7 @@ import {
   clearSessionCookie,
   getSession,
 } from "@/lib/auth";
+import { logActivity } from "@/lib/activity-logger";
 
 export async function loginAdminAction(formData: FormData) {
   const email = (formData.get("email") as string)?.trim().toLowerCase();
@@ -47,6 +48,15 @@ export async function loginAdminAction(formData: FormData) {
     });
 
     await setSessionCookie(token);
+
+    await logActivity({
+      action: "admin_login",
+      userId: user.id,
+      userName: user.name,
+      userEmail: user.email,
+      details: { role: user.role, method: "server_action" },
+    });
+
     return { success: true };
   } catch (err: unknown) {
     console.error("Login error:", err);
@@ -55,6 +65,16 @@ export async function loginAdminAction(formData: FormData) {
 }
 
 export async function logoutAdminAction() {
+  const session = await getSession();
+  if (session) {
+    await logActivity({
+      action: "admin_logout",
+      userId: session.userId,
+      userName: session.name,
+      userEmail: session.email,
+      details: { role: session.role },
+    });
+  }
   await clearSessionCookie();
   redirect("/admin/login");
 }
@@ -62,3 +82,4 @@ export async function logoutAdminAction() {
 export async function getSessionAction() {
   return await getSession();
 }
+

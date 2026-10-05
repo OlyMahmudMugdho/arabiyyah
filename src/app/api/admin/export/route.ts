@@ -9,6 +9,7 @@ import {
   getUserRepository,
   getCategoryRepository,
 } from "@/db/data-source";
+import { logActivity } from "@/lib/activity-logger";
 
 export const dynamic = "force-dynamic";
 
@@ -59,6 +60,14 @@ export async function GET(req: NextRequest) {
 
   const timestamp = new Date().toISOString();
   const dateStr = timestamp.slice(0, 10);
+
+  await logActivity({
+    action: "export_data",
+    userId: session.userId,
+    userName: session.name,
+    userEmail: session.email,
+    details: { resource, format },
+  });
 
   // Fetch relevant data depending on resource
   if (resource === "courses") {

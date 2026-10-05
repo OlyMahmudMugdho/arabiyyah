@@ -5,6 +5,7 @@ import { getCategoryRepository } from "@/db/data-source";
 import { Category, AdminPermission } from "@/db/entities";
 import { getSession, hasPermission } from "@/lib/auth";
 import { getOrSetCache, invalidateCache, CacheTags } from "@/lib/cache";
+import { logActivity } from "@/lib/activity-logger";
 
 function slugify(text: string): string {
   return text
@@ -105,6 +106,14 @@ export async function createCategoryAction(data: {
     revalidatePath("/courses");
     revalidatePath("/books");
 
+    await logActivity({
+      action: "category_create",
+      userId: session?.userId,
+      userName: session?.name,
+      userEmail: session?.email,
+      details: { id: category.id, name: category.name, slug: category.slug },
+    });
+
     return { category };
   } catch (err: unknown) {
     console.error("Failed to create category:", err);
@@ -182,6 +191,14 @@ export async function updateCategoryAction(
     revalidatePath("/courses");
     revalidatePath("/books");
 
+    await logActivity({
+      action: "category_update",
+      userId: session?.userId,
+      userName: session?.name,
+      userEmail: session?.email,
+      details: { id: category.id, name: category.name, slug: category.slug },
+    });
+
     return { category };
   } catch (err: unknown) {
     console.error("Failed to update category:", err);
@@ -216,6 +233,14 @@ export async function deleteCategoryAction(id: string) {
     revalidatePath("/admin/books");
     revalidatePath("/courses");
     revalidatePath("/books");
+
+    await logActivity({
+      action: "category_delete",
+      userId: session?.userId,
+      userName: session?.name,
+      userEmail: session?.email,
+      details: { id, name: category.name, slug: category.slug },
+    });
 
     return { success: true };
   } catch (err: unknown) {

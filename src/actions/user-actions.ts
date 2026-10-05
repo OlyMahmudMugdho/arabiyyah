@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import { getUserRepository } from "@/db/data-source";
 import { User, UserRole, AdminPermission } from "@/db/entities";
 import { getSession } from "@/lib/auth";
+import { logActivity } from "@/lib/activity-logger";
 
 export async function getAdminUsersAction() {
   const session = await getSession();
@@ -71,6 +72,15 @@ export async function createAdminUserAction(data: {
 
     const saved = await userRepo.save(user);
     revalidatePath("/admin/users");
+
+    await logActivity({
+      action: "user_create",
+      userId: session?.userId,
+      userName: session?.name,
+      userEmail: session?.email,
+      details: { id: saved.id, name: saved.name, email: saved.email, role: saved.role },
+    });
+
     return {
       success: true,
       user: {
@@ -132,6 +142,15 @@ export async function updateAdminUserAction(
 
     await userRepo.save(user);
     revalidatePath("/admin/users");
+
+    await logActivity({
+      action: "user_update",
+      userId: session?.userId,
+      userName: session?.name,
+      userEmail: session?.email,
+      details: { id: user.id, name: user.name, email: user.email, role: user.role, isActive: user.isActive },
+    });
+
     return { success: true };
   } catch (err: unknown) {
     console.error("Failed to update admin user:", err);
@@ -166,6 +185,15 @@ export async function deleteAdminUserAction(id: string) {
 
     await userRepo.delete({ id });
     revalidatePath("/admin/users");
+
+    await logActivity({
+      action: "user_delete",
+      userId: session?.userId,
+      userName: session?.name,
+      userEmail: session?.email,
+      details: { id, name: user.name, email: user.email },
+    });
+
     return { success: true };
   } catch (err: unknown) {
     console.error("Failed to delete admin user:", err);

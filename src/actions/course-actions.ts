@@ -5,6 +5,7 @@ import { getCourseRepository } from "@/db/data-source";
 import { Course, AdminPermission } from "@/db/entities";
 import { getSession, hasPermission } from "@/lib/auth";
 import { getOrSetCache, invalidateCache, CacheTags } from "@/lib/cache";
+import { logActivity } from "@/lib/activity-logger";
 
 export interface CourseFilter {
   language?: string;
@@ -133,6 +134,15 @@ export async function createCourseAction(data: {
     revalidatePath("/courses");
     revalidatePath("/admin/courses");
     revalidatePath("/");
+
+    await logActivity({
+      action: "course_create",
+      userId: session?.userId,
+      userName: session?.name,
+      userEmail: session?.email,
+      details: { id: saved.id, title: saved.title, slug: saved.slug },
+    });
+
     return { success: true, course: saved };
   } catch (err: unknown) {
     console.error("Failed to create course:", err);
@@ -164,6 +174,15 @@ export async function updateCourseAction(
     revalidatePath(`/courses/${course.slug}`);
     revalidatePath("/admin/courses");
     revalidatePath("/");
+
+    await logActivity({
+      action: "course_update",
+      userId: session?.userId,
+      userName: session?.name,
+      userEmail: session?.email,
+      details: { id: updated.id, title: updated.title, slug: updated.slug },
+    });
+
     return { success: true, course: updated };
   } catch (err: unknown) {
     console.error("Failed to update course:", err);
@@ -180,11 +199,21 @@ export async function deleteCourseAction(id: string) {
   try {
     const courseRepo = await getCourseRepository();
 
+    const course = await courseRepo.findOne({ where: { id } });
     await courseRepo.delete({ id });
     invalidateCache([CacheTags.COURSES, CacheTags.DASHBOARD]);
     revalidatePath("/courses");
     revalidatePath("/admin/courses");
     revalidatePath("/");
+
+    await logActivity({
+      action: "course_delete",
+      userId: session?.userId,
+      userName: session?.name,
+      userEmail: session?.email,
+      details: { id, title: course?.title, slug: course?.slug },
+    });
+
     return { success: true };
   } catch (err: unknown) {
     console.error("Failed to delete course:", err);

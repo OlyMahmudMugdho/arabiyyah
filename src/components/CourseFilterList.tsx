@@ -1,9 +1,10 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Search, Filter, RotateCcw } from "lucide-react";
 import type { Course } from "@/db/entities";
 import { CourseCard } from "./CourseCard";
+import { trackClientEvent } from "./AnalyticsTracker";
 
 interface CourseFilterListProps {
   initialCourses: Course[];
@@ -94,6 +95,27 @@ export function CourseFilterList({
     setSelectedCategory("All");
     setSearchQuery("");
   };
+
+  useEffect(() => {
+    const q = searchQuery.trim();
+    if (!q) return;
+
+    const timer = setTimeout(() => {
+      trackClientEvent({
+        eventType: "search",
+        searchQuery: q,
+        metadata: {
+          resultsCount: filteredCourses.length,
+          source: "courses",
+          language: selectedLanguage,
+          level: selectedLevel,
+          category: selectedCategory,
+        },
+      });
+    }, 1000);
+
+    return () => clearTimeout(timer);
+  }, [searchQuery, filteredCourses.length, selectedLanguage, selectedLevel, selectedCategory]);
 
   const isFiltered =
     selectedLanguage !== "All" ||

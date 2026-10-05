@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { getUserRepository } from "@/db/data-source";
 import { createSessionToken } from "@/lib/auth";
+import { logActivity } from "@/lib/activity-logger";
 
 const COOKIE_NAME = "arabiyyah_admin_token";
 
@@ -75,6 +76,15 @@ export async function POST(req: Request) {
 
     response.headers.append("Set-Cookie", cookieHeader);
     response.headers.append("Set-Cookie", legacyCookieHeader);
+
+    await logActivity({
+      action: "admin_login",
+      userId: user.id,
+      userName: user.name,
+      userEmail: user.email,
+      details: { role: user.role, method: "api_route" },
+    });
+
     return response;
   } catch (err) {
     console.error("Login API route error:", err);

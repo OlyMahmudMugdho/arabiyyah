@@ -3,6 +3,7 @@
 import { useTheme, type Theme } from "./ThemeProvider";
 import { Sun, Moon, BookOpen, Monitor, ChevronDown, Check } from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
+import { trackClientEvent } from "./AnalyticsTracker";
 
 interface ThemeToggleProps {
   className?: string;
@@ -198,6 +199,10 @@ export function ThemeToggle({ className = "", compact = false }: ThemeToggleProp
                   onClick={() => {
                     setTheme(opt.id);
                     setIsOpen(false);
+                    trackClientEvent({
+                      eventType: "theme_change",
+                      metadata: { selectedTheme: opt.id },
+                    });
                   }}
                   className={`w-full flex items-center justify-between px-2.5 py-2 rounded-xl text-left text-xs transition-colors group cursor-pointer ${
                     isSelected

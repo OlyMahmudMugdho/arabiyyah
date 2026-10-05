@@ -2,6 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import {
   LayoutDashboard,
+  BarChart3,
   GraduationCap,
   Compass,
   BookOpen,
@@ -32,6 +33,7 @@ export default async function AdminDashboardLayout({
 
   const navItems = [
     { name: "Overview", href: "/admin", icon: LayoutDashboard },
+    { name: "Analytics", href: "/admin/analytics", icon: BarChart3 },
     { name: "Courses", href: "/admin/courses", icon: GraduationCap },
     { name: "Learning Paths", href: "/admin/paths", icon: Compass },
     { name: "Books", href: "/admin/books", icon: BookOpen },

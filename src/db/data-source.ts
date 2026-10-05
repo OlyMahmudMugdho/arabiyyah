@@ -10,6 +10,8 @@ import {
   BookSchema,
   NoteSchema,
   CategorySchema,
+  AnalyticsEventSchema,
+  ActivityLogSchema,
   User,
   Course,
   LearningPath,
@@ -18,6 +20,8 @@ import {
   Book,
   Note,
   Category,
+  AnalyticsEvent,
+  ActivityLog,
 } from "./entities";
 
 // Ensure Node network stack doesn't fail on IPv6 when connecting to cloud DBs like Neon
@@ -51,6 +55,8 @@ export const AppDataSource =
       BookSchema,
       NoteSchema,
       CategorySchema,
+      AnalyticsEventSchema,
+      ActivityLogSchema,
     ],
     subscribers: [],
     migrations: [],
@@ -109,4 +115,14 @@ export async function getUserRepository(): Promise<Repository<User>> {
 export async function getCategoryRepository(): Promise<Repository<Category>> {
   const ds = await getDataSource();
   return ds.getRepository<Category>("Category");
+}
+
+export async function getAnalyticsEventRepository(): Promise<Repository<AnalyticsEvent>> {
+  const ds = await getDataSource();
+  return ds.getRepository<AnalyticsEvent>("AnalyticsEvent");
+}
+
+export async function getActivityLogRepository(): Promise<Repository<ActivityLog>> {
+  const ds = await getDataSource();
+  return ds.getRepository<ActivityLog>("ActivityLog");
 }

@@ -1,9 +1,10 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Search, Filter, RotateCcw, BookOpen } from "lucide-react";
 import type { Book } from "@/db/entities";
 import { BookCard } from "./BookCard";
+import { trackClientEvent } from "./AnalyticsTracker";
 
 interface BookFilterListProps {
   initialBooks: Book[];
@@ -62,6 +63,27 @@ export function BookFilterList({ initialBooks }: BookFilterListProps) {
     setSelectedLevel("All");
     setSearchQuery("All");
   };
+
+  useEffect(() => {
+    if (searchQuery === "All") return;
+    const q = searchQuery.trim();
+    if (!q) return;
+
+    const timer = setTimeout(() => {
+      trackClientEvent({
+        eventType: "search",
+        searchQuery: q,
+        metadata: {
+          resultsCount: filteredBooks.length,
+          source: "books",
+          category: selectedCategory,
+          level: selectedLevel,
+        },
+      });
+    }, 1000);
+
+    return () => clearTimeout(timer);
+  }, [searchQuery, filteredBooks.length, selectedCategory, selectedLevel]);
 
   const isFiltered =
     selectedCategory !== "All" ||

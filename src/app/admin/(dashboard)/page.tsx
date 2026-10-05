@@ -10,6 +10,8 @@ import {
   Sparkles,
   Layers,
   Database,
+  BarChart3,
+  Activity,
 } from "lucide-react";
 import {
   getCourseRepository,
@@ -113,10 +115,17 @@ export default async function AdminDashboardPage() {
 
         <div className="flex flex-wrap items-center gap-3">
           <Link
-            href="/admin/courses"
+            href="/admin/analytics"
             className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs transition-colors shadow-md shadow-emerald-900/20"
           >
-            <Plus className="w-4 h-4" />
+            <BarChart3 className="w-4 h-4" />
+            <span>Site Analytics</span>
+          </Link>
+          <Link
+            href="/admin/courses"
+            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white hover:bg-slate-100 text-slate-700 font-semibold text-xs transition-colors border border-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 dark:text-slate-200 dark:border-slate-700"
+          >
+            <Plus className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
             <span>Add Course</span>
           </Link>
           <Link
@@ -241,6 +250,30 @@ export default async function AdminDashboardPage() {
             </Link>
           </div>
         ) : null}
+      </div>
+
+      {/* Site Analytics & Live Intelligence Quick Banner */}
+      <div className="p-6 rounded-3xl bg-gradient-to-r from-slate-900 via-emerald-950 to-slate-900 text-white border border-emerald-900/40 shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-6 transition-all">
+        <div className="space-y-1.5">
+          <div className="flex items-center gap-2">
+            <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 flex items-center gap-1.5">
+              <Activity className="w-3 h-3 text-emerald-400" />
+              Live Site Intelligence
+            </span>
+            <span className="text-xs text-slate-300">Continuous learner telemetry</span>
+          </div>
+          <h3 className="text-base sm:text-lg font-bold">Platform Activity & Traffic Analytics</h3>
+          <p className="text-xs text-slate-300 max-w-xl leading-relaxed">
+            Monitor real-time page views, unique visitors, book downloads, search intent, zero-result inquiries, device demographics, and administrative audit logs.
+          </p>
+        </div>
+        <Link
+          href="/admin/analytics"
+          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs transition-all shrink-0 shadow-lg shadow-emerald-950/40"
+        >
+          <span>Open Analytics Suite</span>
+          <ArrowRight className="w-4 h-4" />
+        </Link>
       </div>
 
       {/* Superadmin Data Export & Backup Section */}

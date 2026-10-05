@@ -1,5 +1,8 @@
+"use client";
+
 import { FileText, Download, User, Eye, Bookmark } from "lucide-react";
 import type { Note } from "@/db/entities";
+import { trackClientEvent } from "@/components/AnalyticsTracker";
 
 interface NoteCardProps {
   note: Note;
@@ -63,6 +66,21 @@ export function NoteCard({ note }: NoteCardProps) {
               href={note.fileUrl}
               target="_blank"
               rel="noopener noreferrer"
+              onClick={() => {
+                trackClientEvent({
+                  eventType: "book_download",
+                  resourceType: "note",
+                  resourceId: note.id,
+                  resourceTitle: note.title,
+                  path: note.fileUrl,
+                  metadata: {
+                    topic: note.topic,
+                    format: note.format,
+                    level: note.level,
+                    author: note.author,
+                  },
+                });
+              }}
               className="flex-1 py-1.5 px-3 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-medium text-xs flex items-center justify-center gap-1.5 transition-colors shadow-xs"
             >
               <Download className="w-3.5 h-3.5" />
@@ -74,6 +92,19 @@ export function NoteCard({ note }: NoteCardProps) {
               href={note.previewUrl}
               target="_blank"
               rel="noopener noreferrer"
+              onClick={() => {
+                trackClientEvent({
+                  eventType: "note_view",
+                  resourceType: "note",
+                  resourceId: note.id,
+                  resourceTitle: note.title,
+                  path: note.previewUrl,
+                  metadata: {
+                    action: "preview",
+                    topic: note.topic,
+                  },
+                });
+              }}
               className="p-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 hover:text-slate-900 dark:bg-slate-800 dark:hover:bg-slate-700 dark:text-slate-300 dark:hover:text-white transition-colors border border-slate-200 dark:border-slate-700/60"
               title="Preview Note"
             >
