@@ -32,7 +32,7 @@ const themeScript = `
     try {
       var stored = localStorage.getItem('arabiyyah_theme') || localStorage.getItem('bayan_theme');
       var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      var theme = stored || 'dark';
+      var theme = stored || 'light';
       var resolved = theme === 'system' ? (prefersDark ? 'dark' : 'light') : theme;
       document.documentElement.classList.remove('dark', 'sepia');
       if (resolved === 'dark') {
@@ -56,6 +56,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
+      data-theme="light"
       suppressHydrationWarning
       className={`${geistSans.variable} ${geistMono.variable} ${amiri.variable} h-full antialiased`}
     >
