@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo, useEffect } from "react";
-import { Search, Filter, RotateCcw } from "lucide-react";
+import { Search, Filter, RotateCcw, GraduationCap } from "lucide-react";
 import type { Course } from "@/db/entities";
 import { CourseCard } from "./CourseCard";
 import { trackClientEvent } from "./AnalyticsTracker";
@@ -128,14 +128,16 @@ export function CourseFilterList({
       {showTitle && (
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
           <div>
-            <span className="text-xs font-semibold tracking-wider text-emerald-400 uppercase">
-              Curated Curriculum
-            </span>
-            <h2 className="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white mt-1">
+            <div className="flex items-center gap-2 text-xs font-semibold text-emerald-700 dark:text-emerald-400 mb-1">
+              <GraduationCap className="w-3.5 h-3.5" />
+              <span>Curated Lecture Series</span>
+              <span className="font-arabic font-bold text-sm">الدروس المرئية</span>
+            </div>
+            <h2 className="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white">
               Arabic Video Courses
             </h2>
             <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
-              Explore systematic lectures across grammar, morphology, rhetoric, and conversational fluency.
+              Explore systematic lectures across grammar, morphology, rhetoric, and classical literature.
             </p>
           </div>
         </div>

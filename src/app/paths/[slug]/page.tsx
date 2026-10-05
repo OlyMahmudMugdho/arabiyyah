@@ -127,7 +127,7 @@ export default async function PathDetailPage({
 
                   {/* Courses in this section */}
                   <div className="space-y-4">
-                    <h4 className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider flex items-center gap-2">
+                    <h4 className="text-xs font-semibold text-slate-500 dark:text-slate-400 flex items-center gap-2">
                       <GraduationCap className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
                       <span>
                         Stage Courses ({section.pathCourses?.length || 0})

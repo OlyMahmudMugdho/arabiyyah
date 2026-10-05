@@ -21,20 +21,20 @@ export function Navbar() {
         <div className="flex items-center justify-between h-18">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-3 group">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-700 flex items-center justify-center text-white shadow-lg shadow-emerald-900/20 group-hover:scale-105 transition-transform">
+            <div className="w-10 h-10 rounded-xl bg-emerald-800 dark:bg-emerald-700 flex items-center justify-center text-white shadow-2xs transition-colors">
               <span className="font-arabic font-bold text-2xl leading-none">ع</span>
             </div>
             <div className="flex flex-col">
               <div className="flex items-center gap-2">
-                <span className="font-bold text-xl tracking-tight text-slate-900 dark:text-white group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
+                <span className="font-bold text-xl tracking-tight text-slate-900 dark:text-white transition-colors">
                   Arabiyyah
                 </span>
-                <span className="font-arabic text-emerald-600 dark:text-emerald-400 text-lg font-bold">
+                <span className="font-arabic text-emerald-700 dark:text-emerald-400 text-lg font-bold">
                   العربية
                 </span>
               </div>
               <span className="text-[11px] text-slate-500 dark:text-slate-400 font-medium">
-                Arabic Learning Resources
+                Classical Arabic Archive & Curriculum
               </span>
             </div>
           </Link>
@@ -64,7 +64,7 @@ export function Navbar() {
             <Link
               href="/paths"
               prefetch={true}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold bg-emerald-600 hover:bg-emerald-500 text-white shadow-md shadow-emerald-900/20 transition-all hover:shadow-emerald-900/40"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold bg-emerald-700 hover:bg-emerald-600 dark:bg-emerald-600 dark:hover:bg-emerald-500 text-white shadow-2xs transition-colors"
             >
               <Compass className="w-4 h-4" />
               <span>Explore Paths</span>

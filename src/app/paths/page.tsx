@@ -16,15 +16,16 @@ export default async function PathsPage() {
       <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-16 w-full">
         {/* Page Header */}
         <div className="max-w-3xl mb-12">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300 dark:bg-emerald-500/10 dark:text-emerald-400 text-xs font-semibold mb-3 dark:border-emerald-500/20">
+          <div className="flex items-center gap-2 text-xs font-semibold text-emerald-700 dark:text-emerald-400 mb-1">
             <Compass className="w-3.5 h-3.5" />
-            <span>Curated Syllabi</span>
+            <span>Sequential Curricula</span>
+            <span className="font-arabic font-bold text-sm">المسارات المنهجية</span>
           </div>
           <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">
             Sequential Learning Paths
           </h1>
           <p className="text-slate-600 dark:text-slate-400 text-sm sm:text-base mt-2 leading-relaxed">
-            Rather than learning in isolation, follow cohesive multi-stage curricula. Each path combines specialized courses divided into logical milestones—from foundational morphology to higher rhetoric.
+            Follow cohesive multi-stage curricula connecting specialized courses divided into milestone stages—from foundational grammar to classical literature.
           </p>
         </div>
 

@@ -147,9 +147,9 @@ export default async function CourseDetailPage({
           {/* Sidebar: Path Context */}
           <div className="space-y-6">
             <div className="p-6 rounded-3xl bg-white border border-slate-200 shadow-xs dark:bg-[#0f172a]/70 dark:border-slate-800 space-y-4 transition-colors">
-              <h3 className="text-sm font-bold text-slate-900 dark:text-slate-200 uppercase tracking-wider flex items-center gap-2">
+              <h3 className="text-sm font-bold text-slate-900 dark:text-slate-200 flex items-center gap-2">
                 <Compass className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
-                <span>Learning Paths</span>
+                <span>Associated Learning Paths</span>
               </h3>
               <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
                 This course is integrated into structured curricula designed for progressive mastery:

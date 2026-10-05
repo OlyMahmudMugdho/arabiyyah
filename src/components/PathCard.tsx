@@ -5,7 +5,6 @@ import {
   GraduationCap,
   Clock,
   Layers,
-  ChevronRight,
   Award,
 } from "lucide-react";
 import type { LearningPath } from "@/db/entities";
@@ -33,34 +32,32 @@ export function PathCard({ path }: PathCardProps) {
   const totalSections = path.sections?.length || 0;
 
   return (
-    <div className="relative group rounded-3xl bg-white border border-slate-200 shadow-sm hover:border-emerald-500/50 hover:shadow-xl dark:bg-gradient-to-b dark:from-[#11192d] dark:to-[#0c1220] dark:border-slate-800 dark:hover:border-emerald-500/50 dark:hover:shadow-emerald-950/20 p-6 md:p-8 flex flex-col justify-between transition-all duration-300">
-      {/* Top Banner & Icon */}
+    <div className="rounded-2xl bg-white border border-slate-200 shadow-2xs hover:border-emerald-600/40 dark:bg-[#0c1220] dark:border-slate-800 dark:hover:border-emerald-500/40 p-6 md:p-8 flex flex-col justify-between transition-colors">
       <div>
+        {/* Top Header */}
         <div className="flex items-start justify-between gap-4 mb-4">
-          <div className="w-12 h-12 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-600 dark:bg-emerald-500/10 dark:border-emerald-500/20 dark:text-emerald-400 flex items-center justify-center group-hover:scale-110 group-hover:bg-emerald-600 group-hover:text-white transition-all duration-300">
-            <Icon className="w-6 h-6" />
+          <div className="w-11 h-11 rounded-xl bg-emerald-50 border border-emerald-200/80 text-emerald-700 dark:bg-emerald-950/40 dark:border-emerald-800/40 dark:text-emerald-400 flex items-center justify-center shrink-0">
+            <Icon className="w-5 h-5" />
           </div>
 
           <div className="flex items-center gap-2">
-            <span className="px-3 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800 border border-emerald-300 dark:bg-emerald-500/10 dark:text-emerald-300 dark:border-emerald-500/20">
+            <span className="px-2.5 py-0.5 rounded-md text-xs font-semibold bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300">
               {path.level}
             </span>
-            <span className="px-3 py-1 rounded-full text-xs font-medium bg-slate-100 text-slate-700 border border-slate-300 dark:bg-slate-800/80 dark:text-slate-300 dark:border-slate-700/50 flex items-center gap-1.5">
-              <Clock className="w-3 h-3 text-amber-600 dark:text-amber-400" />
-              {path.estimatedHours}
+            <span className="px-2.5 py-0.5 rounded-md text-xs font-medium text-slate-600 dark:text-slate-400 flex items-center gap-1.5">
+              <Clock className="w-3.5 h-3.5 text-slate-400" />
+              <span>{path.estimatedHours}</span>
             </span>
           </div>
         </div>
 
-        {/* Path Titles */}
+        {/* Titles */}
         <div className="space-y-1 mb-3">
-          <div className="flex items-baseline justify-between gap-2">
-            <h3 className="text-xl md:text-2xl font-bold text-slate-900 group-hover:text-emerald-600 dark:text-white dark:group-hover:text-emerald-300 transition-colors">
-              {path.title}
-            </h3>
-          </div>
+          <h3 className="text-xl font-bold text-slate-900 dark:text-white">
+            {path.title}
+          </h3>
           {path.titleArabic && (
-            <p className="font-arabic text-sm text-emerald-700 dark:text-emerald-400/90 font-medium">
+            <p className="font-arabic text-sm text-emerald-800 dark:text-emerald-400 font-medium">
               {path.titleArabic}
             </p>
           )}
@@ -72,13 +69,13 @@ export function PathCard({ path }: PathCardProps) {
 
         {/* Multi-Section Pipeline Visualization */}
         {path.sections && path.sections.length > 0 && (
-          <div className="space-y-3 mb-6 bg-slate-50 border border-slate-200 dark:bg-slate-900/60 p-4 rounded-2xl dark:border-slate-800/60">
-            <div className="flex items-center justify-between text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2">
+          <div className="space-y-3 mb-6 bg-slate-50/80 border border-slate-200/80 dark:bg-slate-900/40 p-4 rounded-xl dark:border-slate-800/60">
+            <div className="flex items-center justify-between text-xs font-semibold text-slate-500 dark:text-slate-400 mb-2">
               <span className="flex items-center gap-1.5">
                 <Layers className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
                 <span>Roadmap Stages ({totalSections})</span>
               </span>
-              <span>{totalCourses} Courses Included</span>
+              <span>{totalCourses} Courses</span>
             </div>
 
             <div className="space-y-2">
@@ -87,18 +84,18 @@ export function PathCard({ path }: PathCardProps) {
                   key={section.id}
                   className="flex items-center gap-3 text-xs text-slate-700 dark:text-slate-300"
                 >
-                  <div className="w-5 h-5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300 dark:bg-emerald-500/20 dark:text-emerald-300 font-bold flex items-center justify-center text-[10px] shrink-0 dark:border-emerald-500/30">
+                  <span className="w-5 h-5 rounded bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 font-semibold flex items-center justify-center text-[11px] shrink-0">
                     {idx + 1}
-                  </div>
+                  </span>
                   <span className="truncate font-medium">{section.title}</span>
                   <span className="ml-auto text-[11px] text-slate-400 dark:text-slate-500 shrink-0">
-                    {section.pathCourses?.length || 0} courses
+                    {section.pathCourses?.length || 0} lessons
                   </span>
                 </div>
               ))}
               {path.sections.length > 3 && (
-                <div className="text-xs text-slate-500 dark:text-slate-500 text-center pt-1 font-medium">
-                  + {path.sections.length - 3} more stage(s) in roadmap
+                <div className="text-xs text-slate-500 text-center pt-1">
+                  + {path.sections.length - 3} additional milestone stage(s)
                 </div>
               )}
             </div>
@@ -106,14 +103,13 @@ export function PathCard({ path }: PathCardProps) {
         )}
       </div>
 
-      {/* CTA Button */}
+      {/* Direct Action Link */}
       <div className="pt-2">
         <Link
           href={`/paths/${path.slug}`}
-          className="w-full py-3 px-5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-semibold text-sm flex items-center justify-center gap-2 shadow-lg shadow-emerald-900/20 transition-all"
+          className="w-full py-2.5 px-4 rounded-xl bg-emerald-700 hover:bg-emerald-600 dark:bg-emerald-600 dark:hover:bg-emerald-500 text-white font-semibold text-xs flex items-center justify-center gap-2 transition-colors shadow-2xs"
         >
-          <span>View Complete Path Roadmap</span>
-          <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+          <span>Explore Roadmap</span>
         </Link>
       </div>
     </div>

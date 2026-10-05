@@ -16,15 +16,16 @@ export default async function BooksPage() {
       <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-16 w-full">
         {/* Page Header */}
         <div className="max-w-3xl mb-12">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-100 text-amber-800 border border-amber-300 dark:bg-amber-500/10 dark:text-amber-400 text-xs font-semibold mb-3 dark:border-amber-500/20">
+          <div className="flex items-center gap-2 text-xs font-semibold text-amber-700 dark:text-amber-400 mb-1">
             <BookOpen className="w-3.5 h-3.5" />
-            <span>Classical Library & Modern Textbooks</span>
+            <span>Classical Library & Texts</span>
+            <span className="font-arabic font-bold text-sm">المكتبة اللغوية</span>
           </div>
           <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">
-            Arabic Books, Primers & Dictionaries
+            Classical Primers, Texts & Readers
           </h1>
           <p className="text-slate-600 dark:text-slate-400 text-sm sm:text-base mt-2 leading-relaxed">
-            Free downloadable PDFs of foundational grammatical poems (mutun), modern inductive curricula (Al-Nahw Al-Wadih), root-based lexicons (Hans Wehr), and graded readers.
+            Downloadable editions of foundational grammatical poems (mutūn), vocalized curricula, root-based lexicons, and commentaries.
           </p>
         </div>
 

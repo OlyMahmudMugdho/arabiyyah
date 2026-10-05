@@ -101,7 +101,7 @@ export function AdminShell({ session, children }: AdminShellProps) {
 
       {/* Navigation Container - Independent scroll container */}
       <nav className="flex-1 p-4 space-y-1.5 overflow-y-auto min-h-0 overscroll-contain">
-        <div className="text-[11px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider px-3 mb-2">
+        <div className="text-xs font-semibold text-slate-400 dark:text-slate-500 px-3 mb-2">
           Resource Management
         </div>
 
@@ -133,7 +133,7 @@ export function AdminShell({ session, children }: AdminShellProps) {
         })}
 
         <div className="pt-6">
-          <div className="text-[11px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider px-3 mb-2">
+          <div className="text-xs font-semibold text-slate-400 dark:text-slate-500 px-3 mb-2">
             Public Interface
           </div>
           <Link
