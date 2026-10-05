@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { getCategoryRepository } from "@/db/data-source";
 import { Category, AdminPermission } from "@/db/entities";
 import { getSession, hasPermission } from "@/lib/auth";
+import { getOrSetCache, invalidateCache, CacheTags } from "@/lib/cache";
 
 function slugify(text: string): string {
   return text
@@ -15,24 +16,31 @@ function slugify(text: string): string {
 }
 
 export async function getCategoriesAction(filter?: { itemType?: string }) {
-  try {
-    const categoryRepo = await getCategoryRepository();
-    const query = categoryRepo.createQueryBuilder("category");
+  const cacheKey = `categories:list:${JSON.stringify(filter || {})}`;
+  return await getOrSetCache(
+    cacheKey,
+    async () => {
+      try {
+        const categoryRepo = await getCategoryRepository();
+        const query = categoryRepo.createQueryBuilder("category");
 
-    if (filter?.itemType && filter.itemType !== "all") {
-      query.andWhere(
-        "(category.itemType = :itemType OR category.itemType = 'all')",
-        { itemType: filter.itemType }
-      );
-    }
+        if (filter?.itemType && filter.itemType !== "all") {
+          query.andWhere(
+            "(category.itemType = :itemType OR category.itemType = 'all')",
+            { itemType: filter.itemType }
+          );
+        }
 
-    query.orderBy("category.name", "ASC");
-    const categories = await query.getMany();
-    return categories;
-  } catch (err: unknown) {
-    console.error("Failed to fetch categories:", err);
-    return [];
-  }
+        query.orderBy("category.name", "ASC");
+        const categories = await query.getMany();
+        return categories;
+      } catch (err: unknown) {
+        console.error("Failed to fetch categories:", err);
+        return [];
+      }
+    },
+    { ttlSeconds: 600, tags: [CacheTags.CATEGORIES] }
+  );
 }
 
 export async function createCategoryAction(data: {
@@ -89,6 +97,7 @@ export async function createCategoryAction(data: {
     });
 
     await categoryRepo.save(category);
+    invalidateCache([CacheTags.CATEGORIES, CacheTags.COURSES, CacheTags.BOOKS]);
 
     revalidatePath("/admin/categories");
     revalidatePath("/admin/courses");
@@ -165,6 +174,7 @@ export async function updateCategoryAction(
     }
 
     await categoryRepo.save(category);
+    invalidateCache([CacheTags.CATEGORIES, CacheTags.COURSES, CacheTags.BOOKS]);
 
     revalidatePath("/admin/categories");
     revalidatePath("/admin/courses");
@@ -199,6 +209,7 @@ export async function deleteCategoryAction(id: string) {
     }
 
     await categoryRepo.remove(category);
+    invalidateCache([CacheTags.CATEGORIES, CacheTags.COURSES, CacheTags.BOOKS]);
 
     revalidatePath("/admin/categories");
     revalidatePath("/admin/courses");

@@ -22,7 +22,7 @@ import { getPathsAction } from "@/actions/path-actions";
 import { getBooksAction } from "@/actions/book-actions";
 import { getNotesAction } from "@/actions/note-actions";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
 
 export default async function HomePage() {
   const [courses, paths, books, notes] = await Promise.all([

@@ -4,7 +4,7 @@ import { Footer } from "@/components/Footer";
 import { NoteFilterList } from "@/components/NoteFilterList";
 import { getNotesAction } from "@/actions/note-actions";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
 
 export default async function NotesPage() {
   const notes = await getNotesAction({ onlyPublished: true });

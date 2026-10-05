@@ -3,7 +3,7 @@ import { Footer } from "@/components/Footer";
 import { CourseFilterList } from "@/components/CourseFilterList";
 import { getCoursesAction } from "@/actions/course-actions";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
 
 export default async function CoursesPage() {
   const courses = await getCoursesAction({ onlyPublished: true });

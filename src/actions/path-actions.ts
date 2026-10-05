@@ -13,68 +13,83 @@ import {
   AdminPermission,
 } from "@/db/entities";
 import { getSession, hasPermission } from "@/lib/auth";
+import { getOrSetCache, invalidateCache, CacheTags } from "@/lib/cache";
 
 export async function getPathsAction(filter?: {
   level?: string;
   search?: string;
   onlyPublished?: boolean;
 }) {
-  try {
-    const pathRepo = await getPathRepository();
+  const cacheKey = `paths:list:${JSON.stringify(filter || {})}`;
+  return await getOrSetCache(
+    cacheKey,
+    async () => {
+      try {
+        const pathRepo = await getPathRepository();
 
-    const query = pathRepo
-      .createQueryBuilder("path")
-      .leftJoinAndSelect("path.sections", "sections")
-      .leftJoinAndSelect("sections.pathCourses", "pathCourses")
-      .leftJoinAndSelect("pathCourses.course", "course");
+        const query = pathRepo
+          .createQueryBuilder("path")
+          .leftJoinAndSelect("path.sections", "sections")
+          .leftJoinAndSelect("sections.pathCourses", "pathCourses")
+          .leftJoinAndSelect("pathCourses.course", "course");
 
-    if (filter?.onlyPublished !== false) {
-      if (filter?.onlyPublished === true) {
-        query.andWhere("path.isPublished = :isPublished", { isPublished: true });
+        if (filter?.onlyPublished !== false) {
+          if (filter?.onlyPublished === true) {
+            query.andWhere("path.isPublished = :isPublished", { isPublished: true });
+          }
+        }
+
+        if (filter?.level && filter.level !== "All") {
+          query.andWhere("LOWER(path.level) = LOWER(:level)", {
+            level: filter.level,
+          });
+        }
+
+        if (filter?.search) {
+          query.andWhere(
+            "(LOWER(path.title) LIKE LOWER(:search) OR LOWER(path.description) LIKE LOWER(:search) OR (path.titleArabic IS NOT NULL AND path.titleArabic LIKE :search))",
+            { search: `%${filter.search}%` }
+          );
+        }
+
+        query.orderBy("path.createdAt", "DESC");
+        query.addOrderBy("sections.orderIndex", "ASC");
+        query.addOrderBy("pathCourses.orderIndex", "ASC");
+
+        return await query.getMany();
+      } catch (err) {
+        console.error("Failed to fetch learning paths:", err);
+        return [];
       }
-    }
-
-    if (filter?.level && filter.level !== "All") {
-      query.andWhere("LOWER(path.level) = LOWER(:level)", {
-        level: filter.level,
-      });
-    }
-
-    if (filter?.search) {
-      query.andWhere(
-        "(LOWER(path.title) LIKE LOWER(:search) OR LOWER(path.description) LIKE LOWER(:search) OR (path.titleArabic IS NOT NULL AND path.titleArabic LIKE :search))",
-        { search: `%${filter.search}%` }
-      );
-    }
-
-    query.orderBy("path.createdAt", "DESC");
-    query.addOrderBy("sections.orderIndex", "ASC");
-    query.addOrderBy("pathCourses.orderIndex", "ASC");
-
-    return await query.getMany();
-  } catch (err) {
-    console.error("Failed to fetch learning paths:", err);
-    return [];
-  }
+    },
+    { ttlSeconds: 300, tags: [CacheTags.PATHS] }
+  );
 }
 
 export async function getPathBySlugAction(slug: string) {
-  try {
-    const pathRepo = await getPathRepository();
+  const cacheKey = `paths:slug:${slug}`;
+  return await getOrSetCache(
+    cacheKey,
+    async () => {
+      try {
+        const pathRepo = await getPathRepository();
 
-    return await pathRepo
-      .createQueryBuilder("path")
-      .leftJoinAndSelect("path.sections", "sections")
-      .leftJoinAndSelect("sections.pathCourses", "pathCourses")
-      .leftJoinAndSelect("pathCourses.course", "course")
-      .where("path.slug = :slug", { slug })
-      .orderBy("sections.orderIndex", "ASC")
-      .addOrderBy("pathCourses.orderIndex", "ASC")
-      .getOne();
-  } catch (err) {
-    console.error("Failed to fetch path by slug:", err);
-    return null;
-  }
+        return await pathRepo
+          .createQueryBuilder("path")
+          .leftJoinAndSelect("path.sections", "sections")
+          .leftJoinAndSelect("sections.pathCourses", "pathCourses")
+          .leftJoinAndSelect("pathCourses.course", "course")
+          .where("path.slug = :slug", { slug })
+          .orderBy("sections.orderIndex", "ASC")
+          .addOrderBy("pathCourses.orderIndex", "ASC")
+          .getOne();
+      } catch (err) {
+        console.error("Failed to fetch path by slug:", err);
+        return null;
+      }
+    },
+    { ttlSeconds: 300, tags: [CacheTags.PATHS] }
+  );
 }
 
 export async function createPathAction(data: {
@@ -111,6 +126,7 @@ export async function createPathAction(data: {
     });
 
     const saved = await pathRepo.save(path);
+    invalidateCache([CacheTags.PATHS, CacheTags.DASHBOARD]);
     revalidatePath("/paths");
     revalidatePath("/admin/paths");
     revalidatePath("/");
@@ -135,6 +151,7 @@ export async function updatePathAction(id: string, data: Partial<LearningPath>) 
 
     Object.assign(path, data);
     const updated = await pathRepo.save(path);
+    invalidateCache([CacheTags.PATHS, CacheTags.DASHBOARD]);
     revalidatePath("/paths");
     revalidatePath(`/paths/${path.slug}`);
     revalidatePath("/admin/paths");
@@ -156,6 +173,7 @@ export async function deletePathAction(id: string) {
     const pathRepo = await getPathRepository();
 
     await pathRepo.delete({ id });
+    invalidateCache([CacheTags.PATHS, CacheTags.DASHBOARD]);
     revalidatePath("/paths");
     revalidatePath("/admin/paths");
     revalidatePath("/");
@@ -194,6 +212,7 @@ export async function createPathSectionAction(
     });
 
     const saved = await sectionRepo.save(section);
+    invalidateCache([CacheTags.PATHS, CacheTags.DASHBOARD]);
     revalidatePath("/paths");
     revalidatePath("/admin/paths");
     return { success: true, section: saved };
@@ -220,6 +239,7 @@ export async function updatePathSectionAction(
 
     Object.assign(section, data);
     const updated = await sectionRepo.save(section);
+    invalidateCache([CacheTags.PATHS, CacheTags.DASHBOARD]);
     revalidatePath("/paths");
     revalidatePath("/admin/paths");
     return { success: true, section: updated };
@@ -239,6 +259,7 @@ export async function deletePathSectionAction(sectionId: string) {
     const sectionRepo = await getSectionRepository();
 
     await sectionRepo.delete({ id: sectionId });
+    invalidateCache([CacheTags.PATHS, CacheTags.DASHBOARD]);
     revalidatePath("/paths");
     revalidatePath("/admin/paths");
     return { success: true };
@@ -277,6 +298,7 @@ export async function addCourseToSectionAction(data: {
     });
 
     const saved = await pathCourseRepo.save(item);
+    invalidateCache([CacheTags.PATHS, CacheTags.DASHBOARD]);
     revalidatePath("/paths");
     revalidatePath("/admin/paths");
     return { success: true, item: saved };
@@ -296,6 +318,7 @@ export async function removeCourseFromSectionAction(pathCourseId: string) {
     const pathCourseRepo = await getPathCourseRepository();
 
     await pathCourseRepo.delete({ id: pathCourseId });
+    invalidateCache([CacheTags.PATHS, CacheTags.DASHBOARD]);
     revalidatePath("/paths");
     revalidatePath("/admin/paths");
     return { success: true };

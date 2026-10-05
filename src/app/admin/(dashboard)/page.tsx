@@ -20,6 +20,7 @@ import {
 } from "@/db/data-source";
 import { UserRole } from "@/db/entities";
 import { getSession } from "@/lib/auth";
+import { getOrSetCache, CacheTags } from "@/lib/cache";
 import { ExportDataCard } from "./ExportDataCard";
 
 export const dynamic = "force-dynamic";
@@ -27,21 +28,7 @@ export const dynamic = "force-dynamic";
 export default async function AdminDashboardPage() {
   const session = await getSession();
 
-  const [
-    courseRepo,
-    pathRepo,
-    bookRepo,
-    noteRepo,
-    userRepo,
-  ] = await Promise.all([
-    getCourseRepository(),
-    getPathRepository(),
-    getBookRepository(),
-    getNoteRepository(),
-    getUserRepository(),
-  ]);
-
-  const [
+  const {
     coursesCount,
     pathsCount,
     booksCount,
@@ -49,19 +36,57 @@ export default async function AdminDashboardPage() {
     usersCount,
     recentCourses,
     recentPaths,
-  ] = await Promise.all([
-    courseRepo.count(),
-    pathRepo.count(),
-    bookRepo.count(),
-    noteRepo.count(),
-    userRepo.count(),
-    courseRepo.find({ order: { createdAt: "DESC" }, take: 5 }),
-    pathRepo.find({
-      order: { createdAt: "DESC" },
-      relations: { sections: true },
-      take: 4,
-    }),
-  ]);
+  } = await getOrSetCache(
+    "admin:dashboard:metrics",
+    async () => {
+      const [
+        courseRepo,
+        pathRepo,
+        bookRepo,
+        noteRepo,
+        userRepo,
+      ] = await Promise.all([
+        getCourseRepository(),
+        getPathRepository(),
+        getBookRepository(),
+        getNoteRepository(),
+        getUserRepository(),
+      ]);
+
+      const [
+        coursesCount,
+        pathsCount,
+        booksCount,
+        notesCount,
+        usersCount,
+        recentCourses,
+        recentPaths,
+      ] = await Promise.all([
+        courseRepo.count(),
+        pathRepo.count(),
+        bookRepo.count(),
+        noteRepo.count(),
+        userRepo.count(),
+        courseRepo.find({ order: { createdAt: "DESC" }, take: 5 }),
+        pathRepo.find({
+          order: { createdAt: "DESC" },
+          relations: { sections: true },
+          take: 4,
+        }),
+      ]);
+
+      return {
+        coursesCount,
+        pathsCount,
+        booksCount,
+        notesCount,
+        usersCount,
+        recentCourses,
+        recentPaths,
+      };
+    },
+    { ttlSeconds: 60, tags: [CacheTags.DASHBOARD] }
+  );
 
   const isSuperadmin = session?.role === UserRole.SUPERADMIN;
 

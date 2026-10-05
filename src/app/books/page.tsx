@@ -4,7 +4,7 @@ import { Footer } from "@/components/Footer";
 import { BookFilterList } from "@/components/BookFilterList";
 import { getBooksAction } from "@/actions/book-actions";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
 
 export default async function BooksPage() {
   const books = await getBooksAction({ onlyPublished: true });

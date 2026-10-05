@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { getCourseRepository } from "@/db/data-source";
 import { Course, AdminPermission } from "@/db/entities";
 import { getSession, hasPermission } from "@/lib/auth";
+import { getOrSetCache, invalidateCache, CacheTags } from "@/lib/cache";
 
 export interface CourseFilter {
   language?: string;
@@ -14,67 +15,81 @@ export interface CourseFilter {
 }
 
 export async function getCoursesAction(filter?: CourseFilter) {
-  try {
-    const courseRepo = await getCourseRepository();
-    const query = courseRepo.createQueryBuilder("course");
+  const cacheKey = `courses:list:${JSON.stringify(filter || {})}`;
+  return await getOrSetCache(
+    cacheKey,
+    async () => {
+      try {
+        const courseRepo = await getCourseRepository();
+        const query = courseRepo.createQueryBuilder("course");
 
-    if (filter?.onlyPublished !== false) {
-      if (filter?.onlyPublished === true) {
-        query.andWhere("course.isPublished = :isPublished", { isPublished: true });
+        if (filter?.onlyPublished !== false) {
+          if (filter?.onlyPublished === true) {
+            query.andWhere("course.isPublished = :isPublished", { isPublished: true });
+          }
+        }
+
+        if (filter?.language && filter.language !== "All") {
+          query.andWhere("LOWER(course.language) = LOWER(:language)", {
+            language: filter.language,
+          });
+        }
+
+        if (filter?.level && filter.level !== "All") {
+          query.andWhere("LOWER(course.level) = LOWER(:level)", {
+            level: filter.level,
+          });
+        }
+
+        if (filter?.category && filter.category !== "All") {
+          query.andWhere("LOWER(course.category) LIKE LOWER(:category)", {
+            category: `%${filter.category}%`,
+          });
+        }
+
+        if (filter?.search) {
+          query.andWhere(
+            "(LOWER(course.title) LIKE LOWER(:search) OR LOWER(course.description) LIKE LOWER(:search) OR LOWER(course.instructor) LIKE LOWER(:search) OR (course.titleArabic IS NOT NULL AND course.titleArabic LIKE :search))",
+            { search: `%${filter.search}%` }
+          );
+        }
+
+        query.orderBy("course.createdAt", "DESC");
+
+        return await query.getMany();
+      } catch (err) {
+        console.error("Failed to fetch courses:", err);
+        return [];
       }
-    }
-
-    if (filter?.language && filter.language !== "All") {
-      query.andWhere("LOWER(course.language) = LOWER(:language)", {
-        language: filter.language,
-      });
-    }
-
-    if (filter?.level && filter.level !== "All") {
-      query.andWhere("LOWER(course.level) = LOWER(:level)", {
-        level: filter.level,
-      });
-    }
-
-    if (filter?.category && filter.category !== "All") {
-      query.andWhere("LOWER(course.category) LIKE LOWER(:category)", {
-        category: `%${filter.category}%`,
-      });
-    }
-
-    if (filter?.search) {
-      query.andWhere(
-        "(LOWER(course.title) LIKE LOWER(:search) OR LOWER(course.description) LIKE LOWER(:search) OR LOWER(course.instructor) LIKE LOWER(:search) OR (course.titleArabic IS NOT NULL AND course.titleArabic LIKE :search))",
-        { search: `%${filter.search}%` }
-      );
-    }
-
-    query.orderBy("course.createdAt", "DESC");
-
-    return await query.getMany();
-  } catch (err) {
-    console.error("Failed to fetch courses:", err);
-    return [];
-  }
+    },
+    { ttlSeconds: 300, tags: [CacheTags.COURSES] }
+  );
 }
 
 export async function getCourseBySlugAction(slug: string) {
-  try {
-    const courseRepo = await getCourseRepository();
-    return await courseRepo.findOne({
-      where: { slug },
-      relations: {
-        pathCourses: {
-          section: {
-            path: true,
+  const cacheKey = `courses:slug:${slug}`;
+  return await getOrSetCache(
+    cacheKey,
+    async () => {
+      try {
+        const courseRepo = await getCourseRepository();
+        return await courseRepo.findOne({
+          where: { slug },
+          relations: {
+            pathCourses: {
+              section: {
+                path: true,
+              },
+            },
           },
-        },
-      },
-    });
-  } catch (err) {
-    console.error("Failed to fetch course by slug:", err);
-    return null;
-  }
+        });
+      } catch (err) {
+        console.error("Failed to fetch course by slug:", err);
+        return null;
+      }
+    },
+    { ttlSeconds: 300, tags: [CacheTags.COURSES] }
+  );
 }
 
 export async function createCourseAction(data: {
@@ -114,6 +129,7 @@ export async function createCourseAction(data: {
     });
 
     const saved = await courseRepo.save(course);
+    invalidateCache([CacheTags.COURSES, CacheTags.DASHBOARD]);
     revalidatePath("/courses");
     revalidatePath("/admin/courses");
     revalidatePath("/");
@@ -143,6 +159,7 @@ export async function updateCourseAction(
 
     Object.assign(course, data);
     const updated = await courseRepo.save(course);
+    invalidateCache([CacheTags.COURSES, CacheTags.DASHBOARD]);
     revalidatePath("/courses");
     revalidatePath(`/courses/${course.slug}`);
     revalidatePath("/admin/courses");
@@ -164,6 +181,7 @@ export async function deleteCourseAction(id: string) {
     const courseRepo = await getCourseRepository();
 
     await courseRepo.delete({ id });
+    invalidateCache([CacheTags.COURSES, CacheTags.DASHBOARD]);
     revalidatePath("/courses");
     revalidatePath("/admin/courses");
     revalidatePath("/");
