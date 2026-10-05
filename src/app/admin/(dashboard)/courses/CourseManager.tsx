@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
+import Link from "next/link";
 import {
   Plus,
   Search,
@@ -242,13 +243,14 @@ export function CourseManager({ initialCourses }: CourseManagerProps) {
           </p>
         </div>
 
-        <button
-          onClick={openCreateModal}
+        <Link
+          href="/admin/courses/new"
+          prefetch={true}
           className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs transition-colors shadow-md shadow-emerald-950/20"
         >
           <Plus className="w-4 h-4" />
           <span>Add New Course</span>
-        </button>
+        </Link>
       </div>
 
       {/* Search and Table Box */}

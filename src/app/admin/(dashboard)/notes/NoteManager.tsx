@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { Plus, Search, Trash2, Edit, FileText, ExternalLink, X } from "lucide-react";
 import type { Note } from "@/db/entities";
 import {
@@ -146,13 +147,14 @@ export function NoteManager({ initialNotes }: NoteManagerProps) {
           </p>
         </div>
 
-        <button
-          onClick={openCreateModal}
+        <Link
+          href="/admin/notes/new"
+          prefetch={true}
           className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs transition-colors shadow-md shadow-emerald-950/20"
         >
           <Plus className="w-4 h-4" />
           <span>Add Study Note</span>
-        </button>
+        </Link>
       </div>
 
       <div className="rounded-3xl bg-white dark:bg-[#0d1322] border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm dark:shadow-none">

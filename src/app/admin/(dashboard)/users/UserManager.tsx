@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import {
   Users,
   UserPlus,
@@ -217,13 +218,14 @@ export function UserManager({ initialUsers, currentUserId }: UserManagerProps) {
           </p>
         </div>
 
-        <button
-          onClick={openCreateModal}
+        <Link
+          href="/admin/users/new"
+          prefetch={true}
           className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-white dark:text-slate-950 font-bold text-xs transition-all shadow-md shadow-amber-950/20"
         >
           <UserPlus className="w-4 h-4" />
           <span>Create New Admin</span>
-        </button>
+        </Link>
       </div>
 
       {/* Table */}
