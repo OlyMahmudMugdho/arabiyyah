@@ -47,6 +47,7 @@ export function Navbar() {
                 <Link
                   key={item.name}
                   href={item.href}
+                  prefetch={true}
                   className="flex items-center gap-2 px-3.5 py-2 rounded-lg text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100 dark:text-slate-300 dark:hover:text-white dark:hover:bg-slate-800/60 transition-colors"
                 >
                   <Icon className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
@@ -62,6 +63,7 @@ export function Navbar() {
 
             <Link
               href="/paths"
+              prefetch={true}
               className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold bg-emerald-600 hover:bg-emerald-500 text-white shadow-md shadow-emerald-900/20 transition-all hover:shadow-emerald-900/40"
             >
               <Compass className="w-4 h-4" />
@@ -93,6 +95,7 @@ export function Navbar() {
               <Link
                 key={item.name}
                 href={item.href}
+                prefetch={true}
                 onClick={() => setMobileMenuOpen(false)}
                 className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-base font-medium text-slate-700 hover:bg-slate-100 hover:text-emerald-600 dark:text-slate-200 dark:hover:bg-slate-800/80 dark:hover:text-emerald-400 transition-colors"
               >
@@ -104,6 +107,7 @@ export function Navbar() {
           <div className="pt-2">
             <Link
               href="/paths"
+              prefetch={true}
               onClick={() => setMobileMenuOpen(false)}
               className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold bg-emerald-600 hover:bg-emerald-500 text-white"
             >

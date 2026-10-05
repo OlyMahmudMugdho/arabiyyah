@@ -3,10 +3,12 @@ import bcrypt from "bcryptjs";
 import { getUserRepository } from "@/db/data-source";
 import { createSessionToken } from "@/lib/auth";
 import { logActivity } from "@/lib/activity-logger";
+import { recordLatency } from "@/lib/latency-tracker";
 
 const COOKIE_NAME = "arabiyyah_admin_token";
 
 export async function POST(req: Request) {
+  const reqStart = performance.now();
   try {
     const body = await req.json().catch(() => ({}));
     const email = (body.email as string)?.trim().toLowerCase();
@@ -85,8 +87,13 @@ export async function POST(req: Request) {
       details: { role: user.role, method: "api_route" },
     });
 
+    const reqDuration = Math.round(performance.now() - reqStart);
+    recordLatency("/api/admin/login", reqDuration, "POST", 200);
+
     return response;
   } catch (err) {
+    const reqDuration = Math.round(performance.now() - reqStart);
+    recordLatency("/api/admin/login", reqDuration, "POST", 500);
     console.error("Login API route error:", err);
     return NextResponse.json(
       { error: "An unexpected error occurred during login." },

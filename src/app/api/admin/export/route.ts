@@ -10,6 +10,7 @@ import {
   getCategoryRepository,
 } from "@/db/data-source";
 import { logActivity } from "@/lib/activity-logger";
+import { recordLatency } from "@/lib/latency-tracker";
 
 export const dynamic = "force-dynamic";
 
@@ -33,6 +34,7 @@ function toCSV(headers: string[], rows: Record<string, any>[]): string {
 }
 
 export async function GET(req: NextRequest) {
+  const reqStart = performance.now();
   // 1. Enforce strict Superadmin authorization
   const session = await getSession();
   if (!session || session.role !== UserRole.SUPERADMIN) {
@@ -68,6 +70,9 @@ export async function GET(req: NextRequest) {
     userEmail: session.email,
     details: { resource, format },
   });
+
+  const exportDuration = Math.round(performance.now() - reqStart);
+  recordLatency("/api/admin/export", exportDuration, "GET", 200);
 
   // Fetch relevant data depending on resource
   if (resource === "courses") {

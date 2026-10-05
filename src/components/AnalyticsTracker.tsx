@@ -21,6 +21,7 @@ export interface EventPayload {
   referrer?: string | null;
   searchQuery?: string | null;
   metadata?: Record<string, any> | string | null;
+  durationMs?: number | null;
 }
 
 export function trackClientEvent(payload: EventPayload) {
@@ -67,10 +68,21 @@ export function AnalyticsTracker() {
     if (lastTracked.current === fullPath) return;
     lastTracked.current = fullPath;
 
+    let navDuration: number | null = null;
+    try {
+      const perfNav = performance.getEntriesByType(
+        "navigation"
+      )[0] as PerformanceNavigationTiming | undefined;
+      if (perfNav && perfNav.responseEnd > 0 && perfNav.requestStart > 0) {
+        navDuration = Math.round(perfNav.responseEnd - perfNav.requestStart);
+      }
+    } catch {}
+
     trackClientEvent({
       eventType: "page_view",
       path: fullPath,
       referrer: document.referrer || null,
+      durationMs: navDuration,
     });
   }, [pathname, searchParams]);
 

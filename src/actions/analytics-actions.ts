@@ -2,6 +2,11 @@
 
 import { getAnalyticsEventRepository, getActivityLogRepository } from "@/db/data-source";
 import { getSession } from "@/lib/auth";
+import {
+  getEndpointLatencyStats,
+  pingDatabaseLatency,
+  type EndpointLatencyStats,
+} from "@/lib/latency-tracker";
 
 export interface AnalyticsSummary {
   timeframe: "24h" | "7d" | "30d" | "all";
@@ -12,6 +17,7 @@ export interface AnalyticsSummary {
     totalSearches: number;
     activeNow: number;
   };
+  endpointLatencies: EndpointLatencyStats[];
   timeline: {
     label: string;
     views: number;
@@ -316,6 +322,8 @@ export async function getAnalyticsDashboardDataAction(
       take: 40,
     });
 
+    const endpointLatenciesPromise = getEndpointLatencyStats();
+
     // Run in parallel for high speed
     const [
       totalPageViews,
@@ -334,6 +342,7 @@ export async function getAnalyticsDashboardDataAction(
       timeline,
       recentEvents,
       recentAuditLogs,
+      endpointLatencies,
     ] = await Promise.all([
       totalPageViewsPromise,
       uniqueVisitorsPromise,
@@ -351,6 +360,7 @@ export async function getAnalyticsDashboardDataAction(
       timelinePromise,
       recentEventsPromise,
       recentAuditLogsPromise,
+      endpointLatenciesPromise,
     ]);
 
     // Format demographics with percentages
@@ -406,6 +416,7 @@ export async function getAnalyticsDashboardDataAction(
           totalSearches,
           activeNow,
         },
+        endpointLatencies,
         timeline,
         topPages,
         topDownloads,
@@ -446,4 +457,15 @@ export async function getAnalyticsDashboardDataAction(
       error: "Failed to compile analytics data: " + (err instanceof Error ? err.message : "Unknown error"),
     };
   }
+}
+
+export async function pingEndpointsAction() {
+  const session = await getSession();
+  if (!session) {
+    return { error: "Unauthorized" };
+  }
+
+  const dbLatency = await pingDatabaseLatency();
+  const latencies = await getEndpointLatencyStats();
+  return { dbLatency, latencies };
 }

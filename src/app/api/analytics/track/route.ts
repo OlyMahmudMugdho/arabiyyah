@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { getAnalyticsEventRepository } from "@/db/data-source";
+import { recordLatency } from "@/lib/latency-tracker";
 import crypto from "node:crypto";
 
 function parseDevice(ua: string): "mobile" | "tablet" | "desktop" {
@@ -37,6 +38,7 @@ function parseOS(ua: string): string {
 }
 
 export async function POST(req: Request) {
+  const reqStart = performance.now();
   try {
     const body = await req.json().catch(() => ({}));
     const {
@@ -48,6 +50,7 @@ export async function POST(req: Request) {
       referrer,
       searchQuery,
       metadata,
+      durationMs: clientDurationMs,
     } = body;
 
     if (!eventType) {
@@ -81,6 +84,11 @@ export async function POST(req: Request) {
       req.headers.get("cf-ipcountry") ||
       null;
 
+    const recordedDuration =
+      typeof clientDurationMs === "number" && clientDurationMs > 0
+        ? Math.round(clientDurationMs)
+        : Math.round(performance.now() - reqStart);
+
     const analyticsRepo = await getAnalyticsEventRepository();
     const event = analyticsRepo.create({
       eventType: String(eventType).slice(0, 100),
@@ -100,12 +108,23 @@ export async function POST(req: Request) {
       browser,
       os,
       country,
+      durationMs: recordedDuration,
+      statusCode: 200,
     });
 
     await analyticsRepo.save(event);
 
-    return NextResponse.json({ success: true });
+    const routeLatency = Math.round(performance.now() - reqStart);
+    recordLatency("/api/analytics/track", routeLatency, "POST", 200);
+
+    if (typeof clientDurationMs === "number" && clientDurationMs > 0) {
+      recordLatency(eventPath, Math.round(clientDurationMs), "GET", 200);
+    }
+
+    return NextResponse.json({ success: true, latencyMs: routeLatency });
   } catch (err) {
+    const routeLatency = Math.round(performance.now() - reqStart);
+    recordLatency("/api/analytics/track", routeLatency, "POST", 500);
     console.error("Analytics tracking error:", err);
     return NextResponse.json(
       { error: "Failed to record event" },

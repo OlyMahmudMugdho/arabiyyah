@@ -350,6 +350,8 @@ export interface AnalyticsEvent {
   browser: string | null;
   os: string | null;
   country: string | null;
+  durationMs: number | null;
+  statusCode: number | null;
   createdAt: Date;
 }
 
@@ -372,6 +374,8 @@ export const AnalyticsEventSchema = new EntitySchema<AnalyticsEvent>({
     browser: { type: "varchar", length: 50, nullable: true },
     os: { type: "varchar", length: 50, nullable: true },
     country: { type: "varchar", length: 100, nullable: true },
+    durationMs: { type: "int", nullable: true },
+    statusCode: { type: "int", nullable: true },
     createdAt: { type: "timestamp", createDate: true },
   },
   indices: [
