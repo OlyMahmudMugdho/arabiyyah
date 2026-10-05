@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Lock, Mail, ShieldAlert, ArrowRight, KeyRound, Sparkles } from "lucide-react";
+import { Lock, Mail, ShieldAlert, ArrowRight, KeyRound } from "lucide-react";
 import { ThemeToggle } from "@/components/ThemeToggle";
 
 export default function AdminLoginPage() {
@@ -72,17 +72,6 @@ export default function AdminLoginPage() {
             </div>
           </div>
 
-          {/* Alert box indicating no public signup */}
-          <div className="p-3.5 rounded-2xl bg-amber-50/80 border border-amber-200 text-amber-900 dark:bg-slate-900/90 dark:border-slate-800 dark:text-slate-400 text-xs space-y-1">
-            <div className="flex items-center gap-1.5 text-amber-700 dark:text-amber-400 font-semibold">
-              <ShieldAlert className="w-4 h-4 shrink-0" />
-              <span>Private Access Only</span>
-            </div>
-            <p className="text-[11px] text-slate-600 dark:text-slate-400 leading-relaxed">
-              Public registration is disabled. Only authorized administrators created by the Superadmin can sign in.
-            </p>
-          </div>
-
           {/* Error Message */}
           {error && (
             <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 dark:bg-rose-500/15 dark:border-rose-500/30 dark:text-rose-300 text-xs flex items-center gap-2">
@@ -128,7 +117,7 @@ export default function AdminLoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full mt-2 py-3 px-4 rounded-xl font-semibold text-sm bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white shadow-lg shadow-emerald-900/20 flex items-center justify-center gap-2 transition-all disabled:opacity-50"
+              className="w-full mt-2 py-3 px-4 rounded-xl font-semibold text-sm bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white shadow-lg shadow-emerald-900/20 flex items-center justify-center gap-2 transition-all disabled:opacity-50 cursor-pointer"
             >
               {loading ? (
                 <span>Authenticating...</span>
@@ -140,18 +129,6 @@ export default function AdminLoginPage() {
               )}
             </button>
           </form>
-
-          {/* Pre-seeded credentials helper for convenience */}
-          <div className="pt-4 border-t border-slate-200 dark:border-slate-800 text-center">
-            <div className="inline-flex items-center gap-1.5 text-[11px] text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-slate-900/60 px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-800/80">
-              <Sparkles className="w-3.5 h-3.5 text-amber-500 dark:text-amber-400" />
-              <span>Superadmin: </span>
-              <strong className="text-emerald-700 dark:text-emerald-400">superadmin@arabiyyah.org</strong>
-              <span className="text-slate-400">(or @bayan.org)</span>
-              <span> / </span>
-              <strong className="text-emerald-700 dark:text-emerald-400">SuperAdmin123!</strong>
-            </div>
-          </div>
         </div>
       </div>
     </div>
