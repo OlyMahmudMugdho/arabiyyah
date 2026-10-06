@@ -11,7 +11,6 @@ import {
   Layers,
   Database,
   BarChart3,
-  Activity,
 } from "lucide-react";
 import {
   getCourseRepository,
@@ -108,9 +107,6 @@ export default async function AdminDashboardPage() {
           <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white">
             {session?.name || "Administrator"}
           </h1>
-          <p className="text-sm text-slate-600 dark:text-slate-400">
-            You have {session?.role === UserRole.SUPERADMIN ? "full superadmin authorization" : "administrative access"} to manage curricula, courses, paths, books, and study guides.
-          </p>
         </div>
 
         <div className="flex flex-wrap items-center gap-3">
@@ -252,29 +248,6 @@ export default async function AdminDashboardPage() {
         ) : null}
       </div>
 
-      {/* Site Analytics & Live Intelligence Quick Banner */}
-      <div className="p-6 rounded-3xl bg-gradient-to-r from-slate-900 via-emerald-950 to-slate-900 text-white border border-emerald-900/40 shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-6 transition-all">
-        <div className="space-y-1.5">
-          <div className="flex items-center gap-2">
-            <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 flex items-center gap-1.5">
-              <Activity className="w-3 h-3 text-emerald-400" />
-              Live Site Intelligence
-            </span>
-            <span className="text-xs text-slate-300">Continuous learner telemetry</span>
-          </div>
-          <h3 className="text-base sm:text-lg font-bold">Platform Activity & Traffic Analytics</h3>
-          <p className="text-xs text-slate-300 max-w-xl leading-relaxed">
-            Monitor real-time page views, unique visitors, book downloads, search intent, zero-result inquiries, device demographics, and administrative audit logs.
-          </p>
-        </div>
-        <Link
-          href="/admin/analytics"
-          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs transition-all shrink-0 shadow-lg shadow-emerald-950/40"
-        >
-          <span>Open Analytics Suite</span>
-          <ArrowRight className="w-4 h-4" />
-        </Link>
-      </div>
 
       {/* Superadmin Data Export & Backup Section */}
       <div id="export-section">

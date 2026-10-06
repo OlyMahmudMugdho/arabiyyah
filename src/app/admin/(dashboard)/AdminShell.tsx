@@ -14,7 +14,6 @@ import {
   FolderKanban,
   LogOut,
   ExternalLink,
-  Shield,
   Menu,
   X,
   KeyRound,
@@ -286,12 +285,6 @@ export function AdminShell({ session, children }: AdminShellProps) {
             >
               <Menu className="w-5 h-5" />
             </button>
-            <div className="flex items-center gap-2">
-              <Shield className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
-              <span className="text-xs font-medium text-slate-500 dark:text-slate-400 truncate">
-                Arabiyyah Gateway • Connected to PostgreSQL 18
-              </span>
-            </div>
           </div>
 
           <div className="flex items-center gap-3">

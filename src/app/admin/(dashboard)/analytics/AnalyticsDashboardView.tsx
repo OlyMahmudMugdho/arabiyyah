@@ -17,7 +17,6 @@ import {
   RefreshCw,
   Clock,
   ArrowUpRight,
-  Activity,
   Sparkles,
   BookOpen,
   FileText,
@@ -200,11 +199,6 @@ export function AnalyticsDashboardView({
 
         <div className="space-y-2 relative z-10">
           <div className="flex items-center gap-3 flex-wrap">
-            <span className="px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 flex items-center gap-1.5">
-              <Activity className="w-3.5 h-3.5 text-emerald-400" />
-              Live Site Intelligence
-            </span>
-
             {/* Active Now Live Indicator */}
             <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-slate-800/80 border border-slate-700 text-xs font-medium">
               <span className="relative flex h-2 w-2">
@@ -221,10 +215,6 @@ export function AnalyticsDashboardView({
           <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
             Platform Analytics & Activity Tracking
           </h1>
-          <p className="text-slate-300 text-xs sm:text-sm max-w-2xl leading-relaxed">
-            Real-time telemetry measuring learner discovery, resource downloads, search intent,
-            and complete administrative governance audit logs.
-          </p>
         </div>
 
         {/* Action Bar: Timeframe Buttons & Refresh */}
