@@ -24,36 +24,32 @@ export async function seedDatabase() {
 
   console.log("🌱 Checking superadmin account...");
   const adminEmail =
-    process.env.INITIAL_SUPERADMIN_EMAIL || "superadmin@arabiyyah.org";
+    process.env.INITIAL_SUPERADMIN_EMAIL || "mugdhodzs38@gmail.com";
   const defaultPassword =
     process.env.INITIAL_SUPERADMIN_PASSWORD || "SuperAdmin123!";
   const passwordHash = await bcrypt.hash(defaultPassword, 10);
 
-  const initialEmails = Array.from(
-    new Set([
-      adminEmail,
-      "superadmin@arabiyyah.org",
-      "superadmin@bayan.org",
-      "mugdhodzs38@gmail.com",
-    ])
-  );
+  let admin = await userRepo.findOne({ where: { email: adminEmail } });
+  if (!admin) {
+    admin = userRepo.create({
+      name: process.env.INITIAL_SUPERADMIN_NAME || "Super Admin",
+      email: adminEmail,
+      passwordHash,
+      role: UserRole.SUPERADMIN,
+      permissions: Object.values(AdminPermission),
+      isActive: true,
+    });
+    await userRepo.save(admin);
+    console.log(`✅ Created default superadmin: ${adminEmail}`);
+  } else {
+    console.log(`ℹ️ Superadmin already exists: ${adminEmail}`);
+  }
 
-  for (const email of initialEmails) {
-    let admin = await userRepo.findOne({ where: { email } });
-    if (!admin) {
-      admin = userRepo.create({
-        name: process.env.INITIAL_SUPERADMIN_NAME || "Super Admin",
-        email,
-        passwordHash,
-        role: UserRole.SUPERADMIN,
-        permissions: Object.values(AdminPermission),
-        isActive: true,
-      });
-      await userRepo.save(admin);
-      console.log(`✅ Created default superadmin: ${email} (password: ${defaultPassword})`);
-    } else {
-      console.log(`ℹ️ Superadmin already exists: ${email}`);
-    }
+  // Only seed mock courses/paths/books/notes if explicitly requested via SEED_SAMPLE_DATA=true
+  const shouldSeedSampleData = process.env.SEED_SAMPLE_DATA === "true";
+  if (!shouldSeedSampleData) {
+    console.log("ℹ️ Sample dummy data seeding skipped (database is clean).");
+    return;
   }
 
   // Seed courses if empty
