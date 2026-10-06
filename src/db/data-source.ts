@@ -1,5 +1,7 @@
 import "reflect-metadata";
 import net from "node:net";
+import * as pgModule from "pg";
+import pgDefault from "pg";
 import { DataSource, Repository } from "typeorm";
 import {
   UserSchema,
@@ -29,6 +31,13 @@ if (typeof net.setDefaultAutoSelectFamily === "function") {
   net.setDefaultAutoSelectFamily(false);
 }
 
+const pgDriver =
+  (pgDefault as { Pool?: unknown })?.Pool
+    ? pgDefault
+    : (pgModule as { Pool?: unknown })?.Pool
+    ? pgModule
+    : (pgModule as { default?: unknown })?.default;
+
 const globalForTypeOrm = globalThis as unknown as {
   appDataSource?: DataSource;
 };
@@ -43,6 +52,7 @@ export const AppDataSource =
   new DataSource({
     type: "postgres",
     url: dbUrl,
+    driver: pgDriver,
     ssl: isSsl ? { rejectUnauthorized: false } : false,
     synchronize: true,
     logging: process.env.NODE_ENV === "development" ? ["error", "warn"] : false,
