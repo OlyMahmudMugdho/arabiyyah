@@ -30,7 +30,12 @@ export async function seedDatabase() {
   const passwordHash = await bcrypt.hash(defaultPassword, 10);
 
   const initialEmails = Array.from(
-    new Set([adminEmail, "superadmin@arabiyyah.org", "superadmin@bayan.org"])
+    new Set([
+      adminEmail,
+      "superadmin@arabiyyah.org",
+      "superadmin@bayan.org",
+      "mugdhodzs38@gmail.com",
+    ])
   );
 
   for (const email of initialEmails) {

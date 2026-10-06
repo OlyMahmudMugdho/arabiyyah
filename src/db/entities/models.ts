@@ -22,6 +22,9 @@ export interface User {
   role: UserRole;
   permissions: string[];
   isActive: boolean;
+  resetPasswordToken?: string | null;
+  resetPasswordOtp?: string | null;
+  resetPasswordExpires?: Date | null;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -37,6 +40,9 @@ export const UserSchema = new EntitySchema<User>({
     role: { type: "varchar", length: 50, default: UserRole.ADMIN },
     permissions: { type: "simple-array", default: "" },
     isActive: { type: "boolean", default: true },
+    resetPasswordToken: { type: "varchar", length: 255, nullable: true },
+    resetPasswordOtp: { type: "varchar", length: 20, nullable: true },
+    resetPasswordExpires: { type: "timestamp", nullable: true },
     createdAt: { type: "timestamp", createDate: true },
     updatedAt: { type: "timestamp", updateDate: true },
   },

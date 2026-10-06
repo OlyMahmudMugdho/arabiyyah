@@ -17,9 +17,12 @@ import {
   Shield,
   Menu,
   X,
+  KeyRound,
+  CheckCircle2,
+  AlertCircle,
 } from "lucide-react";
 import { UserRole } from "@/db/entities";
-import { logoutAdminAction } from "@/actions/auth-actions";
+import { logoutAdminAction, changePasswordAction } from "@/actions/auth-actions";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import type { SessionPayload } from "@/lib/auth";
 
@@ -38,6 +41,51 @@ export function AdminShell({ session, children }: AdminShellProps) {
   }, [pathname]);
 
   const isSuperadmin = session.role === UserRole.SUPERADMIN;
+
+  const [passwordModalOpen, setPasswordModalOpen] = useState(false);
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [passwordLoading, setPasswordLoading] = useState(false);
+  const [passwordError, setPasswordError] = useState<string | null>(null);
+  const [passwordSuccess, setPasswordSuccess] = useState<string | null>(null);
+
+  const handlePasswordSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setPasswordError(null);
+    setPasswordSuccess(null);
+
+    if (newPassword.length < 8) {
+      setPasswordError("New password must be at least 8 characters long.");
+      return;
+    }
+
+    if (newPassword !== confirmPassword) {
+      setPasswordError("New passwords do not match.");
+      return;
+    }
+
+    setPasswordLoading(true);
+    try {
+      const res = await changePasswordAction(currentPassword, newPassword);
+      if (res.error) {
+        setPasswordError(res.error);
+      } else {
+        setPasswordSuccess("Password updated successfully!");
+        setCurrentPassword("");
+        setNewPassword("");
+        setConfirmPassword("");
+        setTimeout(() => {
+          setPasswordModalOpen(false);
+          setPasswordSuccess(null);
+        }, 1800);
+      }
+    } catch {
+      setPasswordError("An unexpected error occurred.");
+    } finally {
+      setPasswordLoading(false);
+    }
+  };
 
   const navItems = [
     { name: "Overview", href: "/admin", icon: LayoutDashboard },
@@ -171,15 +219,29 @@ export function AdminShell({ session, children }: AdminShellProps) {
           </span>
         </div>
 
-        <form action={logoutAdminAction}>
+        <div className="space-y-1.5">
           <button
-            type="submit"
-            className="w-full flex items-center justify-center gap-2 py-2 px-3 rounded-lg bg-white hover:bg-rose-50 hover:text-rose-600 hover:border-rose-300 text-slate-700 text-xs font-medium transition-colors border border-slate-200 dark:bg-slate-800/80 dark:hover:bg-rose-950/40 dark:hover:text-rose-300 dark:text-slate-300 dark:border-slate-700/60 shadow-xs cursor-pointer"
+            type="button"
+            onClick={() => {
+              if (isMobile) setMobileOpen(false);
+              setPasswordModalOpen(true);
+            }}
+            className="w-full flex items-center justify-center gap-2 py-2 px-3 rounded-lg bg-white hover:bg-slate-100 hover:text-slate-900 text-slate-700 text-xs font-medium transition-colors border border-slate-200 dark:bg-slate-800/80 dark:hover:bg-slate-700 dark:text-slate-300 dark:border-slate-700/60 shadow-2xs cursor-pointer"
           >
-            <LogOut className="w-3.5 h-3.5 shrink-0" />
-            <span>Sign Out</span>
+            <KeyRound className="w-3.5 h-3.5 shrink-0 text-slate-400 dark:text-slate-500" />
+            <span>Change Password</span>
           </button>
-        </form>
+
+          <form action={logoutAdminAction}>
+            <button
+              type="submit"
+              className="w-full flex items-center justify-center gap-2 py-2 px-3 rounded-lg bg-white hover:bg-rose-50 hover:text-rose-600 hover:border-rose-300 text-slate-700 text-xs font-medium transition-colors border border-slate-200 dark:bg-slate-800/80 dark:hover:bg-rose-950/40 dark:hover:text-rose-300 dark:text-slate-300 dark:border-slate-700/60 shadow-2xs cursor-pointer"
+            >
+              <LogOut className="w-3.5 h-3.5 shrink-0" />
+              <span>Sign Out</span>
+            </button>
+          </form>
+        </div>
       </div>
     </div>
   );
@@ -247,6 +309,111 @@ export function AdminShell({ session, children }: AdminShellProps) {
         {/* Page Content */}
         <main className="p-4 sm:p-6 md:p-10 flex-1">{children}</main>
       </div>
+
+      {/* Change Password Modal */}
+      {passwordModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-xs">
+          <div className="w-full max-w-md rounded-3xl bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800 p-6 shadow-2xl space-y-5">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
+              <div className="flex items-center gap-2.5">
+                <div className="w-9 h-9 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center border border-emerald-500/20">
+                  <KeyRound className="w-4 h-4" />
+                </div>
+                <div>
+                  <h3 className="text-sm font-bold text-slate-900 dark:text-white">
+                    Change Password
+                  </h3>
+                  <p className="text-[11px] text-slate-500 dark:text-slate-400">
+                    Update credentials for {session.email}
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setPasswordModalOpen(false)}
+                className="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {passwordError && (
+              <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 dark:bg-rose-500/15 dark:border-rose-500/30 dark:text-rose-300 text-xs flex items-center gap-2">
+                <AlertCircle className="w-4 h-4 shrink-0" />
+                <span>{passwordError}</span>
+              </div>
+            )}
+
+            {passwordSuccess && (
+              <div className="p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 dark:bg-emerald-500/15 dark:border-emerald-500/30 dark:text-emerald-300 text-xs flex items-center gap-2">
+                <CheckCircle2 className="w-4 h-4 shrink-0" />
+                <span>{passwordSuccess}</span>
+              </div>
+            )}
+
+            <form onSubmit={handlePasswordSubmit} className="space-y-4">
+              <div className="space-y-1">
+                <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+                  Current Password
+                </label>
+                <input
+                  type="password"
+                  required
+                  value={currentPassword}
+                  onChange={(e) => setCurrentPassword(e.target.value)}
+                  placeholder="••••••••••••"
+                  className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 dark:bg-slate-900 dark:border-slate-700/80 dark:text-white text-xs focus:outline-none focus:border-emerald-500 transition-colors"
+                />
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+                  New Password
+                </label>
+                <input
+                  type="password"
+                  required
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  placeholder="Minimum 8 characters"
+                  className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 dark:bg-slate-900 dark:border-slate-700/80 dark:text-white text-xs focus:outline-none focus:border-emerald-500 transition-colors"
+                />
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+                  Confirm New Password
+                </label>
+                <input
+                  type="password"
+                  required
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  placeholder="Re-enter new password"
+                  className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 dark:bg-slate-900 dark:border-slate-700/80 dark:text-white text-xs focus:outline-none focus:border-emerald-500 transition-colors"
+                />
+              </div>
+
+              <div className="flex items-center justify-end gap-2 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setPasswordModalOpen(false)}
+                  className="px-3.5 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={passwordLoading}
+                  className="px-4 py-2 rounded-xl text-xs font-semibold bg-emerald-600 hover:bg-emerald-500 text-white shadow-xs transition-colors disabled:opacity-50 cursor-pointer"
+                >
+                  {passwordLoading ? "Saving..." : "Update Password"}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

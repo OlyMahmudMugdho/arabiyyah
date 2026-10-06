@@ -14,12 +14,17 @@ import {
   X,
   Check,
   Lock,
+  RotateCcw,
+  Copy,
+  KeyRound,
+  CheckCircle2,
 } from "lucide-react";
 import { UserRole, AdminPermission } from "@/db/entities";
 import {
   createAdminUserAction,
   updateAdminUserAction,
   deleteAdminUserAction,
+  superadminResetUserPasswordAction,
 } from "@/actions/user-actions";
 
 interface AdminUser {
@@ -54,6 +59,55 @@ export function UserManager({ initialUsers, currentUserId }: UserManagerProps) {
     AdminPermission.MANAGE_PATHS,
   ]);
   const [isActive, setIsActive] = useState(true);
+
+  // Superadmin Reset Password states
+  const [resetModalOpen, setResetModalOpen] = useState(false);
+  const [resetTargetUser, setResetTargetUser] = useState<AdminUser | null>(null);
+  const [resetCustomPassword, setResetCustomPassword] = useState("");
+  const [resetResultPassword, setResetResultPassword] = useState<string | null>(null);
+  const [resetCopied, setResetCopied] = useState(false);
+  const [resetLoading, setResetLoading] = useState(false);
+  const [resetError, setResetError] = useState<string | null>(null);
+
+  const openResetModal = (user: AdminUser) => {
+    setResetTargetUser(user);
+    setResetCustomPassword("");
+    setResetResultPassword(null);
+    setResetCopied(false);
+    setResetError(null);
+    setResetModalOpen(true);
+  };
+
+  const handleSuperadminReset = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!resetTargetUser) return;
+    setResetLoading(true);
+    setResetError(null);
+
+    try {
+      const res = await superadminResetUserPasswordAction(
+        resetTargetUser.id,
+        resetCustomPassword || undefined
+      );
+
+      if (res.error) {
+        setResetError(res.error);
+      } else if (res.newPassword) {
+        setResetResultPassword(res.newPassword);
+      }
+    } catch {
+      setResetError("Failed to reset password. Please try again.");
+    } finally {
+      setResetLoading(false);
+    }
+  };
+
+  const handleCopyNewPassword = () => {
+    if (!resetResultPassword) return;
+    navigator.clipboard.writeText(resetResultPassword);
+    setResetCopied(true);
+    setTimeout(() => setResetCopied(false), 2000);
+  };
 
   const allAvailablePermissions = [
     {
@@ -314,6 +368,13 @@ export function UserManager({ initialUsers, currentUserId }: UserManagerProps) {
 
                     <td className="py-3.5 px-4 whitespace-nowrap text-right space-x-2">
                       <button
+                        onClick={() => openResetModal(u)}
+                        className="p-1.5 rounded-lg bg-slate-100 hover:bg-amber-50 text-slate-600 hover:text-amber-700 dark:bg-slate-800 dark:hover:bg-amber-950/60 dark:text-slate-300 dark:hover:text-amber-300 transition-colors"
+                        title="Reset User Password"
+                      >
+                        <KeyRound className="w-3.5 h-3.5" />
+                      </button>
+                      <button
                         onClick={() => openEditModal(u)}
                         className="p-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-600 hover:text-slate-900 dark:bg-slate-800 dark:hover:bg-slate-700 dark:text-slate-300 dark:hover:text-white transition-colors"
                         title="Edit Permissions"
@@ -502,6 +563,126 @@ export function UserManager({ initialUsers, currentUserId }: UserManagerProps) {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Superadmin Reset Password Modal */}
+      {resetModalOpen && resetTargetUser && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-xs">
+          <div className="w-full max-w-md rounded-3xl bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800 p-6 shadow-2xl space-y-5">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
+              <div className="flex items-center gap-2.5">
+                <div className="w-9 h-9 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center border border-amber-500/20">
+                  <KeyRound className="w-4 h-4" />
+                </div>
+                <div>
+                  <h3 className="text-sm font-bold text-slate-900 dark:text-white">
+                    Reset User Password
+                  </h3>
+                  <p className="text-[11px] text-slate-500 dark:text-slate-400">
+                    Administrator: {resetTargetUser.name} ({resetTargetUser.email})
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setResetModalOpen(false)}
+                className="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {resetError && (
+              <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 dark:bg-rose-500/15 dark:border-rose-500/30 dark:text-rose-300 text-xs flex items-center gap-2">
+                <ShieldAlert className="w-4 h-4 shrink-0" />
+                <span>{resetError}</span>
+              </div>
+            )}
+
+            {resetResultPassword ? (
+              <div className="space-y-4">
+                <div className="p-4 rounded-2xl bg-emerald-50 dark:bg-emerald-500/15 border border-emerald-200 dark:border-emerald-500/30 space-y-2">
+                  <div className="flex items-center gap-2 text-xs font-bold text-emerald-800 dark:text-emerald-300">
+                    <CheckCircle2 className="w-4 h-4 shrink-0" />
+                    <span>Password Reset Successfully!</span>
+                  </div>
+                  <p className="text-[11px] text-slate-600 dark:text-slate-300">
+                    Please securely share this new credential with {resetTargetUser.name}.
+                  </p>
+                </div>
+
+                <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 flex items-center justify-between gap-3">
+                  <div className="font-mono text-sm font-bold text-slate-900 dark:text-white tracking-wider select-all">
+                    {resetResultPassword}
+                  </div>
+                  <button
+                    type="button"
+                    onClick={handleCopyNewPassword}
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors cursor-pointer shrink-0"
+                  >
+                    {resetCopied ? (
+                      <>
+                        <Check className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+                        <span className="text-emerald-600 dark:text-emerald-400">Copied</span>
+                      </>
+                    ) : (
+                      <>
+                        <Copy className="w-3.5 h-3.5" />
+                        <span>Copy</span>
+                      </>
+                    )}
+                  </button>
+                </div>
+
+                <div className="flex justify-end pt-2">
+                  <button
+                    type="button"
+                    onClick={() => setResetModalOpen(false)}
+                    className="px-4 py-2 rounded-xl text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-white dark:bg-slate-700 dark:hover:bg-slate-600 transition-colors cursor-pointer"
+                  >
+                    Done
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <form onSubmit={handleSuperadminReset} className="space-y-4">
+                <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/20 text-[11px] text-amber-800 dark:text-amber-300 leading-relaxed">
+                  As Superadmin, you can assign a custom password below, or leave it blank to automatically generate a secure 8+ character password.
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+                    Custom New Password (Optional)
+                  </label>
+                  <input
+                    type="text"
+                    value={resetCustomPassword}
+                    onChange={(e) => setResetCustomPassword(e.target.value)}
+                    placeholder="Leave blank for auto-generated password"
+                    className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 dark:bg-slate-900 dark:border-slate-700/80 dark:text-white text-xs focus:outline-none focus:border-amber-500 transition-colors font-mono"
+                  />
+                </div>
+
+                <div className="flex items-center justify-end gap-2 pt-2 border-t border-slate-100 dark:border-slate-800">
+                  <button
+                    type="button"
+                    onClick={() => setResetModalOpen(false)}
+                    className="px-3.5 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={resetLoading}
+                    className="px-4 py-2 rounded-xl text-xs font-semibold bg-amber-600 hover:bg-amber-500 text-white dark:text-slate-950 font-bold transition-colors disabled:opacity-50 cursor-pointer shadow-xs"
+                  >
+                    {resetLoading ? "Resetting..." : "Reset Password"}
+                  </button>
+                </div>
+              </form>
+            )}
           </div>
         </div>
       )}

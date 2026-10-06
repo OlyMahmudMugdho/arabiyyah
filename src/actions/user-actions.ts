@@ -200,3 +200,46 @@ export async function deleteAdminUserAction(id: string) {
     return { error: "Failed to delete user." };
   }
 }
+
+export async function superadminResetUserPasswordAction(
+  userId: string,
+  newPassword?: string
+) {
+  const session = await getSession();
+  if (!session || session.role !== UserRole.SUPERADMIN) {
+    return { error: "Unauthorized. Only superadmin can reset user passwords." };
+  }
+
+  try {
+    const userRepo = await getUserRepository();
+    const user = await userRepo.findOne({ where: { id: userId } });
+    if (!user) return { error: "User not found." };
+
+    const effectivePassword =
+      newPassword && newPassword.trim().length >= 8
+        ? newPassword.trim()
+        : Math.random().toString(36).slice(-8) + "Aa1!";
+
+    user.passwordHash = await bcrypt.hash(effectivePassword, 10);
+    user.resetPasswordToken = null;
+    user.resetPasswordExpires = null;
+    await userRepo.save(user);
+
+    await logActivity({
+      action: "superadmin_password_reset",
+      userId: session.userId,
+      userName: session.name,
+      userEmail: session.email,
+      details: { targetUserId: user.id, targetUserEmail: user.email },
+    });
+
+    return {
+      success: true,
+      newPassword: effectivePassword,
+      message: `Password for ${user.email} has been updated.`,
+    };
+  } catch (err: unknown) {
+    console.error("Failed to reset user password:", err);
+    return { error: "Failed to reset user password." };
+  }
+}
