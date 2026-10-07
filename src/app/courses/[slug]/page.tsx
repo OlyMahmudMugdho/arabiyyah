@@ -55,56 +55,82 @@ export default async function CourseDetailPage({
         </Link>
 
         {/* Course Header Banner */}
-        <div className="rounded-3xl bg-white border border-slate-200 shadow-sm dark:bg-[#0f172a]/80 dark:border-slate-800 p-6 md:p-10 space-y-6 transition-colors">
-          <div className="flex flex-wrap items-center gap-3">
-            <span className="px-3 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800 border border-emerald-300 dark:bg-emerald-500/10 dark:text-emerald-300 dark:border-emerald-500/20">
-              {course.category}
-            </span>
-            <span className="px-3 py-1 rounded-full text-xs font-semibold bg-amber-100 text-amber-800 border border-amber-300 dark:bg-amber-500/10 dark:text-amber-300 dark:border-amber-500/20">
-              {course.level}
-            </span>
-            <span className="px-3 py-1 rounded-full text-xs font-medium bg-slate-100 text-slate-700 border border-slate-300 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700 flex items-center gap-1.5">
-              <Globe className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
-              <span>Language: {course.language}</span>
-            </span>
-          </div>
-
-          <div className="space-y-2">
-            <h1 className="text-2xl md:text-4xl font-extrabold text-slate-900 dark:text-white">
-              {course.title}
-            </h1>
-            {course.titleArabic && (
-              <p className="font-arabic text-xl md:text-2xl font-bold text-emerald-700 dark:text-emerald-400">
-                {course.titleArabic}
-              </p>
+        <div className="rounded-3xl bg-white border border-slate-200 shadow-sm dark:bg-[#0f172a]/80 dark:border-slate-800 p-6 md:p-8 transition-colors overflow-hidden">
+          <div className={course.thumbnailUrl ? "grid grid-cols-1 lg:grid-cols-12 gap-8 items-center" : "space-y-6"}>
+            {course.thumbnailUrl && (
+              <div className="lg:col-span-5 relative aspect-video lg:aspect-4/3 w-full rounded-2xl overflow-hidden bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-md group shrink-0">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={course.thumbnailUrl}
+                  alt={course.title}
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-transparent pointer-events-none" />
+                <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between text-xs text-white/90">
+                  <span className="px-2 py-0.5 rounded-md bg-black/60 backdrop-blur-xs font-semibold text-[11px]">
+                    {course.category}
+                  </span>
+                  {course.titleArabic && (
+                    <span className="font-arabic font-bold text-emerald-300 text-xs truncate max-w-[50%]" dir="rtl">
+                      {course.titleArabic}
+                    </span>
+                  )}
+                </div>
+              </div>
             )}
-          </div>
 
-          <div className="flex flex-wrap items-center gap-6 text-sm text-slate-600 dark:text-slate-300 pt-2 border-t border-slate-200 dark:border-slate-800">
-            <div className="flex items-center gap-2">
-              <User className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
-              <span>Instructor: <strong className="text-slate-900 dark:text-white">{course.instructor}</strong></span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Clock className="w-4 h-4 text-amber-600 dark:text-amber-400" />
-              <span>Duration: <strong className="text-slate-900 dark:text-white">{course.duration}</strong></span>
+            <div className={course.thumbnailUrl ? "lg:col-span-7 space-y-6" : "space-y-6"}>
+              <div className="flex flex-wrap items-center gap-3">
+                <span className="px-3 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800 border border-emerald-300 dark:bg-emerald-500/10 dark:text-emerald-300 dark:border-emerald-500/20">
+                  {course.category}
+                </span>
+                <span className="px-3 py-1 rounded-full text-xs font-semibold bg-amber-100 text-amber-800 border border-amber-300 dark:bg-amber-500/10 dark:text-amber-300 dark:border-amber-500/20">
+                  {course.level}
+                </span>
+                <span className="px-3 py-1 rounded-full text-xs font-medium bg-slate-100 text-slate-700 border border-slate-300 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700 flex items-center gap-1.5">
+                  <Globe className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+                  <span>Language: {course.language}</span>
+                </span>
+              </div>
+
+              <div className="space-y-2">
+                <h1 className="text-2xl md:text-3xl lg:text-4xl font-extrabold text-slate-900 dark:text-white">
+                  {course.title}
+                </h1>
+                {course.titleArabic && (
+                  <p className="font-arabic text-xl md:text-2xl font-bold text-emerald-700 dark:text-emerald-400">
+                    {course.titleArabic}
+                  </p>
+                )}
+              </div>
+
+              <div className="flex flex-wrap items-center gap-6 text-sm text-slate-600 dark:text-slate-300 pt-2 border-t border-slate-200 dark:border-slate-800">
+                <div className="flex items-center gap-2">
+                  <User className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+                  <span>Instructor: <strong className="text-slate-900 dark:text-white">{course.instructor}</strong></span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Clock className="w-4 h-4 text-amber-600 dark:text-amber-400" />
+                  <span>Duration: <strong className="text-slate-900 dark:text-white">{course.duration}</strong></span>
+                </div>
+              </div>
+
+              {/* Action Button */}
+              {course.resourceUrl && (
+                <div className="pt-2">
+                  <a
+                    href={course.resourceUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-sm shadow-lg shadow-emerald-900/20 transition-all"
+                  >
+                    <span>Access Course Content / Video Series</span>
+                    <ExternalLink className="w-4 h-4" />
+                  </a>
+                </div>
+              )}
             </div>
           </div>
-
-          {/* Action Button */}
-          {course.resourceUrl && (
-            <div className="pt-2">
-              <a
-                href={course.resourceUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-sm shadow-lg shadow-emerald-900/20 transition-all"
-              >
-                <span>Access Course Content / Video Series</span>
-                <ExternalLink className="w-4 h-4" />
-              </a>
-            </div>
-          )}
         </div>
 
         {/* Course Description & Syllabus Grid */}

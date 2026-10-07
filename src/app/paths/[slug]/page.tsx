@@ -35,6 +35,11 @@ export default async function PathDetailPage({
       0
     ) || 0;
 
+  const featuredCourse = path.sections
+    ?.flatMap((s) => s.pathCourses || [])
+    .map((pc) => pc.course)
+    .find((c) => Boolean(c?.thumbnailUrl));
+
   return (
     <div className="min-h-screen flex flex-col bg-slate-50 bg-arabesque text-slate-900 dark:bg-[#0b101b] dark:text-slate-100 transition-colors duration-200">
       <Navbar />
@@ -50,39 +55,65 @@ export default async function PathDetailPage({
         </Link>
 
         {/* Path Header */}
-        <div className="rounded-3xl bg-white border border-slate-200 shadow-sm dark:bg-[#0f172a]/90 dark:border-slate-800 p-6 md:p-10 space-y-6 transition-colors">
-          <div className="flex flex-wrap items-center gap-3">
-            <span className="px-3 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800 border border-emerald-300 dark:bg-emerald-500/10 dark:text-emerald-300 dark:border-emerald-500/20">
-              {path.level}
-            </span>
-            <span className="px-3 py-1 rounded-full text-xs font-medium bg-slate-100 text-slate-700 border border-slate-300 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700 flex items-center gap-1.5">
-              <Clock className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
-              <span>{path.estimatedHours} Total Roadmap</span>
-            </span>
-            <span className="px-3 py-1 rounded-full text-xs font-medium bg-slate-100 text-slate-700 border border-slate-300 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700 flex items-center gap-1.5">
-              <Layers className="w-3.5 h-3.5 text-teal-600 dark:text-cyan-400" />
-              <span>{path.sections?.length || 0} Milestone Stages</span>
-            </span>
-            <span className="px-3 py-1 rounded-full text-xs font-medium bg-slate-100 text-slate-700 border border-slate-300 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700 flex items-center gap-1.5">
-              <GraduationCap className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
-              <span>{totalCourses} Courses Combined</span>
-            </span>
-          </div>
-
-          <div className="space-y-2">
-            <h1 className="text-2xl md:text-4xl font-extrabold text-slate-900 dark:text-white">
-              {path.title}
-            </h1>
-            {path.titleArabic && (
-              <p className="font-arabic text-xl md:text-2xl font-bold text-emerald-700 dark:text-emerald-400">
-                {path.titleArabic}
-              </p>
+        <div className="rounded-3xl bg-white border border-slate-200 shadow-sm dark:bg-[#0f172a]/90 dark:border-slate-800 p-6 md:p-8 space-y-6 transition-colors overflow-hidden">
+          <div className={featuredCourse?.thumbnailUrl ? "grid grid-cols-1 md:grid-cols-12 gap-8 items-center" : "space-y-6"}>
+            {featuredCourse?.thumbnailUrl && (
+              <div className="md:col-span-5 relative aspect-video md:aspect-4/3 w-full rounded-2xl overflow-hidden bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-md group shrink-0">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={featuredCourse.thumbnailUrl}
+                  alt={path.title}
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent pointer-events-none" />
+                <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between text-xs text-white/90">
+                  <span className="px-2 py-0.5 rounded-md bg-black/60 backdrop-blur-xs font-semibold text-[11px]">
+                    Curriculum Roadmap
+                  </span>
+                  {featuredCourse.title && (
+                    <span className="font-semibold text-emerald-300 text-xs truncate max-w-[55%]">
+                      {featuredCourse.title}
+                    </span>
+                  )}
+                </div>
+              </div>
             )}
-          </div>
 
-          <p className="text-slate-600 dark:text-slate-300 text-sm sm:text-base leading-relaxed max-w-3xl">
-            {path.description}
-          </p>
+            <div className={featuredCourse?.thumbnailUrl ? "md:col-span-7 space-y-6" : "space-y-6"}>
+              <div className="flex flex-wrap items-center gap-3">
+                <span className="px-3 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800 border border-emerald-300 dark:bg-emerald-500/10 dark:text-emerald-300 dark:border-emerald-500/20">
+                  {path.level}
+                </span>
+                <span className="px-3 py-1 rounded-full text-xs font-medium bg-slate-100 text-slate-700 border border-slate-300 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700 flex items-center gap-1.5">
+                  <Clock className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
+                  <span>{path.estimatedHours} Total Roadmap</span>
+                </span>
+                <span className="px-3 py-1 rounded-full text-xs font-medium bg-slate-100 text-slate-700 border border-slate-300 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700 flex items-center gap-1.5">
+                  <Layers className="w-3.5 h-3.5 text-teal-600 dark:text-cyan-400" />
+                  <span>{path.sections?.length || 0} Milestone Stages</span>
+                </span>
+                <span className="px-3 py-1 rounded-full text-xs font-medium bg-slate-100 text-slate-700 border border-slate-300 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700 flex items-center gap-1.5">
+                  <GraduationCap className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+                  <span>{totalCourses} Courses Combined</span>
+                </span>
+              </div>
+
+              <div className="space-y-2">
+                <h1 className="text-2xl md:text-4xl font-extrabold text-slate-900 dark:text-white">
+                  {path.title}
+                </h1>
+                {path.titleArabic && (
+                  <p className="font-arabic text-xl md:text-2xl font-bold text-emerald-700 dark:text-emerald-400">
+                    {path.titleArabic}
+                  </p>
+                )}
+              </div>
+
+              <p className="text-slate-600 dark:text-slate-300 text-sm sm:text-base leading-relaxed max-w-3xl">
+                {path.description}
+              </p>
+            </div>
+          </div>
         </div>
 
         {/* Multi-Section Roadmap Timeline */}
@@ -143,10 +174,39 @@ export default async function PathDetailPage({
                           return (
                             <div
                               key={pc.id}
-                              className="p-5 rounded-2xl bg-white border border-slate-200 shadow-xs hover:border-emerald-500/50 hover:shadow-md dark:bg-[#0f172a] dark:border-slate-800 dark:hover:border-emerald-500/40 flex flex-col justify-between space-y-4 transition-all"
+                              className="rounded-2xl bg-white border border-slate-200 shadow-xs hover:border-emerald-500/50 hover:shadow-md dark:bg-[#0f172a] dark:border-slate-800 dark:hover:border-emerald-500/40 flex flex-col justify-between overflow-hidden transition-all group"
                             >
-                              <div className="space-y-2">
-                                <div className="flex items-center justify-between gap-2">
+                              {course.thumbnailUrl ? (
+                                <div className="relative h-36 sm:h-40 w-full overflow-hidden bg-slate-900 shrink-0">
+                                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                                  <img
+                                    src={course.thumbnailUrl}
+                                    alt={course.title}
+                                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                                  />
+                                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent" />
+                                  <div className="absolute top-2.5 left-2.5 right-2.5 flex items-center justify-between gap-2">
+                                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-slate-900/80 backdrop-blur-xs text-slate-200 border border-slate-700/60 shadow-2xs">
+                                      Step {sIndex + 1}.{cIndex + 1}
+                                    </span>
+                                    <span
+                                      className={`text-[10px] font-semibold px-2 py-0.5 rounded-md backdrop-blur-xs ${
+                                        pc.isMandatory
+                                          ? "bg-emerald-900/80 text-emerald-200 border border-emerald-500/40"
+                                          : "bg-amber-900/80 text-amber-200 border border-amber-500/40"
+                                      }`}
+                                    >
+                                      {pc.isMandatory ? "Mandatory" : "Optional"}
+                                    </span>
+                                  </div>
+                                  {course.titleArabic && (
+                                    <div className="absolute bottom-2 right-3 font-arabic text-right text-xs font-bold text-emerald-300 drop-shadow-sm" dir="rtl">
+                                      {course.titleArabic}
+                                    </div>
+                                  )}
+                                </div>
+                              ) : (
+                                <div className="p-5 pb-0 flex items-center justify-between gap-2">
                                   <span className="text-[11px] font-bold text-slate-500 dark:text-slate-400">
                                     Step {sIndex + 1}.{cIndex + 1}
                                   </span>
@@ -160,56 +220,60 @@ export default async function PathDetailPage({
                                     {pc.isMandatory ? "Mandatory" : "Optional"}
                                   </span>
                                 </div>
+                              )}
 
-                                <h5 className="font-bold text-base text-slate-900 hover:text-emerald-600 dark:text-white dark:hover:text-emerald-300 transition-colors">
-                                  <Link href={`/courses/${course.slug}`}>
-                                    {course.title}
-                                  </Link>
-                                </h5>
+                              <div className="p-5 flex-1 flex flex-col justify-between space-y-4">
+                                <div className="space-y-2">
+                                  <h5 className="font-bold text-base text-slate-900 hover:text-emerald-600 dark:text-white dark:hover:text-emerald-300 transition-colors">
+                                    <Link href={`/courses/${course.slug}`}>
+                                      {course.title}
+                                    </Link>
+                                  </h5>
 
-                                {course.titleArabic && (
-                                  <p className="font-arabic text-xs font-medium text-emerald-700 dark:text-emerald-400/90">
-                                    {course.titleArabic}
-                                  </p>
-                                )}
-
-                                <p className="text-xs text-slate-600 dark:text-slate-400 line-clamp-2">
-                                  {course.description}
-                                </p>
-
-                                {pc.customNotes && (
-                                  <div className="mt-2 p-2.5 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 dark:bg-slate-900/90 dark:border-slate-800 text-xs dark:text-amber-300/90 flex items-start gap-2">
-                                    <Info className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
-                                    <span className="leading-snug">
-                                      {pc.customNotes}
-                                    </span>
-                                  </div>
-                                )}
-                              </div>
-
-                              <div className="pt-3 border-t border-slate-200 dark:border-slate-800/80 flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
-                                <div className="flex items-center gap-1.5">
-                                  <Globe className="w-3.5 h-3.5 text-slate-400 dark:text-slate-500" />
-                                  <span>{course.language}</span>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                  <Link
-                                    href={`/courses/${course.slug}`}
-                                    className="px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-emerald-600 hover:text-white text-slate-800 dark:bg-slate-800 dark:hover:bg-emerald-600 dark:text-white font-medium transition-colors text-xs"
-                                  >
-                                    Details
-                                  </Link>
-                                  {course.resourceUrl && (
-                                    <a
-                                      href={course.resourceUrl}
-                                      target="_blank"
-                                      rel="noopener noreferrer"
-                                      className="p-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 hover:text-slate-900 dark:bg-slate-800 dark:hover:bg-slate-700 dark:text-slate-300 dark:hover:text-white transition-colors border border-slate-200 dark:border-slate-700/60"
-                                      title="Open Source Video/Material"
-                                    >
-                                      <ExternalLink className="w-4 h-4" />
-                                    </a>
+                                  {course.titleArabic && !course.thumbnailUrl && (
+                                    <p className="font-arabic text-xs font-medium text-emerald-700 dark:text-emerald-400/90">
+                                      {course.titleArabic}
+                                    </p>
                                   )}
+
+                                  <p className="text-xs text-slate-600 dark:text-slate-400 line-clamp-2">
+                                    {course.description}
+                                  </p>
+
+                                  {pc.customNotes && (
+                                    <div className="mt-2 p-2.5 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 dark:bg-slate-900/90 dark:border-slate-800 text-xs dark:text-amber-300/90 flex items-start gap-2">
+                                      <Info className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
+                                      <span className="leading-snug">
+                                        {pc.customNotes}
+                                      </span>
+                                    </div>
+                                  )}
+                                </div>
+
+                                <div className="pt-3 border-t border-slate-200 dark:border-slate-800/80 flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
+                                  <div className="flex items-center gap-1.5">
+                                    <Globe className="w-3.5 h-3.5 text-slate-400 dark:text-slate-500" />
+                                    <span>{course.language}</span>
+                                  </div>
+                                  <div className="flex items-center gap-2">
+                                    <Link
+                                      href={`/courses/${course.slug}`}
+                                      className="px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-emerald-600 hover:text-white text-slate-800 dark:bg-slate-800 dark:hover:bg-emerald-600 dark:text-white font-medium transition-colors text-xs"
+                                    >
+                                      Details
+                                    </Link>
+                                    {course.resourceUrl && (
+                                      <a
+                                        href={course.resourceUrl}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="p-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 hover:text-slate-900 dark:bg-slate-800 dark:hover:bg-slate-700 dark:text-slate-300 dark:hover:text-white transition-colors border border-slate-200 dark:border-slate-700/60"
+                                        title="Open Source Video/Material"
+                                      >
+                                        <ExternalLink className="w-4 h-4" />
+                                      </a>
+                                    )}
+                                  </div>
                                 </div>
                               </div>
                             </div>

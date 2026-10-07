@@ -9,12 +9,10 @@ import {
   Loader2,
   Check,
   AlertCircle,
-  Globe,
-  Clock,
-  Sparkles,
 } from "lucide-react";
 import { createCourseAction } from "@/actions/course-actions";
 import { createCategoryAction } from "@/actions/category-actions";
+import { CourseThumbnailUploader } from "@/components/admin/CourseThumbnailUploader";
 
 interface CourseCreateFormProps {
   initialCategories: string[];
@@ -40,6 +38,7 @@ export function CourseCreateForm({ initialCategories }: CourseCreateFormProps) {
   const [isPublished, setIsPublished] = useState(true);
 
   const [loading, setLoading] = useState(false);
+  const [uploadingImage, setUploadingImage] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const existingCategories = useMemo(() => {
@@ -315,33 +314,31 @@ export function CourseCreateForm({ initialCategories }: CourseCreateFormProps) {
           )}
         </div>
 
-        {/* Thumbnail & Resource URL */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="space-y-1.5">
-            <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
-              Thumbnail Image URL (Optional)
-            </label>
-            <input
-              type="url"
-              placeholder="https://images.unsplash.com/..."
-              value={thumbnailUrl}
-              onChange={(e) => setThumbnailUrl(e.target.value)}
-              className="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 dark:bg-slate-900 dark:border-slate-700 dark:text-white text-xs placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-emerald-500"
-            />
-          </div>
+        {/* Course Thumbnail */}
+        <div className="space-y-1.5">
+          <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
+            Course Thumbnail (Upload Image File or URL)
+          </label>
+          <CourseThumbnailUploader
+            value={thumbnailUrl}
+            onChange={setThumbnailUrl}
+            onUploadStateChange={setUploadingImage}
+            disabled={loading}
+          />
+        </div>
 
-          <div className="space-y-1.5">
-            <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
-              Resource / External Video Playlist URL (Optional)
-            </label>
-            <input
-              type="url"
-              placeholder="https://youtube.com/playlist?list=..."
-              value={resourceUrl}
-              onChange={(e) => setResourceUrl(e.target.value)}
-              className="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 dark:bg-slate-900 dark:border-slate-700 dark:text-white text-xs placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-emerald-500"
-            />
-          </div>
+        {/* Resource / External Video Playlist URL */}
+        <div className="space-y-1.5">
+          <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
+            Resource / External Video Playlist URL (Optional)
+          </label>
+          <input
+            type="url"
+            placeholder="https://youtube.com/playlist?list=..."
+            value={resourceUrl}
+            onChange={(e) => setResourceUrl(e.target.value)}
+            className="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 dark:bg-slate-900 dark:border-slate-700 dark:text-white text-xs placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-emerald-500"
+          />
         </div>
 
         {/* Description */}
@@ -410,13 +407,18 @@ export function CourseCreateForm({ initialCategories }: CourseCreateFormProps) {
 
           <button
             type="submit"
-            disabled={loading}
+            disabled={loading || uploadingImage}
             className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white font-bold text-xs transition-colors shadow-md shadow-emerald-950/20"
           >
             {loading ? (
               <>
                 <Loader2 className="w-4 h-4 animate-spin" />
                 <span>Creating Course...</span>
+              </>
+            ) : uploadingImage ? (
+              <>
+                <Loader2 className="w-4 h-4 animate-spin" />
+                <span>Uploading Image...</span>
               </>
             ) : (
               <>

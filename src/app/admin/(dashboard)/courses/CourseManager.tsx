@@ -7,12 +7,8 @@ import {
   Search,
   Trash2,
   Edit,
-  ExternalLink,
   GraduationCap,
-  Globe,
-  Clock,
   X,
-  Check,
 } from "lucide-react";
 import type { Course } from "@/db/entities";
 import {
@@ -21,6 +17,7 @@ import {
   deleteCourseAction,
 } from "@/actions/course-actions";
 import { createCategoryAction } from "@/actions/category-actions";
+import { CourseThumbnailUploader } from "@/components/admin/CourseThumbnailUploader";
 
 interface CourseManagerProps {
   initialCourses: Course[];
@@ -32,6 +29,7 @@ export function CourseManager({ initialCourses }: CourseManagerProps) {
   const [modalOpen, setModalOpen] = useState(false);
   const [editingCourse, setEditingCourse] = useState<Course | null>(null);
   const [loading, setLoading] = useState(false);
+  const [uploadingImage, setUploadingImage] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   // Form states
@@ -557,14 +555,13 @@ export function CourseManager({ initialCourses }: CourseManagerProps) {
 
               <div className="space-y-1">
                 <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">
-                  Thumbnail Image URL
+                  Thumbnail Image (Upload Image File or URL)
                 </label>
-                <input
-                  type="url"
+                <CourseThumbnailUploader
                   value={thumbnailUrl}
-                  onChange={(e) => setThumbnailUrl(e.target.value)}
-                  placeholder="https://images.unsplash.com/..."
-                  className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 dark:bg-slate-900 dark:border-slate-700 dark:text-white text-xs focus:outline-none focus:border-emerald-500"
+                  onChange={setThumbnailUrl}
+                  onUploadStateChange={setUploadingImage}
+                  disabled={loading}
                 />
               </div>
 
@@ -604,10 +601,16 @@ export function CourseManager({ initialCourses }: CourseManagerProps) {
                 </button>
                 <button
                   type="submit"
-                  disabled={loading}
+                  disabled={loading || uploadingImage}
                   className="px-5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold transition-colors shadow-md shadow-emerald-950/20 disabled:opacity-50"
                 >
-                  {loading ? "Saving..." : editingCourse ? "Update Course" : "Create Course"}
+                  {loading
+                    ? "Saving..."
+                    : uploadingImage
+                    ? "Uploading Image..."
+                    : editingCourse
+                    ? "Update Course"
+                    : "Create Course"}
                 </button>
               </div>
             </form>

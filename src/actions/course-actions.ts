@@ -6,6 +6,7 @@ import { Course, AdminPermission } from "@/db/entities";
 import { getSession, hasPermission } from "@/lib/auth";
 import { getOrSetCache, invalidateCache, CacheTags } from "@/lib/cache";
 import { logActivity } from "@/lib/activity-logger";
+import { isCloudinaryConfigured, uploadImageToCloudinary } from "@/lib/cloudinary";
 
 export interface CourseFilter {
   language?: string;
@@ -220,3 +221,84 @@ export async function deleteCourseAction(id: string) {
     return { error: "Failed to delete course." };
   }
 }
+
+export async function getCloudinaryConfigStatusAction(): Promise<{
+  configured: boolean;
+}> {
+  return {
+    configured: isCloudinaryConfigured(),
+  };
+}
+
+export async function uploadCourseThumbnailAction(formData: FormData): Promise<{
+  success?: boolean;
+  url?: string;
+  publicId?: string;
+  error?: string;
+}> {
+  const session = await getSession();
+  if (!hasPermission(session, AdminPermission.MANAGE_COURSES)) {
+    return { error: "Unauthorized. Missing permission to manage courses." };
+  }
+
+  if (!isCloudinaryConfigured()) {
+    return {
+      error:
+        "Cloudinary is not configured. Please set CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, and CLOUDINARY_API_SECRET in your environment variables.",
+    };
+  }
+
+  const file = formData.get("file");
+  if (!file || !(file instanceof Blob)) {
+    return { error: "No image file provided." };
+  }
+
+  const mimeType = file.type;
+  if (!mimeType.startsWith("image/")) {
+    return { error: "Selected file must be an image (JPEG, PNG, WebP, etc.)." };
+  }
+
+  const MAX_SIZE_BYTES = 10 * 1024 * 1024; // 10MB
+  if (file.size > MAX_SIZE_BYTES) {
+    return { error: "Image file exceeds maximum allowable size of 10MB." };
+  }
+
+  try {
+    const arrayBuffer = await file.arrayBuffer();
+    const buffer = Buffer.from(arrayBuffer);
+
+    const uploadResult = await uploadImageToCloudinary(buffer, {
+      folder: "arabiyyah/courses",
+      tags: ["course_thumbnail", "arabiyyah"],
+    });
+
+    await logActivity({
+      action: "course_thumbnail_upload",
+      userId: session?.userId,
+      userName: session?.name,
+      userEmail: session?.email,
+      details: {
+        fileName: (file as File).name || "thumbnail",
+        fileSize: file.size,
+        mimeType,
+        publicId: uploadResult.publicId,
+        url: uploadResult.secureUrl,
+      },
+    });
+
+    return {
+      success: true,
+      url: uploadResult.secureUrl,
+      publicId: uploadResult.publicId,
+    };
+  } catch (err: unknown) {
+    console.error("Failed to upload course thumbnail to Cloudinary:", err);
+    return {
+      error:
+        err instanceof Error
+          ? err.message
+          : "Failed to upload image to Cloudinary.",
+    };
+  }
+}
+
