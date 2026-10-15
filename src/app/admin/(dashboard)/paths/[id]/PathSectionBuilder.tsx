@@ -23,6 +23,7 @@ import {
   addCourseToSectionAction,
   removeCourseFromSectionAction,
 } from "@/actions/path-actions";
+import { DeleteConfirmModal } from "@/components/admin/DeleteConfirmModal";
 
 interface PathSectionBuilderProps {
   initialPath: LearningPath;
@@ -34,6 +35,16 @@ export function PathSectionBuilder({
   allCourses,
 }: PathSectionBuilderProps) {
   const [path, setPath] = useState<LearningPath>(initialPath);
+
+  // Delete modal state
+  const [deleteDialog, setDeleteDialog] = useState<{
+    type: "section" | "course";
+    id: string;
+    secId?: string;
+    title: string;
+  } | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
 
   // Section Modal
   const [sectionModalOpen, setSectionModalOpen] = useState(false);
@@ -124,17 +135,61 @@ export function PathSectionBuilder({
     }
   };
 
-  const handleDeleteSection = async (secId: string, title: string) => {
-    if (!confirm(`Delete section "${title}" and all its course links?`)) return;
-    const res = await deletePathSectionAction(secId);
-    if (res.error) {
-      alert(res.error);
+  const confirmDelete = async () => {
+    if (!deleteDialog) return;
+    setIsDeleting(true);
+    setDeleteError(null);
+
+    if (deleteDialog.type === "section") {
+      const res = await deletePathSectionAction(deleteDialog.id);
+      if (res.error) {
+        setDeleteError(res.error);
+        setIsDeleting(false);
+      } else {
+        setPath({
+          ...path,
+          sections: (path.sections || []).filter((s) => s.id !== deleteDialog.id),
+        });
+        setIsDeleting(false);
+        setDeleteDialog(null);
+      }
     } else {
-      setPath({
-        ...path,
-        sections: (path.sections || []).filter((s) => s.id !== secId),
-      });
+      const res = await removeCourseFromSectionAction(deleteDialog.id);
+      if (res.error) {
+        setDeleteError(res.error);
+        setIsDeleting(false);
+      } else {
+        setPath({
+          ...path,
+          sections: (path.sections || []).map((s) =>
+            s.id === deleteDialog.secId
+              ? {
+                  ...s,
+                  pathCourses: (s.pathCourses || []).filter(
+                    (pc) => pc.id !== deleteDialog.id
+                  ),
+                }
+              : s
+          ),
+        });
+        setIsDeleting(false);
+        setDeleteDialog(null);
+      }
     }
+  };
+
+  const promptDeleteSection = (secId: string, title: string) => {
+    setDeleteError(null);
+    setDeleteDialog({ type: "section", id: secId, title });
+  };
+
+  const promptRemoveCourse = (
+    pathCourseId: string,
+    secId: string,
+    cTitle: string
+  ) => {
+    setDeleteError(null);
+    setDeleteDialog({ type: "course", id: pathCourseId, secId, title: cTitle });
   };
 
   // Course linking handlers
@@ -190,32 +245,6 @@ export function PathSectionBuilder({
     }
   };
 
-  const handleRemoveCourse = async (
-    pathCourseId: string,
-    secId: string,
-    cTitle: string
-  ) => {
-    if (!confirm(`Remove "${cTitle}" from this section?`)) return;
-    const res = await removeCourseFromSectionAction(pathCourseId);
-    if (res.error) {
-      alert(res.error);
-    } else {
-      setPath({
-        ...path,
-        sections: (path.sections || []).map((s) =>
-          s.id === secId
-            ? {
-                ...s,
-                pathCourses: (s.pathCourses || []).filter(
-                  (pc) => pc.id !== pathCourseId
-                ),
-              }
-            : s
-        ),
-      });
-    }
-  };
-
   return (
     <div className="space-y-8">
       {/* Top Breadcrumb & Path Meta */}
@@ -249,13 +278,22 @@ export function PathSectionBuilder({
             </p>
           </div>
 
-          <button
-            onClick={openAddSection}
-            className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs shadow-lg shadow-emerald-950/20 transition-colors shrink-0"
-          >
-            <Plus className="w-4 h-4" />
-            <span>Add Roadmap Stage / Section</span>
-          </button>
+          <div className="flex items-center gap-3 shrink-0">
+            <Link
+              href={`/admin/paths/${path.id}/edit`}
+              className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 dark:bg-slate-800 dark:hover:bg-slate-700 dark:text-slate-300 font-semibold text-xs transition-colors border border-slate-200 dark:border-transparent"
+            >
+              <Edit className="w-3.5 h-3.5" />
+              <span>Edit Path Details</span>
+            </Link>
+            <button
+              onClick={openAddSection}
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs shadow-lg shadow-emerald-950/20 transition-colors shrink-0"
+            >
+              <Plus className="w-4 h-4" />
+              <span>Add Roadmap Stage / Section</span>
+            </button>
+          </div>
         </div>
       </div>
 
@@ -307,8 +345,9 @@ export function PathSectionBuilder({
                       <Edit className="w-3.5 h-3.5" />
                     </button>
                     <button
+                      type="button"
                       onClick={() =>
-                        handleDeleteSection(section.id, section.title)
+                        promptDeleteSection(section.id, section.title)
                       }
                       className="p-1.5 rounded-lg bg-slate-100 hover:bg-rose-50 text-slate-700 hover:text-rose-600 dark:bg-slate-800 dark:hover:bg-rose-950/60 dark:text-slate-300 dark:hover:text-rose-300 transition-colors border border-slate-200 dark:border-transparent"
                       title="Delete Section"
@@ -381,8 +420,9 @@ export function PathSectionBuilder({
                             </div>
 
                             <button
+                              type="button"
                               onClick={() =>
-                                handleRemoveCourse(
+                                promptRemoveCourse(
                                   pc.id,
                                   section.id,
                                   course?.title || "Course"
@@ -624,6 +664,31 @@ export function PathSectionBuilder({
           </div>
         </div>
       )}
+
+      {/* Delete Confirmation Dialog */}
+      <DeleteConfirmModal
+        isOpen={Boolean(deleteDialog)}
+        title={
+          deleteDialog?.type === "section"
+            ? "Delete Roadmap Stage"
+            : "Remove Course from Stage"
+        }
+        itemName={deleteDialog?.title}
+        message={
+          deleteDialog?.type === "section"
+            ? `Are you sure you want to delete stage "${deleteDialog?.title}" and all its linked course assignments?`
+            : `Are you sure you want to remove "${deleteDialog?.title}" from this roadmap stage?`
+        }
+        confirmText={
+          deleteDialog?.type === "section" ? "Delete Stage" : "Remove Course"
+        }
+        loading={isDeleting}
+        error={deleteError}
+        onClose={() => {
+          if (!isDeleting) setDeleteDialog(null);
+        }}
+        onConfirm={confirmDelete}
+      />
     </div>
   );
 }

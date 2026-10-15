@@ -10,6 +10,7 @@ import {
   deleteBookAction,
 } from "@/actions/book-actions";
 import { createCategoryAction } from "@/actions/category-actions";
+import { DeleteConfirmModal } from "@/components/admin/DeleteConfirmModal";
 
 interface BookManagerProps {
   initialBooks: Book[];
@@ -22,6 +23,27 @@ export function BookManager({ initialBooks }: BookManagerProps) {
   const [editingBook, setEditingBook] = useState<Book | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Delete modal state
+  const [deleteTarget, setDeleteTarget] = useState<{ id: string; title: string } | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
+
+  const confirmDelete = async () => {
+    if (!deleteTarget) return;
+    setIsDeleting(true);
+    setDeleteError(null);
+
+    const res = await deleteBookAction(deleteTarget.id);
+    if (res.error) {
+      setDeleteError(res.error);
+      setIsDeleting(false);
+    } else {
+      setBooks((prev) => prev.filter((b) => b.id !== deleteTarget.id));
+      setIsDeleting(false);
+      setDeleteTarget(null);
+    }
+  };
 
   // Form states
   const [title, setTitle] = useState("");
@@ -161,15 +183,7 @@ export function BookManager({ initialBooks }: BookManagerProps) {
     }
   };
 
-  const handleDelete = async (id: string, name: string) => {
-    if (!confirm(`Are you sure you want to delete book "${name}"?`)) return;
-    const res = await deleteBookAction(id);
-    if (res.error) {
-      alert(res.error);
-    } else {
-      setBooks(books.filter((b) => b.id !== id));
-    }
-  };
+
 
   const filtered = books.filter((b) => {
     const q = search.toLowerCase();
@@ -259,7 +273,11 @@ export function BookManager({ initialBooks }: BookManagerProps) {
                       <Edit className="w-3.5 h-3.5" />
                     </button>
                     <button
-                      onClick={() => handleDelete(b.id, b.title)}
+                      type="button"
+                      onClick={() => {
+                        setDeleteError(null);
+                        setDeleteTarget({ id: b.id, title: b.title });
+                      }}
                       className="p-1.5 rounded-lg bg-slate-100 hover:bg-rose-50 text-slate-700 hover:text-rose-600 dark:bg-slate-800 dark:hover:bg-rose-950/60 dark:text-slate-300 dark:hover:text-rose-300 transition-colors border border-slate-200 dark:border-transparent"
                       title="Delete Book"
                     >
@@ -495,6 +513,19 @@ export function BookManager({ initialBooks }: BookManagerProps) {
           </div>
         </div>
       )}
+
+      {/* Delete Confirmation Modal */}
+      <DeleteConfirmModal
+        isOpen={Boolean(deleteTarget)}
+        title="Delete Book"
+        itemName={deleteTarget?.title}
+        loading={isDeleting}
+        error={deleteError}
+        onClose={() => {
+          if (!isDeleting) setDeleteTarget(null);
+        }}
+        onConfirm={confirmDelete}
+      />
     </div>
   );
 }

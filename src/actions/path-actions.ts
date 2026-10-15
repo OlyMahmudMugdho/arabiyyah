@@ -94,6 +94,16 @@ export async function getPathBySlugAction(slug: string) {
   );
 }
 
+export async function getPathByIdAction(id: string) {
+  try {
+    const pathRepo = await getPathRepository();
+    return await pathRepo.findOne({ where: { id } });
+  } catch (err) {
+    console.error("Failed to fetch path by id:", err);
+    return null;
+  }
+}
+
 export async function createPathAction(data: {
   title: string;
   titleArabic?: string;

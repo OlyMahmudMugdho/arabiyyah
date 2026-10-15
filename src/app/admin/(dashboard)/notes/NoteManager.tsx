@@ -9,6 +9,7 @@ import {
   updateNoteAction,
   deleteNoteAction,
 } from "@/actions/note-actions";
+import { DeleteConfirmModal } from "@/components/admin/DeleteConfirmModal";
 
 interface NoteManagerProps {
   initialNotes: Note[];
@@ -21,6 +22,27 @@ export function NoteManager({ initialNotes }: NoteManagerProps) {
   const [editingNote, setEditingNote] = useState<Note | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Delete modal state
+  const [deleteTarget, setDeleteTarget] = useState<{ id: string; title: string } | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
+
+  const confirmDelete = async () => {
+    if (!deleteTarget) return;
+    setIsDeleting(true);
+    setDeleteError(null);
+
+    const res = await deleteNoteAction(deleteTarget.id);
+    if (res.error) {
+      setDeleteError(res.error);
+      setIsDeleting(false);
+    } else {
+      setNotes((prev) => prev.filter((n) => n.id !== deleteTarget.id));
+      setIsDeleting(false);
+      setDeleteTarget(null);
+    }
+  };
 
   // Form states
   const [title, setTitle] = useState("");
@@ -115,15 +137,7 @@ export function NoteManager({ initialNotes }: NoteManagerProps) {
     }
   };
 
-  const handleDelete = async (id: string, name: string) => {
-    if (!confirm(`Are you sure you want to delete note "${name}"?`)) return;
-    const res = await deleteNoteAction(id);
-    if (res.error) {
-      alert(res.error);
-    } else {
-      setNotes(notes.filter((n) => n.id !== id));
-    }
-  };
+
 
   const filtered = notes.filter((n) => {
     const q = search.toLowerCase();
@@ -206,7 +220,11 @@ export function NoteManager({ initialNotes }: NoteManagerProps) {
                       <Edit className="w-3.5 h-3.5" />
                     </button>
                     <button
-                      onClick={() => handleDelete(n.id, n.title)}
+                      type="button"
+                      onClick={() => {
+                        setDeleteError(null);
+                        setDeleteTarget({ id: n.id, title: n.title });
+                      }}
                       className="p-1.5 rounded-lg bg-slate-100 hover:bg-rose-50 text-slate-600 hover:text-rose-600 dark:bg-slate-800 dark:hover:bg-rose-950/60 dark:text-slate-300 dark:hover:text-rose-300 transition-colors"
                       title="Delete Note"
                     >
@@ -364,6 +382,19 @@ export function NoteManager({ initialNotes }: NoteManagerProps) {
           </div>
         </div>
       )}
+
+      {/* Delete Confirmation Modal */}
+      <DeleteConfirmModal
+        isOpen={Boolean(deleteTarget)}
+        title="Delete Study Note"
+        itemName={deleteTarget?.title}
+        loading={isDeleting}
+        error={deleteError}
+        onClose={() => {
+          if (!isDeleting) setDeleteTarget(null);
+        }}
+        onConfirm={confirmDelete}
+      />
     </div>
   );
 }

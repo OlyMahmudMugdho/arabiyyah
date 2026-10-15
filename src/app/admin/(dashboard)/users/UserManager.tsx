@@ -26,6 +26,7 @@ import {
   deleteAdminUserAction,
   superadminResetUserPasswordAction,
 } from "@/actions/user-actions";
+import { DeleteConfirmModal } from "@/components/admin/DeleteConfirmModal";
 
 interface AdminUser {
   id: string;
@@ -48,6 +49,27 @@ export function UserManager({ initialUsers, currentUserId }: UserManagerProps) {
   const [editingUser, setEditingUser] = useState<AdminUser | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Delete modal state
+  const [deleteTarget, setDeleteTarget] = useState<{ id: string; name: string } | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
+
+  const confirmDelete = async () => {
+    if (!deleteTarget) return;
+    setIsDeleting(true);
+    setDeleteError(null);
+
+    const res = await deleteAdminUserAction(deleteTarget.id);
+    if (res.error) {
+      setDeleteError(res.error);
+      setIsDeleting(false);
+    } else {
+      setUsers((prev) => prev.filter((u) => u.id !== deleteTarget.id));
+      setIsDeleting(false);
+      setDeleteTarget(null);
+    }
+  };
 
   // Form states
   const [name, setName] = useState("");
@@ -242,17 +264,7 @@ export function UserManager({ initialUsers, currentUserId }: UserManagerProps) {
     }
   };
 
-  const handleDelete = async (id: string, name: string) => {
-    if (!confirm(`Are you sure you want to permanently delete admin user "${name}"?`))
-      return;
 
-    const res = await deleteAdminUserAction(id);
-    if (res.error) {
-      alert(res.error);
-    } else {
-      setUsers(users.filter((u) => u.id !== id));
-    }
-  };
 
   return (
     <div className="space-y-6">
@@ -383,7 +395,11 @@ export function UserManager({ initialUsers, currentUserId }: UserManagerProps) {
                       </button>
                       {!isSelf && (
                         <button
-                          onClick={() => handleDelete(u.id, u.name)}
+                          type="button"
+                          onClick={() => {
+                            setDeleteError(null);
+                            setDeleteTarget({ id: u.id, name: u.name });
+                          }}
                           className="p-1.5 rounded-lg bg-slate-100 hover:bg-rose-50 text-slate-600 hover:text-rose-600 dark:bg-slate-800 dark:hover:bg-rose-950/60 dark:text-slate-300 dark:hover:text-rose-300 transition-colors"
                           title="Delete User"
                         >
@@ -686,6 +702,24 @@ export function UserManager({ initialUsers, currentUserId }: UserManagerProps) {
           </div>
         </div>
       )}
+
+      {/* Delete Confirmation Modal */}
+      <DeleteConfirmModal
+        isOpen={Boolean(deleteTarget)}
+        title="Delete Admin User"
+        itemName={deleteTarget?.name}
+        message={
+          deleteTarget
+            ? `Are you sure you want to permanently delete admin user "${deleteTarget.name}"? They will lose access to the admin dashboard immediately.`
+            : undefined
+        }
+        loading={isDeleting}
+        error={deleteError}
+        onClose={() => {
+          if (!isDeleting) setDeleteTarget(null);
+        }}
+        onConfirm={confirmDelete}
+      />
     </div>
   );
 }

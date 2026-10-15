@@ -11,15 +11,18 @@ import {
   Layers,
   Clock,
   ArrowRight,
-  X,
+  BookOpen,
+  GraduationCap,
+  Map,
+  Award,
+  Star,
+  Flame,
+  Lightbulb,
+  ExternalLink,
 } from "lucide-react";
 import type { LearningPath } from "@/db/entities";
-import {
-  createPathAction,
-  updatePathAction,
-  deletePathAction,
-} from "@/actions/path-actions";
-import { PathThumbnailUploader } from "@/components/admin/CourseThumbnailUploader";
+import { deletePathAction } from "@/actions/path-actions";
+import { DeleteConfirmModal } from "@/components/admin/DeleteConfirmModal";
 
 interface PathManagerProps {
   initialPaths: LearningPath[];
@@ -28,131 +31,38 @@ interface PathManagerProps {
 export function PathManager({ initialPaths }: PathManagerProps) {
   const [paths, setPaths] = useState<LearningPath[]>(initialPaths);
   const [search, setSearch] = useState("");
-  const [modalOpen, setModalOpen] = useState(false);
-  const [editingPath, setEditingPath] = useState<LearningPath | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [uploadingImage, setUploadingImage] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
-  // Form states
-  const [title, setTitle] = useState("");
-  const [titleArabic, setTitleArabic] = useState("");
-  const [slug, setSlug] = useState("");
-  const [description, setDescription] = useState("");
-  const [level, setLevel] = useState("Beginner");
-  const [estimatedHours, setEstimatedHours] = useState("40 hours");
-  const [icon, setIcon] = useState("Compass");
-  const [color, setColor] = useState("emerald");
-  const [thumbnailUrl, setThumbnailUrl] = useState("");
-  const [isPublished, setIsPublished] = useState(true);
+  // Delete modal state
+  const [deleteTarget, setDeleteTarget] = useState<{ id: string; title: string } | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
 
-  const openCreateModal = () => {
-    setEditingPath(null);
-    setTitle("");
-    setTitleArabic("");
-    setSlug("");
-    setDescription("");
-    setLevel("Beginner");
-    setEstimatedHours("40 hours");
-    setIcon("Compass");
-    setColor("emerald");
-    setThumbnailUrl("");
-    setIsPublished(true);
-    setError(null);
-    setModalOpen(true);
-  };
+  const confirmDelete = async () => {
+    if (!deleteTarget) return;
+    setIsDeleting(true);
+    setDeleteError(null);
 
-  const openEditModal = (p: LearningPath) => {
-    setEditingPath(p);
-    setTitle(p.title);
-    setTitleArabic(p.titleArabic || "");
-    setSlug(p.slug);
-    setDescription(p.description);
-    setLevel(p.level);
-    setEstimatedHours(p.estimatedHours);
-    setIcon(p.icon);
-    setColor(p.color);
-    setThumbnailUrl(p.thumbnailUrl || "");
-    setIsPublished(p.isPublished);
-    setError(null);
-    setModalOpen(true);
-  };
-
-  const handleTitleChange = (val: string) => {
-    setTitle(val);
-    if (!editingPath) {
-      setSlug(
-        val
-          .toLowerCase()
-          .replace(/[^\w\s-]/g, "")
-          .replace(/\s+/g, "-")
-      );
-    }
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    setError(null);
-
-    if (editingPath) {
-      const res = await updatePathAction(editingPath.id, {
-        title,
-        titleArabic: titleArabic || null,
-        description,
-        level,
-        estimatedHours,
-        icon,
-        color,
-        thumbnailUrl: thumbnailUrl || null,
-        isPublished,
-      });
-
-      if (res.error) {
-        setError(res.error);
-        setLoading(false);
-      } else if (res.path) {
-        setPaths(
-          paths.map((p) =>
-            p.id === editingPath.id ? { ...p, ...(res.path as LearningPath) } : p
-          )
-        );
-        setModalOpen(false);
-        setLoading(false);
-      }
-    } else {
-      const res = await createPathAction({
-        title,
-        titleArabic: titleArabic || undefined,
-        slug,
-        description,
-        level,
-        estimatedHours,
-        icon,
-        color,
-        thumbnailUrl: thumbnailUrl || undefined,
-        isPublished,
-      });
-
-      if (res.error) {
-        setError(res.error);
-        setLoading(false);
-      } else if (res.path) {
-        setPaths([res.path as LearningPath, ...paths]);
-        setModalOpen(false);
-        setLoading(false);
-      }
-    }
-  };
-
-  const handleDelete = async (id: string, name: string) => {
-    if (!confirm(`Are you sure you want to delete path "${name}"?`)) return;
-    const res = await deletePathAction(id);
+    const res = await deletePathAction(deleteTarget.id);
     if (res.error) {
-      alert(res.error);
+      setDeleteError(res.error);
+      setIsDeleting(false);
     } else {
-      setPaths(paths.filter((p) => p.id !== id));
+      setPaths((prev) => prev.filter((p) => p.id !== deleteTarget.id));
+      setIsDeleting(false);
+      setDeleteTarget(null);
     }
+  };
+
+  const iconMap: Record<string, typeof Compass> = {
+    Compass: Compass,
+    Layers: Layers,
+    BookOpen: BookOpen,
+    GraduationCap: GraduationCap,
+    Map: Map,
+    Award: Award,
+    Star: Star,
+    Flame: Flame,
+    Lightbulb: Lightbulb,
   };
 
   const filtered = paths.filter((p) => {
@@ -187,6 +97,18 @@ export function PathManager({ initialPaths }: PathManagerProps) {
         </Link>
       </div>
 
+      {/* Search */}
+      <div className="relative max-w-md">
+        <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+        <input
+          type="text"
+          placeholder="Search learning paths..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="w-full pl-10 pr-4 py-2 rounded-xl bg-white dark:bg-[#0d1322] border border-slate-300 dark:border-slate-800 text-slate-900 dark:text-white text-xs placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-emerald-500"
+        />
+      </div>
+
       {/* Grid of paths */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {filtered.map((p) => {
@@ -197,25 +119,59 @@ export function PathManager({ initialPaths }: PathManagerProps) {
               0
             ) || 0;
 
+          const IconComp = iconMap[p.icon] || Compass;
+
           return (
             <div
               key={p.id}
-              className="p-6 rounded-3xl bg-white border border-slate-200 shadow-xs hover:border-emerald-500/50 hover:shadow-md dark:bg-[#0d1322] dark:border-slate-800 dark:hover:border-emerald-500/40 transition-all flex flex-col justify-between space-y-4"
+              className="p-6 rounded-3xl bg-white border border-slate-200 shadow-xs dark:bg-[#0d1322] dark:border-slate-800 flex flex-col justify-between space-y-4 hover:border-emerald-500/30 transition-colors"
             >
-              <div className="space-y-2">
-                <div className="flex items-start justify-between gap-2">
-                  <span className="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-100 text-emerald-800 border border-emerald-300 dark:bg-emerald-500/10 dark:text-emerald-300 dark:border-emerald-500/20">
-                    {p.level}
-                  </span>
-                  <div className="flex items-center gap-1.5 text-xs text-slate-500 dark:text-slate-400">
-                    <Clock className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
-                    <span>{p.estimatedHours}</span>
+              <div className="space-y-3">
+                {/* Header info */}
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex items-center gap-3">
+                    {p.thumbnailUrl ? (
+                      /* eslint-disable-next-line @next/next/no-img-element */
+                      <img
+                        src={p.thumbnailUrl}
+                        alt={p.title}
+                        className="w-11 h-11 rounded-xl object-cover border border-slate-200 dark:border-slate-700 shrink-0 shadow-2xs"
+                      />
+                    ) : (
+                      <div className="w-11 h-11 rounded-xl bg-emerald-50 border border-emerald-200/80 text-emerald-700 dark:bg-emerald-950/40 dark:border-emerald-800/40 dark:text-emerald-400 flex items-center justify-center shrink-0">
+                        <IconComp className="w-5 h-5" />
+                      </div>
+                    )}
+                    <div>
+                      <h3 className="font-bold text-slate-900 dark:text-white line-clamp-1">
+                        {p.title}
+                      </h3>
+                      <div className="flex items-center gap-2 mt-0.5">
+                        <span className="text-[11px] font-semibold text-emerald-700 dark:text-emerald-400">
+                          {p.level}
+                        </span>
+                        <span className="text-slate-300 dark:text-slate-700">•</span>
+                        <span className="text-[11px] text-slate-500 dark:text-slate-400 flex items-center gap-1">
+                          <Clock className="w-3 h-3" />
+                          <span>{p.estimatedHours}</span>
+                        </span>
+                      </div>
+                    </div>
                   </div>
+
+                  <span
+                    className={`px-2 py-0.5 rounded-full text-[10px] font-semibold shrink-0 ${
+                      p.isPublished
+                        ? "bg-emerald-100 text-emerald-800 border border-emerald-300 dark:bg-emerald-500/15 dark:text-emerald-300 dark:border-emerald-500/30"
+                        : "bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-300"
+                    }`}
+                  >
+                    {p.isPublished ? "Published" : "Draft"}
+                  </span>
                 </div>
 
-                <h3 className="font-bold text-lg text-slate-900 dark:text-white">{p.title}</h3>
                 {p.titleArabic && (
-                  <p className="font-arabic text-sm text-emerald-700 dark:text-emerald-400 font-semibold">
+                  <p className="font-arabic text-emerald-700 dark:text-emerald-400 text-xs font-semibold">
                     {p.titleArabic}
                   </p>
                 )}
@@ -237,23 +193,38 @@ export function PathManager({ initialPaths }: PathManagerProps) {
               <div className="pt-4 border-t border-slate-200 dark:border-slate-800/80 flex items-center justify-between gap-2">
                 <Link
                   href={`/admin/paths/${p.id}`}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold transition-colors"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold transition-colors shadow-2xs"
                 >
                   <Layers className="w-3.5 h-3.5" />
                   <span>Build Stages & Courses</span>
                   <ArrowRight className="w-3 h-3 ml-0.5" />
                 </Link>
 
-                <div className="flex items-center gap-2">
-                  <button
-                    onClick={() => openEditModal(p)}
+                <div className="flex items-center gap-1.5">
+                  <Link
+                    href={`/paths/${p.slug}`}
+                    target="_blank"
+                    className="p-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 dark:bg-slate-800 dark:hover:bg-slate-700 dark:text-slate-300 dark:hover:text-white transition-colors border border-slate-200 dark:border-transparent"
+                    title="View Public Roadmap"
+                  >
+                    <ExternalLink className="w-3.5 h-3.5" />
+                  </Link>
+
+                  <Link
+                    href={`/admin/paths/${p.id}/edit`}
+                    prefetch={true}
                     className="p-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 dark:bg-slate-800 dark:hover:bg-slate-700 dark:text-slate-300 dark:hover:text-white transition-colors border border-slate-200 dark:border-transparent"
                     title="Edit Path Details"
                   >
                     <Edit className="w-3.5 h-3.5" />
-                  </button>
+                  </Link>
+
                   <button
-                    onClick={() => handleDelete(p.id, p.title)}
+                    type="button"
+                    onClick={() => {
+                      setDeleteError(null);
+                      setDeleteTarget({ id: p.id, title: p.title });
+                    }}
                     className="p-1.5 rounded-lg bg-slate-100 hover:bg-rose-50 text-slate-700 hover:text-rose-600 dark:bg-slate-800 dark:hover:bg-rose-950/60 dark:text-slate-300 dark:hover:text-rose-300 transition-colors border border-slate-200 dark:border-transparent"
                     title="Delete Path"
                   >
@@ -266,172 +237,24 @@ export function PathManager({ initialPaths }: PathManagerProps) {
         })}
       </div>
 
-      {/* Modal */}
-      {modalOpen && (
-        <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
-          <div className="bg-white border border-slate-200 shadow-2xl dark:bg-[#0f172a] dark:border-slate-800 rounded-3xl max-w-xl w-full p-6 md:p-8 space-y-6 transition-colors">
-            <div className="flex items-center justify-between">
-              <h2 className="text-xl font-bold text-slate-900 dark:text-white">
-                {editingPath ? "Edit Learning Path" : "Create Learning Path"}
-              </h2>
-              <button
-                onClick={() => setModalOpen(false)}
-                className="p-1 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 dark:hover:text-white dark:hover:bg-slate-800"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-
-            {error && (
-              <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 dark:bg-rose-500/15 dark:border-rose-500/30 dark:text-rose-300 text-xs">
-                {error}
-              </div>
-            )}
-
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="space-y-1">
-                <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">
-                  Path Title *
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={title}
-                  onChange={(e) => handleTitleChange(e.target.value)}
-                  placeholder="e.g. Quranic Arabic Fluency Track"
-                  className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 dark:bg-slate-900 dark:border-slate-700 dark:text-white text-xs focus:outline-none focus:border-emerald-500"
-                />
-              </div>
-
-              <div className="space-y-1">
-                <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">
-                  Arabic Title
-                </label>
-                <input
-                  type="text"
-                  value={titleArabic}
-                  onChange={(e) => setTitleArabic(e.target.value)}
-                  placeholder="مسار إتقان العربية"
-                  dir="rtl"
-                  className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 dark:bg-slate-900 dark:border-slate-700 dark:text-white text-xs font-arabic focus:outline-none focus:border-emerald-500"
-                />
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-1">
-                  <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">
-                    URL Slug *
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    disabled={!!editingPath}
-                    value={slug}
-                    onChange={(e) => setSlug(e.target.value)}
-                    className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 dark:bg-slate-900 dark:border-slate-700 dark:text-white text-xs focus:outline-none focus:border-emerald-500 disabled:opacity-50"
-                  />
-                </div>
-
-                <div className="space-y-1">
-                  <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">
-                    Target Level *
-                  </label>
-                  <select
-                    value={level}
-                    onChange={(e) => setLevel(e.target.value)}
-                    className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 dark:bg-slate-900 dark:border-slate-700 dark:text-white text-xs focus:outline-none focus:border-emerald-500"
-                  >
-                    <option value="Beginner">Beginner</option>
-                    <option value="Intermediate">Intermediate</option>
-                    <option value="Advanced">Advanced</option>
-                    <option value="All Levels">All Levels</option>
-                  </select>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-1">
-                  <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">
-                    Estimated Duration *
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    value={estimatedHours}
-                    onChange={(e) => setEstimatedHours(e.target.value)}
-                    placeholder="e.g. 95 Hours"
-                    className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 dark:bg-slate-900 dark:border-slate-700 dark:text-white text-xs focus:outline-none focus:border-emerald-500"
-                  />
-                </div>
-
-                <div className="space-y-1">
-                  <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">
-                    Icon Theme
-                  </label>
-                  <select
-                    value={icon}
-                    onChange={(e) => setIcon(e.target.value)}
-                    className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 dark:bg-slate-900 dark:border-slate-700 dark:text-white text-xs focus:outline-none focus:border-emerald-500"
-                  >
-                    <option value="Compass">Compass (Navigation)</option>
-                    <option value="BookOpen">BookOpen (Knowledge)</option>
-                    <option value="GraduationCap">GraduationCap (Scholar)</option>
-                    <option value="Award">Award (Mastery)</option>
-                  </select>
-                </div>
-              </div>
-
-              <div className="space-y-1">
-                <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">
-                  Thumbnail Image (Upload Image File or URL)
-                </label>
-                <PathThumbnailUploader
-                  value={thumbnailUrl}
-                  onChange={setThumbnailUrl}
-                  onUploadStateChange={setUploadingImage}
-                  disabled={loading}
-                />
-              </div>
-
-              <div className="space-y-1">
-                <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">
-                  Description *
-                </label>
-                <textarea
-                  required
-                  rows={3}
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                  className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 dark:bg-slate-900 dark:border-slate-700 dark:text-white text-xs focus:outline-none focus:border-emerald-500"
-                />
-              </div>
-
-              <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-200 dark:border-slate-800">
-                <button
-                  type="button"
-                  onClick={() => setModalOpen(false)}
-                  className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 dark:bg-slate-800 dark:hover:bg-slate-700 dark:text-slate-300 text-xs font-semibold transition-colors"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  disabled={loading || uploadingImage}
-                  className="px-5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold disabled:opacity-50 shadow-md shadow-emerald-950/20"
-                >
-                  {loading
-                    ? "Saving..."
-                    : uploadingImage
-                    ? "Uploading Image..."
-                    : editingPath
-                    ? "Update Path"
-                    : "Create Path"}
-                </button>
-              </div>
-            </form>
-          </div>
+      {filtered.length === 0 && (
+        <div className="text-center py-12 text-slate-400 bg-white dark:bg-[#0d1322] border border-slate-200 dark:border-slate-800 rounded-3xl">
+          No learning paths found matching your query.
         </div>
       )}
+
+      {/* Delete Confirmation Modal */}
+      <DeleteConfirmModal
+        isOpen={Boolean(deleteTarget)}
+        title="Delete Learning Path"
+        itemName={deleteTarget?.title}
+        loading={isDeleting}
+        error={deleteError}
+        onClose={() => {
+          if (!isDeleting) setDeleteTarget(null);
+        }}
+        onConfirm={confirmDelete}
+      />
     </div>
   );
 }

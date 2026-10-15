@@ -22,6 +22,7 @@ import {
   updateCategoryAction,
   deleteCategoryAction,
 } from "@/actions/category-actions";
+import { DeleteConfirmModal } from "@/components/admin/DeleteConfirmModal";
 
 interface CategoryManagerProps {
   initialCategories: Category[];
@@ -37,6 +38,27 @@ export function CategoryManager({
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Delete modal state
+  const [deleteTarget, setDeleteTarget] = useState<{ id: string; name: string } | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
+
+  const confirmDelete = async () => {
+    if (!deleteTarget) return;
+    setIsDeleting(true);
+    setDeleteError(null);
+
+    const res = await deleteCategoryAction(deleteTarget.id);
+    if (res.error) {
+      setDeleteError(res.error);
+      setIsDeleting(false);
+    } else {
+      setCategories((prev) => prev.filter((c) => c.id !== deleteTarget.id));
+      setIsDeleting(false);
+      setDeleteTarget(null);
+    }
+  };
 
   // Form states
   const [name, setName] = useState("");
@@ -136,15 +158,7 @@ export function CategoryManager({
     }
   };
 
-  const handleDelete = async (id: string, catName: string) => {
-    if (!confirm(`Are you sure you want to delete category "${catName}"?`)) return;
-    const res = await deleteCategoryAction(id);
-    if (res.error) {
-      alert(res.error);
-    } else {
-      setCategories(categories.filter((c) => c.id !== id));
-    }
-  };
+
 
   const filtered = categories.filter((c) => {
     const q = search.toLowerCase();
@@ -311,7 +325,11 @@ export function CategoryManager({
                         <Edit className="w-3.5 h-3.5" />
                       </button>
                       <button
-                        onClick={() => handleDelete(cat.id, cat.name)}
+                        type="button"
+                        onClick={() => {
+                          setDeleteError(null);
+                          setDeleteTarget({ id: cat.id, name: cat.name });
+                        }}
                         className="p-1.5 rounded-lg bg-slate-100 hover:bg-rose-50 text-slate-600 hover:text-rose-600 dark:bg-slate-800 dark:hover:bg-rose-950/60 dark:text-slate-300 dark:hover:text-rose-300 transition-colors"
                         title="Delete Category"
                       >
@@ -467,6 +485,19 @@ export function CategoryManager({
           </div>
         </div>
       )}
+
+      {/* Delete Confirmation Modal */}
+      <DeleteConfirmModal
+        isOpen={Boolean(deleteTarget)}
+        title="Delete Category"
+        itemName={deleteTarget?.name}
+        loading={isDeleting}
+        error={deleteError}
+        onClose={() => {
+          if (!isDeleting) setDeleteTarget(null);
+        }}
+        onConfirm={confirmDelete}
+      />
     </div>
   );
 }
