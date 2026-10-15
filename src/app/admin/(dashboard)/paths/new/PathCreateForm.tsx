@@ -19,6 +19,7 @@ import {
   Lightbulb,
 } from "lucide-react";
 import { createPathAction } from "@/actions/path-actions";
+import { PathThumbnailUploader } from "@/components/admin/CourseThumbnailUploader";
 
 export function PathCreateForm() {
   const router = useRouter();
@@ -32,9 +33,11 @@ export function PathCreateForm() {
   const [estimatedHours, setEstimatedHours] = useState("40 hours");
   const [icon, setIcon] = useState("Compass");
   const [color, setColor] = useState("emerald");
+  const [thumbnailUrl, setThumbnailUrl] = useState("");
   const [isPublished, setIsPublished] = useState(true);
 
   const [loading, setLoading] = useState(false);
+  const [uploadingImage, setUploadingImage] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const iconOptions = [
@@ -85,6 +88,7 @@ export function PathCreateForm() {
         estimatedHours,
         icon,
         color,
+        thumbnailUrl: thumbnailUrl || undefined,
         isPublished,
       });
 
@@ -270,6 +274,19 @@ export function PathCreateForm() {
           </div>
         </div>
 
+        {/* Path Thumbnail */}
+        <div className="space-y-1.5">
+          <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
+            Path Thumbnail Image (Optional)
+          </label>
+          <PathThumbnailUploader
+            value={thumbnailUrl}
+            onChange={setThumbnailUrl}
+            onUploadStateChange={setUploadingImage}
+            disabled={loading}
+          />
+        </div>
+
         {/* Description */}
         <div className="space-y-1.5">
           <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
@@ -319,13 +336,18 @@ export function PathCreateForm() {
 
           <button
             type="submit"
-            disabled={loading}
+            disabled={loading || uploadingImage}
             className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white font-bold text-xs transition-colors shadow-md shadow-emerald-950/20"
           >
             {loading ? (
               <>
                 <Loader2 className="w-4 h-4 animate-spin" />
                 <span>Creating Path...</span>
+              </>
+            ) : uploadingImage ? (
+              <>
+                <Loader2 className="w-4 h-4 animate-spin" />
+                <span>Uploading Image...</span>
               </>
             ) : (
               <>

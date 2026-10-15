@@ -19,6 +19,7 @@ import {
   updatePathAction,
   deletePathAction,
 } from "@/actions/path-actions";
+import { PathThumbnailUploader } from "@/components/admin/CourseThumbnailUploader";
 
 interface PathManagerProps {
   initialPaths: LearningPath[];
@@ -30,6 +31,7 @@ export function PathManager({ initialPaths }: PathManagerProps) {
   const [modalOpen, setModalOpen] = useState(false);
   const [editingPath, setEditingPath] = useState<LearningPath | null>(null);
   const [loading, setLoading] = useState(false);
+  const [uploadingImage, setUploadingImage] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   // Form states
@@ -41,6 +43,7 @@ export function PathManager({ initialPaths }: PathManagerProps) {
   const [estimatedHours, setEstimatedHours] = useState("40 hours");
   const [icon, setIcon] = useState("Compass");
   const [color, setColor] = useState("emerald");
+  const [thumbnailUrl, setThumbnailUrl] = useState("");
   const [isPublished, setIsPublished] = useState(true);
 
   const openCreateModal = () => {
@@ -53,6 +56,7 @@ export function PathManager({ initialPaths }: PathManagerProps) {
     setEstimatedHours("40 hours");
     setIcon("Compass");
     setColor("emerald");
+    setThumbnailUrl("");
     setIsPublished(true);
     setError(null);
     setModalOpen(true);
@@ -68,6 +72,7 @@ export function PathManager({ initialPaths }: PathManagerProps) {
     setEstimatedHours(p.estimatedHours);
     setIcon(p.icon);
     setColor(p.color);
+    setThumbnailUrl(p.thumbnailUrl || "");
     setIsPublished(p.isPublished);
     setError(null);
     setModalOpen(true);
@@ -99,6 +104,7 @@ export function PathManager({ initialPaths }: PathManagerProps) {
         estimatedHours,
         icon,
         color,
+        thumbnailUrl: thumbnailUrl || null,
         isPublished,
       });
 
@@ -124,6 +130,7 @@ export function PathManager({ initialPaths }: PathManagerProps) {
         estimatedHours,
         icon,
         color,
+        thumbnailUrl: thumbnailUrl || undefined,
         isPublished,
       });
 
@@ -376,6 +383,18 @@ export function PathManager({ initialPaths }: PathManagerProps) {
 
               <div className="space-y-1">
                 <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+                  Thumbnail Image (Upload Image File or URL)
+                </label>
+                <PathThumbnailUploader
+                  value={thumbnailUrl}
+                  onChange={setThumbnailUrl}
+                  onUploadStateChange={setUploadingImage}
+                  disabled={loading}
+                />
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">
                   Description *
                 </label>
                 <textarea
@@ -397,10 +416,16 @@ export function PathManager({ initialPaths }: PathManagerProps) {
                 </button>
                 <button
                   type="submit"
-                  disabled={loading}
+                  disabled={loading || uploadingImage}
                   className="px-5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold disabled:opacity-50 shadow-md shadow-emerald-950/20"
                 >
-                  {loading ? "Saving..." : editingPath ? "Update Path" : "Create Path"}
+                  {loading
+                    ? "Saving..."
+                    : uploadingImage
+                    ? "Uploading Image..."
+                    : editingPath
+                    ? "Update Path"
+                    : "Create Path"}
                 </button>
               </div>
             </form>

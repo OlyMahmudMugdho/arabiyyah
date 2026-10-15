@@ -17,12 +17,20 @@ import {
   uploadCourseThumbnailAction,
   getCloudinaryConfigStatusAction,
 } from "@/actions/course-actions";
+import { uploadPathThumbnailAction } from "@/actions/path-actions";
 
-interface CourseThumbnailUploaderProps {
+export interface CourseThumbnailUploaderProps {
   value: string;
   onChange: (url: string) => void;
   disabled?: boolean;
   onUploadStateChange?: (uploading: boolean) => void;
+  uploadAction?: (formData: FormData) => Promise<{
+    success?: boolean;
+    url?: string;
+    publicId?: string;
+    error?: string;
+  }>;
+  label?: string;
 }
 
 export function CourseThumbnailUploader({
@@ -30,6 +38,8 @@ export function CourseThumbnailUploader({
   onChange,
   disabled = false,
   onUploadStateChange,
+  uploadAction,
+  label = "Course",
 }: CourseThumbnailUploaderProps) {
   const [activeTab, setActiveTab] = useState<"upload" | "url">("upload");
   const [isUploading, setIsUploading] = useState(false);
@@ -89,7 +99,8 @@ export function CourseThumbnailUploader({
     setUploadingState(true);
 
     try {
-      const result = await uploadCourseThumbnailAction(formData);
+      const uploader = uploadAction || uploadCourseThumbnailAction;
+      const result = await uploader(formData);
 
       if (result.error) {
         setError(result.error);
@@ -360,7 +371,7 @@ export function CourseThumbnailUploader({
           <div className="flex items-center justify-between text-xs font-semibold text-slate-700 dark:text-slate-300">
             <div className="flex items-center gap-1.5">
               <ImageIcon className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
-              <span>Current Course Thumbnail Preview</span>
+              <span>Current {label} Thumbnail Preview</span>
             </div>
 
             <div className="flex items-center gap-1.5">
@@ -394,7 +405,7 @@ export function CourseThumbnailUploader({
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={value}
-                alt="Course thumbnail preview"
+                alt={`${label} thumbnail preview`}
                 className="w-full h-full object-cover"
                 onError={(e) => {
                   (e.target as HTMLImageElement).src =
@@ -464,3 +475,16 @@ export function CourseThumbnailUploader({
     </div>
   );
 }
+
+export function PathThumbnailUploader(
+  props: Omit<CourseThumbnailUploaderProps, "uploadAction" | "label">
+) {
+  return (
+    <CourseThumbnailUploader
+      {...props}
+      uploadAction={uploadPathThumbnailAction}
+      label="Learning Path"
+    />
+  );
+}
+

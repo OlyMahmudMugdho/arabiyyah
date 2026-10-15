@@ -37,6 +37,9 @@ export class LearningPath {
   @Column({ type: "varchar", length: 50, default: "emerald" })
   color!: string; // emerald, amber, blue, purple, rose
 
+  @Column({ type: "text", nullable: true })
+  thumbnailUrl!: string | null;
+
   @Column({ type: "boolean", default: true })
   isPublished!: boolean;
 

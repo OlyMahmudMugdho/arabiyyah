@@ -94,6 +94,18 @@ export async function getCourseBySlugAction(slug: string) {
   );
 }
 
+export async function getCourseByIdAction(id: string) {
+  try {
+    const courseRepo = await getCourseRepository();
+    return await courseRepo.findOne({
+      where: { id },
+    });
+  } catch (err) {
+    console.error("Failed to fetch course by id:", err);
+    return null;
+  }
+}
+
 export async function createCourseAction(data: {
   title: string;
   titleArabic?: string;

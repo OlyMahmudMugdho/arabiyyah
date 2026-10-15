@@ -15,6 +15,7 @@ import {
 import { getSession, hasPermission } from "@/lib/auth";
 import { getOrSetCache, invalidateCache, CacheTags } from "@/lib/cache";
 import { logActivity } from "@/lib/activity-logger";
+import { isCloudinaryConfigured, uploadImageToCloudinary } from "@/lib/cloudinary";
 
 export async function getPathsAction(filter?: {
   level?: string;
@@ -102,6 +103,7 @@ export async function createPathAction(data: {
   estimatedHours: string;
   icon?: string;
   color?: string;
+  thumbnailUrl?: string;
   isPublished?: boolean;
   isFeatured?: boolean;
 }) {
@@ -122,6 +124,7 @@ export async function createPathAction(data: {
       ...data,
       icon: data.icon || "Compass",
       color: data.color || "emerald",
+      thumbnailUrl: data.thumbnailUrl || undefined,
       isPublished: data.isPublished ?? true,
       isFeatured: data.isFeatured ?? false,
     });
@@ -356,3 +359,76 @@ export async function removeCourseFromSectionAction(pathCourseId: string) {
     return { error: "Failed to remove course from section." };
   }
 }
+
+export async function uploadPathThumbnailAction(formData: FormData): Promise<{
+  success?: boolean;
+  url?: string;
+  publicId?: string;
+  error?: string;
+}> {
+  const session = await getSession();
+  if (!hasPermission(session, AdminPermission.MANAGE_PATHS)) {
+    return { error: "Unauthorized. Missing permission to manage learning paths." };
+  }
+
+  if (!isCloudinaryConfigured()) {
+    return {
+      error:
+        "Cloudinary is not configured. Please set CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, and CLOUDINARY_API_SECRET in your environment variables.",
+    };
+  }
+
+  const file = formData.get("file");
+  if (!file || !(file instanceof Blob)) {
+    return { error: "No image file provided." };
+  }
+
+  const mimeType = file.type;
+  if (!mimeType.startsWith("image/")) {
+    return { error: "Selected file must be an image (JPEG, PNG, WebP, etc.)." };
+  }
+
+  const MAX_SIZE_BYTES = 10 * 1024 * 1024; // 10MB
+  if (file.size > MAX_SIZE_BYTES) {
+    return { error: "Image file exceeds maximum allowable size of 10MB." };
+  }
+
+  try {
+    const arrayBuffer = await file.arrayBuffer();
+    const buffer = Buffer.from(arrayBuffer);
+
+    const uploadResult = await uploadImageToCloudinary(buffer, {
+      folder: "arabiyyah/paths",
+      tags: ["path_thumbnail", "arabiyyah"],
+    });
+
+    await logActivity({
+      action: "path_thumbnail_upload",
+      userId: session?.userId,
+      userName: session?.name,
+      userEmail: session?.email,
+      details: {
+        fileName: (file as File).name || "path_thumbnail",
+        fileSize: file.size,
+        mimeType,
+        publicId: uploadResult.publicId,
+        url: uploadResult.secureUrl,
+      },
+    });
+
+    return {
+      success: true,
+      url: uploadResult.secureUrl,
+      publicId: uploadResult.publicId,
+    };
+  } catch (err: unknown) {
+    console.error("Failed to upload path thumbnail to Cloudinary:", err);
+    return {
+      error:
+        err instanceof Error
+          ? err.message
+          : "Failed to upload image to Cloudinary.",
+    };
+  }
+}
+

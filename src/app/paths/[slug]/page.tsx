@@ -40,6 +40,9 @@ export default async function PathDetailPage({
     .map((pc) => pc.course)
     .find((c) => Boolean(c?.thumbnailUrl));
 
+  const bannerImage = path.thumbnailUrl || featuredCourse?.thumbnailUrl;
+  const bannerTitle = path.thumbnailUrl ? path.title : featuredCourse?.title;
+
   return (
     <div className="min-h-screen flex flex-col bg-slate-50 bg-arabesque text-slate-900 dark:bg-[#0b101b] dark:text-slate-100 transition-colors duration-200">
       <Navbar />
@@ -56,12 +59,12 @@ export default async function PathDetailPage({
 
         {/* Path Header */}
         <div className="rounded-3xl bg-white border border-slate-200 shadow-sm dark:bg-[#0f172a]/90 dark:border-slate-800 p-6 md:p-8 space-y-6 transition-colors overflow-hidden">
-          <div className={featuredCourse?.thumbnailUrl ? "grid grid-cols-1 md:grid-cols-12 gap-8 items-center" : "space-y-6"}>
-            {featuredCourse?.thumbnailUrl && (
+          <div className={bannerImage ? "grid grid-cols-1 md:grid-cols-12 gap-8 items-center" : "space-y-6"}>
+            {bannerImage && (
               <div className="md:col-span-5 relative aspect-video md:aspect-4/3 w-full rounded-2xl overflow-hidden bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-md group shrink-0">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
-                  src={featuredCourse.thumbnailUrl}
+                  src={bannerImage}
                   alt={path.title}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                 />
@@ -70,16 +73,16 @@ export default async function PathDetailPage({
                   <span className="px-2 py-0.5 rounded-md bg-black/60 backdrop-blur-xs font-semibold text-[11px]">
                     Curriculum Roadmap
                   </span>
-                  {featuredCourse.title && (
+                  {bannerTitle && (
                     <span className="font-semibold text-emerald-300 text-xs truncate max-w-[55%]">
-                      {featuredCourse.title}
+                      {bannerTitle}
                     </span>
                   )}
                 </div>
               </div>
             )}
 
-            <div className={featuredCourse?.thumbnailUrl ? "md:col-span-7 space-y-6" : "space-y-6"}>
+            <div className={bannerImage ? "md:col-span-7 space-y-6" : "space-y-6"}>
               <div className="flex flex-wrap items-center gap-3">
                 <span className="px-3 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800 border border-emerald-300 dark:bg-emerald-500/10 dark:text-emerald-300 dark:border-emerald-500/20">
                   {path.level}

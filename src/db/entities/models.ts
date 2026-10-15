@@ -110,6 +110,7 @@ export interface LearningPath {
   estimatedHours: string;
   icon: string;
   color: string;
+  thumbnailUrl?: string | null;
   isPublished: boolean;
   isFeatured: boolean;
   sections?: PathSection[];
@@ -130,6 +131,7 @@ export const LearningPathSchema = new EntitySchema<LearningPath>({
     estimatedHours: { type: "varchar", length: 100, default: "40 hours" },
     icon: { type: "varchar", length: 50, default: "Compass" },
     color: { type: "varchar", length: 50, default: "emerald" },
+    thumbnailUrl: { type: "text", nullable: true },
     isPublished: { type: "boolean", default: true },
     isFeatured: { type: "boolean", default: false },
     createdAt: { type: "timestamp", createDate: true },
