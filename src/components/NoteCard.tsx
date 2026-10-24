@@ -12,14 +12,13 @@ export function NoteCard({ note }: NoteCardProps) {
   return (
     <div className="rounded-2xl bg-white border border-slate-200 shadow-2xs hover:border-emerald-600/40 dark:bg-[#0c1220] dark:border-slate-800 dark:hover:border-emerald-500/40 flex flex-col justify-between transition-colors overflow-hidden">
       {note.previewUrl && (
-        <div className="relative h-40 w-full overflow-hidden bg-slate-900 border-b border-slate-100 dark:border-slate-800/80 shrink-0">
+        <div className="relative w-full overflow-hidden bg-slate-100 dark:bg-slate-900 border-b border-slate-100 dark:border-slate-800/80 shrink-0">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={note.previewUrl}
             alt={note.title}
-            className="w-full h-full object-cover opacity-90"
+            className="w-full h-auto block"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-slate-950/60 via-transparent to-transparent" />
         </div>
       )}
       <div className="p-5 flex-1 flex flex-col justify-between">

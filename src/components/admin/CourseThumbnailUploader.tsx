@@ -408,7 +408,7 @@ export function CourseThumbnailUploader({
               <img
                 src={value}
                 alt={`${label} thumbnail preview`}
-                className="w-full h-full object-cover"
+                className="w-full h-full object-contain"
                 onError={(e) => {
                   (e.target as HTMLImageElement).src =
                     "https://placehold.co/600x400/0f172a/10b981?text=Thumbnail+Not+Found";

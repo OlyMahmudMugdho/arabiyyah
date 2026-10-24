@@ -35,14 +35,16 @@ export function PathCard({ path }: PathCardProps) {
     <div className="rounded-2xl bg-white border border-slate-200 shadow-2xs hover:border-emerald-600/40 dark:bg-[#0c1220] dark:border-slate-800 dark:hover:border-emerald-500/40 flex flex-col justify-between transition-colors overflow-hidden">
       {/* Thumbnail Header if present */}
       {path.thumbnailUrl && (
-        <div className="relative h-44 w-full overflow-hidden bg-slate-900 border-b border-slate-100 dark:border-slate-800/80 shrink-0">
+        <div className="relative w-full overflow-hidden bg-slate-100 dark:bg-slate-900 border-b border-slate-100 dark:border-slate-800/80 shrink-0">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={path.thumbnailUrl}
             alt={path.title}
-            className="w-full h-full object-cover opacity-90"
+            className="w-full h-auto block"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent" />
+          {path.titleArabic && (
+            <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-slate-950/75 to-transparent pointer-events-none" />
+          )}
           <div className="absolute top-3 left-3 right-3 flex items-center justify-between gap-2">
             <span className="px-2.5 py-0.5 text-xs font-semibold rounded-md bg-slate-900/80 backdrop-blur-xs text-slate-200 border border-slate-700/60 shadow-2xs">
               {path.level}

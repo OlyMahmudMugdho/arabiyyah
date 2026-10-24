@@ -58,12 +58,12 @@ export default async function CourseDetailPage({
         <div className="rounded-3xl bg-white border border-slate-200 shadow-sm dark:bg-[#0f172a]/80 dark:border-slate-800 p-6 md:p-8 transition-colors overflow-hidden">
           <div className={course.thumbnailUrl ? "grid grid-cols-1 lg:grid-cols-12 gap-8 items-center" : "space-y-6"}>
             {course.thumbnailUrl && (
-              <div className="lg:col-span-5 relative aspect-video lg:aspect-4/3 w-full rounded-2xl overflow-hidden bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-md group shrink-0">
+              <div className="lg:col-span-5 relative w-full rounded-2xl overflow-hidden bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-md group shrink-0">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={course.thumbnailUrl}
                   alt={course.title}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  className="w-full h-auto block group-hover:scale-105 transition-transform duration-300"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-transparent pointer-events-none" />
                 <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between text-xs text-white/90">

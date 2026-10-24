@@ -61,12 +61,12 @@ export default async function PathDetailPage({
         <div className="rounded-3xl bg-white border border-slate-200 shadow-sm dark:bg-[#0f172a]/90 dark:border-slate-800 p-6 md:p-8 space-y-6 transition-colors overflow-hidden">
           <div className={bannerImage ? "grid grid-cols-1 md:grid-cols-12 gap-8 items-center" : "space-y-6"}>
             {bannerImage && (
-              <div className="md:col-span-5 relative aspect-video md:aspect-4/3 w-full rounded-2xl overflow-hidden bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-md group shrink-0">
+              <div className="md:col-span-5 relative w-full rounded-2xl overflow-hidden bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-md group shrink-0">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={bannerImage}
                   alt={path.title}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  className="w-full h-auto block group-hover:scale-105 transition-transform duration-300"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent pointer-events-none" />
                 <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between text-xs text-white/90">
@@ -180,12 +180,12 @@ export default async function PathDetailPage({
                               className="rounded-2xl bg-white border border-slate-200 shadow-xs hover:border-emerald-500/50 hover:shadow-md dark:bg-[#0f172a] dark:border-slate-800 dark:hover:border-emerald-500/40 flex flex-col justify-between overflow-hidden transition-all group"
                             >
                               {course.thumbnailUrl ? (
-                                <div className="relative h-36 sm:h-40 w-full overflow-hidden bg-slate-900 shrink-0">
+                                <div className="relative w-full overflow-hidden bg-slate-900 shrink-0">
                                   {/* eslint-disable-next-line @next/next/no-img-element */}
                                   <img
                                     src={course.thumbnailUrl}
                                     alt={course.title}
-                                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                                    className="w-full h-auto block group-hover:scale-105 transition-transform duration-300"
                                   />
                                   <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent" />
                                   <div className="absolute top-2.5 left-2.5 right-2.5 flex items-center justify-between gap-2">

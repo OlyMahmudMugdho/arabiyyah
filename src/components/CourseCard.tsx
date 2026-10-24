@@ -10,21 +10,23 @@ export function CourseCard({ course }: CourseCardProps) {
   return (
     <div className="rounded-2xl bg-white border border-slate-200 shadow-2xs hover:border-emerald-600/40 dark:bg-[#0c1220] dark:border-slate-800 dark:hover:border-emerald-500/40 transition-colors flex flex-col overflow-hidden">
       {/* Thumbnail or Architectural Header */}
-      <div className="relative h-44 w-full overflow-hidden bg-slate-900">
+      <div className="relative w-full overflow-hidden bg-slate-900">
         {course.thumbnailUrl ? (
           <img
             src={course.thumbnailUrl}
             alt={course.title}
-            className="w-full h-full object-cover opacity-90"
+            className="w-full h-auto block"
           />
         ) : (
-          <div className="w-full h-full flex flex-col items-center justify-center bg-arabesque text-slate-500">
+          <div className="w-full aspect-video flex flex-col items-center justify-center bg-arabesque text-slate-500">
             <BookOpen className="w-10 h-10 text-emerald-600/40 mb-1" />
             <span className="font-arabic text-xs font-bold text-slate-400">درس عربي</span>
           </div>
         )}
 
-        <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent" />
+        {course.titleArabic && (
+          <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-slate-950/75 to-transparent pointer-events-none" />
+        )}
 
         {/* Level and Language indicators */}
         <div className="absolute top-3 left-3 right-3 flex items-center justify-between gap-2">

@@ -18,7 +18,7 @@ export function BookCard({ book }: BookCardProps) {
             <img
               src={book.coverUrl}
               alt={book.title}
-              className="w-full h-full object-cover"
+              className="w-full h-full object-contain"
             />
           ) : (
             <div className="flex flex-col items-center justify-center p-2 text-center text-slate-400 dark:text-slate-500">
