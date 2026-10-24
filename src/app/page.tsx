@@ -36,125 +36,133 @@ export default async function HomePage() {
       <Navbar />
 
       <main className="flex-1">
-        {/* HERO SECTION - Dignified Scholastic Entrance */}
-        <section className="relative pt-16 pb-20 md:pt-24 md:pb-28 overflow-hidden">
+        {/* HERO SECTION - Dignified Scholastic Entrance (2-Column Layout) */}
+        <section className="relative pt-6 pb-12 md:pt-10 md:pb-16 overflow-hidden">
           {/* Subtle atmosphere gradients */}
-          <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[350px] bg-emerald-500/8 dark:bg-emerald-500/5 rounded-full blur-3xl pointer-events-none" />
-          <div className="absolute top-1/3 right-1/4 w-[350px] h-[250px] bg-amber-500/8 dark:bg-amber-500/5 rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute top-1/4 left-1/4 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[350px] bg-emerald-500/8 dark:bg-emerald-500/5 rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute bottom-1/4 right-1/4 w-[450px] h-[300px] bg-amber-500/8 dark:bg-amber-500/5 rounded-full blur-3xl pointer-events-none" />
 
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
-            {/* Traditional Basmala Heading */}
-            <div className="font-arabic text-emerald-800 dark:text-emerald-400 text-xl sm:text-2xl font-bold tracking-wide mb-4" dir="rtl">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            {/* Traditional Basmala Heading - Centered */}
+            <div
+              className="text-center font-arabic text-emerald-800 dark:text-emerald-400 text-xl sm:text-2xl font-bold tracking-wide mb-6 md:mb-8"
+              dir="rtl"
+            >
               بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ
             </div>
 
-            {/* Clear, deliberate headline without artificial gradient clipping */}
-            <h1 className="text-3xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-slate-900 dark:text-white max-w-4xl mx-auto leading-tight md:leading-snug">
-              Master Classical Arabic, Sacred Grammar, and Quranic Eloquence
-            </h1>
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
+              {/* Left Column: Headline, Description & Actions */}
+              <div className="lg:col-span-7 text-left space-y-5">
+                {/* Clear, deliberate headline */}
+                <h1 className="text-3xl sm:text-5xl lg:text-[3.35rem] font-extrabold tracking-tight text-slate-900 dark:text-white leading-[1.15]">
+                  Master Classical Arabic, Sacred Grammar, and Quranic Eloquence
+                </h1>
 
-            {/* Disciplined line length under 75 characters */}
-            <p className="mt-5 text-base sm:text-lg text-slate-600 dark:text-slate-300 max-w-2xl mx-auto leading-relaxed">
-              Curated milestone roadmaps, foundational primers, recorded video series, and high-yield grammar matrices for dedicated students of the Arabic tongue.
-            </p>
+                {/* Description */}
+                <p className="text-base sm:text-lg text-slate-600 dark:text-slate-300 max-w-2xl leading-relaxed">
+                  Curated milestone roadmaps, foundational primers, recorded video series, and high-yield grammar matrices for dedicated students of the Arabic tongue.
+                </p>
 
-            {/* Primary Action Buttons */}
-            <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
-              <Link
-                href="/paths"
-                className="w-full sm:w-auto px-7 py-3 rounded-xl font-semibold text-sm bg-emerald-700 hover:bg-emerald-600 dark:bg-emerald-600 dark:hover:bg-emerald-500 text-white shadow-sm transition-colors flex items-center justify-center gap-2.5"
-              >
-                <Compass className="w-4 h-4" />
-                <span>Explore Learning Paths</span>
-              </Link>
+                {/* Primary Action Buttons */}
+                <div className="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-3.5">
+                  <Link
+                    href="/paths"
+                    className="px-7 py-3.5 rounded-xl font-semibold text-sm bg-emerald-700 hover:bg-emerald-600 dark:bg-emerald-600 dark:hover:bg-emerald-500 text-white shadow-sm transition-colors flex items-center justify-center gap-2.5"
+                  >
+                    <Compass className="w-4 h-4" />
+                    <span>Explore Learning Paths</span>
+                  </Link>
 
-              <Link
-                href="/books"
-                className="w-full sm:w-auto px-7 py-3 rounded-xl font-semibold text-sm bg-white hover:bg-slate-100 text-slate-800 border border-slate-300 shadow-xs dark:bg-slate-800 dark:hover:bg-slate-700 dark:text-slate-100 dark:border-slate-700 transition-colors flex items-center justify-center gap-2.5"
-              >
-                <BookOpen className="w-4 h-4 text-emerald-700 dark:text-emerald-400" />
-                <span>Browse Library & Primers</span>
-              </Link>
-            </div>
+                  <Link
+                    href="/books"
+                    className="px-7 py-3.5 rounded-xl font-semibold text-sm bg-white hover:bg-slate-100 text-slate-800 border border-slate-300 shadow-xs dark:bg-slate-800 dark:hover:bg-slate-700 dark:text-slate-100 dark:border-slate-700 transition-colors flex items-center justify-center gap-2.5"
+                  >
+                    <BookOpen className="w-4 h-4 text-emerald-700 dark:text-emerald-400" />
+                    <span>Browse Library & Primers</span>
+                  </Link>
+                </div>
+              </div>
 
-            {/* Unified Scholastic Gateway - Replacing generic SaaS card row */}
-            <div className="mt-16 max-w-5xl mx-auto">
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-left">
-                {/* 1. Learning Paths */}
-                <Link
-                  href="/paths"
-                  className="p-5 rounded-2xl bg-white/90 border border-slate-200/90 shadow-2xs hover:border-emerald-600/40 dark:bg-[#0c1220]/90 dark:border-slate-800 dark:hover:border-emerald-500/40 transition-all group"
-                >
-                  <div className="flex items-center justify-between mb-3">
-                    <span className="w-9 h-9 rounded-xl bg-emerald-50 dark:bg-emerald-950/50 border border-emerald-200/80 dark:border-emerald-800/50 flex items-center justify-center text-emerald-700 dark:text-emerald-400 group-hover:bg-emerald-600 group-hover:text-white transition-colors">
-                      <Compass className="w-4 h-4" />
-                    </span>
-                    <span className="font-arabic text-emerald-700/80 dark:text-emerald-400/80 text-sm font-bold">المناهج</span>
-                  </div>
-                  <div className="text-xl font-bold text-slate-900 dark:text-white">
-                    {paths.length} Curated Tracks
-                  </div>
-                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 leading-normal">
-                    Sequential, milestone-driven tracks from alphabet to classical texts.
-                  </p>
-                </Link>
+              {/* Right Column: 2x2 Scholastic Gateway Grid */}
+              <div className="lg:col-span-5">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-left">
+                  {/* 1. Learning Paths */}
+                  <Link
+                    href="/paths"
+                    className="p-5 rounded-2xl bg-white/95 border border-slate-200/90 shadow-xs hover:border-emerald-600/40 dark:bg-[#0c1220]/95 dark:border-slate-800 dark:hover:border-emerald-500/40 transition-all group"
+                  >
+                    <div className="flex items-center justify-between mb-3">
+                      <span className="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-950/50 border border-emerald-200/80 dark:border-emerald-800/50 flex items-center justify-center text-emerald-700 dark:text-emerald-400 group-hover:bg-emerald-600 group-hover:text-white transition-colors">
+                        <Compass className="w-4 h-4" />
+                      </span>
+                      <span className="font-arabic text-emerald-700/80 dark:text-emerald-400/80 text-sm font-bold">المناهج</span>
+                    </div>
+                    <div className="text-xl font-bold text-slate-900 dark:text-white">
+                      {paths.length} Curated Tracks
+                    </div>
+                    <p className="text-xs text-slate-500 dark:text-slate-400 mt-1.5 leading-relaxed">
+                      Sequential, milestone-driven tracks from alphabet to classical texts.
+                    </p>
+                  </Link>
 
-                {/* 2. Video Courses */}
-                <Link
-                  href="/courses"
-                  className="p-5 rounded-2xl bg-white/90 border border-slate-200/90 shadow-2xs hover:border-emerald-600/40 dark:bg-[#0c1220]/90 dark:border-slate-800 dark:hover:border-emerald-500/40 transition-all group"
-                >
-                  <div className="flex items-center justify-between mb-3">
-                    <span className="w-9 h-9 rounded-xl bg-emerald-50 dark:bg-emerald-950/50 border border-emerald-200/80 dark:border-emerald-800/50 flex items-center justify-center text-emerald-700 dark:text-emerald-400 group-hover:bg-emerald-600 group-hover:text-white transition-colors">
-                      <GraduationCap className="w-4 h-4" />
-                    </span>
-                    <span className="font-arabic text-emerald-700/80 dark:text-emerald-400/80 text-sm font-bold">الدروس</span>
-                  </div>
-                  <div className="text-xl font-bold text-slate-900 dark:text-white">
-                    {courses.length} Video Series
-                  </div>
-                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 leading-normal">
-                    Structured lectures indexed in English, Arabic, and Urdu.
-                  </p>
-                </Link>
+                  {/* 2. Video Courses */}
+                  <Link
+                    href="/courses"
+                    className="p-5 rounded-2xl bg-white/95 border border-slate-200/90 shadow-xs hover:border-emerald-600/40 dark:bg-[#0c1220]/95 dark:border-slate-800 dark:hover:border-emerald-500/40 transition-all group"
+                  >
+                    <div className="flex items-center justify-between mb-3">
+                      <span className="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-950/50 border border-emerald-200/80 dark:border-emerald-800/50 flex items-center justify-center text-emerald-700 dark:text-emerald-400 group-hover:bg-emerald-600 group-hover:text-white transition-colors">
+                        <GraduationCap className="w-4 h-4" />
+                      </span>
+                      <span className="font-arabic text-emerald-700/80 dark:text-emerald-400/80 text-sm font-bold">الدروس</span>
+                    </div>
+                    <div className="text-xl font-bold text-slate-900 dark:text-white">
+                      {courses.length} Video Series
+                    </div>
+                    <p className="text-xs text-slate-500 dark:text-slate-400 mt-1.5 leading-relaxed">
+                      Structured lectures indexed in English, Arabic, and Urdu.
+                    </p>
+                  </Link>
 
-                {/* 3. Classical Books */}
-                <Link
-                  href="/books"
-                  className="p-5 rounded-2xl bg-white/90 border border-slate-200/90 shadow-2xs hover:border-emerald-600/40 dark:bg-[#0c1220]/90 dark:border-slate-800 dark:hover:border-emerald-500/40 transition-all group"
-                >
-                  <div className="flex items-center justify-between mb-3">
-                    <span className="w-9 h-9 rounded-xl bg-emerald-50 dark:bg-emerald-950/50 border border-emerald-200/80 dark:border-emerald-800/50 flex items-center justify-center text-emerald-700 dark:text-emerald-400 group-hover:bg-emerald-600 group-hover:text-white transition-colors">
-                      <BookOpen className="w-4 h-4" />
-                    </span>
-                    <span className="font-arabic text-emerald-700/80 dark:text-emerald-400/80 text-sm font-bold">المكتبة</span>
-                  </div>
-                  <div className="text-xl font-bold text-slate-900 dark:text-white">
-                    {books.length} Classical Texts
-                  </div>
-                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 leading-normal">
-                    Vocalized mutūn, primers, and commentaries ready for study.
-                  </p>
-                </Link>
+                  {/* 3. Classical Books */}
+                  <Link
+                    href="/books"
+                    className="p-5 rounded-2xl bg-white/95 border border-slate-200/90 shadow-xs hover:border-emerald-600/40 dark:bg-[#0c1220]/95 dark:border-slate-800 dark:hover:border-emerald-500/40 transition-all group"
+                  >
+                    <div className="flex items-center justify-between mb-3">
+                      <span className="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-950/50 border border-emerald-200/80 dark:border-emerald-800/50 flex items-center justify-center text-emerald-700 dark:text-emerald-400 group-hover:bg-emerald-600 group-hover:text-white transition-colors">
+                        <BookOpen className="w-4 h-4" />
+                      </span>
+                      <span className="font-arabic text-emerald-700/80 dark:text-emerald-400/80 text-sm font-bold">المكتبة</span>
+                    </div>
+                    <div className="text-xl font-bold text-slate-900 dark:text-white">
+                      {books.length} Classical Texts
+                    </div>
+                    <p className="text-xs text-slate-500 dark:text-slate-400 mt-1.5 leading-relaxed">
+                      Vocalized mutūn, primers, and commentaries ready for study.
+                    </p>
+                  </Link>
 
-                {/* 4. Grammar Matrices */}
-                <Link
-                  href="/notes"
-                  className="p-5 rounded-2xl bg-white/90 border border-slate-200/90 shadow-2xs hover:border-emerald-600/40 dark:bg-[#0c1220]/90 dark:border-slate-800 dark:hover:border-emerald-500/40 transition-all group"
-                >
-                  <div className="flex items-center justify-between mb-3">
-                    <span className="w-9 h-9 rounded-xl bg-emerald-50 dark:bg-emerald-950/50 border border-emerald-200/80 dark:border-emerald-800/50 flex items-center justify-center text-emerald-700 dark:text-emerald-400 group-hover:bg-emerald-600 group-hover:text-white transition-colors">
-                      <FileText className="w-4 h-4" />
-                    </span>
-                    <span className="font-arabic text-emerald-700/80 dark:text-emerald-400/80 text-sm font-bold">الفوائد</span>
-                  </div>
-                  <div className="text-xl font-bold text-slate-900 dark:text-white">
-                    {notes.length} Study Matrices
-                  </div>
-                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 leading-normal">
-                    High-yield paradigm tables, particles, and conjugation sheets.
-                  </p>
-                </Link>
+                  {/* 4. Grammar Matrices */}
+                  <Link
+                    href="/notes"
+                    className="p-5 rounded-2xl bg-white/95 border border-slate-200/90 shadow-xs hover:border-emerald-600/40 dark:bg-[#0c1220]/95 dark:border-slate-800 dark:hover:border-emerald-500/40 transition-all group"
+                  >
+                    <div className="flex items-center justify-between mb-3">
+                      <span className="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-950/50 border border-emerald-200/80 dark:border-emerald-800/50 flex items-center justify-center text-emerald-700 dark:text-emerald-400 group-hover:bg-emerald-600 group-hover:text-white transition-colors">
+                        <FileText className="w-4 h-4" />
+                      </span>
+                      <span className="font-arabic text-emerald-700/80 dark:text-emerald-400/80 text-sm font-bold">الفوائد</span>
+                    </div>
+                    <div className="text-xl font-bold text-slate-900 dark:text-white">
+                      {notes.length} Study Matrices
+                    </div>
+                    <p className="text-xs text-slate-500 dark:text-slate-400 mt-1.5 leading-relaxed">
+                      High-yield paradigm tables, particles, and conjugation sheets.
+                    </p>
+                  </Link>
+                </div>
               </div>
             </div>
           </div>
