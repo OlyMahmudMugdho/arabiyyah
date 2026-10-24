@@ -13,6 +13,8 @@ import {
   Sparkles,
 } from "lucide-react";
 import { createNoteAction } from "@/actions/note-actions";
+import { NoteFileUploader } from "@/components/admin/CloudinaryFileUploader";
+import { NotePreviewUploader } from "@/components/admin/CourseThumbnailUploader";
 
 export function NoteCreateForm() {
   const router = useRouter();
@@ -29,6 +31,8 @@ export function NoteCreateForm() {
   const [isPublished, setIsPublished] = useState(true);
 
   const [loading, setLoading] = useState(false);
+  const [uploadingFile, setUploadingFile] = useState(false);
+  const [uploadingPreview, setUploadingPreview] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const topicOptions = [
@@ -203,31 +207,29 @@ export function NoteCreateForm() {
           />
         </div>
 
-        {/* File URL and Preview URL */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* File Upload and Preview Image Upload */}
+        <div className="space-y-6">
           <div className="space-y-1.5">
             <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
-              Download File URL (PDF or Drive link)
+              Study Note File (Upload PDF / Image / Doc to Cloudinary or Paste URL)
             </label>
-            <input
-              type="url"
-              placeholder="https://storage.googleapis.com/... or Google Drive URL"
+            <NoteFileUploader
               value={fileUrl}
-              onChange={(e) => setFileUrl(e.target.value)}
-              className="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 dark:bg-slate-900 dark:border-slate-700 dark:text-white text-xs placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-emerald-500"
+              onChange={setFileUrl}
+              onUploadStateChange={setUploadingFile}
+              disabled={loading}
             />
           </div>
 
           <div className="space-y-1.5">
             <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
-              Preview Thumbnail URL (Optional)
+              Preview Thumbnail Image (Optional — Upload to Cloudinary or Paste URL)
             </label>
-            <input
-              type="url"
-              placeholder="https://images.unsplash.com/..."
+            <NotePreviewUploader
               value={previewUrl}
-              onChange={(e) => setPreviewUrl(e.target.value)}
-              className="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 dark:bg-slate-900 dark:border-slate-700 dark:text-white text-xs placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-emerald-500"
+              onChange={setPreviewUrl}
+              onUploadStateChange={setUploadingPreview}
+              disabled={loading}
             />
           </div>
         </div>
@@ -281,13 +283,18 @@ export function NoteCreateForm() {
 
           <button
             type="submit"
-            disabled={loading}
+            disabled={loading || uploadingFile || uploadingPreview}
             className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white font-bold text-xs transition-colors shadow-md shadow-emerald-950/20"
           >
             {loading ? (
               <>
                 <Loader2 className="w-4 h-4 animate-spin" />
                 <span>Creating Note...</span>
+              </>
+            ) : uploadingFile || uploadingPreview ? (
+              <>
+                <Loader2 className="w-4 h-4 animate-spin" />
+                <span>Uploading to Cloudinary...</span>
               </>
             ) : (
               <>

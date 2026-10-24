@@ -18,6 +18,8 @@ import {
   getCloudinaryConfigStatusAction,
 } from "@/actions/course-actions";
 import { uploadPathThumbnailAction } from "@/actions/path-actions";
+import { uploadNotePreviewAction } from "@/actions/note-actions";
+import { uploadBookCoverAction } from "@/actions/book-actions";
 
 export interface CourseThumbnailUploaderProps {
   value: string;
@@ -484,6 +486,30 @@ export function PathThumbnailUploader(
       {...props}
       uploadAction={uploadPathThumbnailAction}
       label="Learning Path"
+    />
+  );
+}
+
+export function NotePreviewUploader(
+  props: Omit<CourseThumbnailUploaderProps, "uploadAction" | "label">
+) {
+  return (
+    <CourseThumbnailUploader
+      {...props}
+      uploadAction={uploadNotePreviewAction}
+      label="Study Note Preview"
+    />
+  );
+}
+
+export function BookCoverUploader(
+  props: Omit<CourseThumbnailUploaderProps, "uploadAction" | "label">
+) {
+  return (
+    <CourseThumbnailUploader
+      {...props}
+      uploadAction={uploadBookCoverAction}
+      label="Book Cover"
     />
   );
 }

@@ -8,6 +8,9 @@ export interface CloudinaryUploadResult {
   height?: number;
   format?: string;
   bytes?: number;
+  resourceType?: string;
+  pages?: number;
+  originalFilename?: string;
 }
 
 /**
@@ -100,6 +103,91 @@ export async function uploadImageToCloudinary(
             height: result.height,
             format: result.format,
             bytes: result.bytes,
+            resourceType: result.resource_type,
+            pages: result.pages,
+            originalFilename: result.original_filename,
+          });
+        }
+      }
+    );
+
+    uploadStream.end(buffer);
+  });
+}
+
+/**
+ * Uploads any supported file buffer (PDF, image, document, markdown, etc.) to Cloudinary.
+ *
+ * @param buffer - The raw binary buffer of the file
+ * @param options - Upload options including target folder, resourceType, fileName, publicId, and tags
+ */
+export async function uploadFileToCloudinary(
+  buffer: Buffer,
+  options: {
+    folder?: string;
+    publicId?: string;
+    tags?: string[];
+    resourceType?: "image" | "raw" | "video" | "auto";
+    fileName?: string;
+  } = {}
+): Promise<CloudinaryUploadResult> {
+  const configured = configureCloudinary();
+  if (!configured) {
+    throw new Error(
+      "Cloudinary credentials are not configured. Please set CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, and CLOUDINARY_API_SECRET in your environment variables."
+    );
+  }
+
+  const folder =
+    options.folder || process.env.CLOUDINARY_FOLDER || "arabiyyah/files";
+
+  let safeFileName: string | undefined;
+  if (options.fileName) {
+    const lastDot = options.fileName.lastIndexOf(".");
+    const rawStem = lastDot > 0 ? options.fileName.slice(0, lastDot) : options.fileName;
+    const rawExt = lastDot > 0 ? options.fileName.slice(lastDot).toLowerCase() : "";
+    const cleanStem = rawStem
+      .toLowerCase()
+      .replace(/[^a-z0-9_-]+/g, "-")
+      .replace(/^-+|-+$/g, "");
+    const cleanExt = rawExt.replace(/[^.a-z0-9]/g, "");
+    safeFileName = `${cleanStem || "document"}${cleanExt}`;
+  }
+
+  return new Promise((resolve, reject) => {
+    const uploadStream = cloudinary.uploader.upload_stream(
+      {
+        folder,
+        public_id: options.publicId,
+        resource_type: options.resourceType || "auto",
+        tags: options.tags,
+        overwrite: true,
+        ...(safeFileName
+          ? {
+              filename_override: safeFileName,
+              use_filename: true,
+              unique_filename: true,
+            }
+          : {}),
+      },
+      (error, result: UploadApiResponse | undefined) => {
+        if (error || !result) {
+          reject(
+            error ||
+              new Error("Failed to upload file to Cloudinary (no result returned).")
+          );
+        } else {
+          resolve({
+            url: result.url,
+            secureUrl: result.secure_url,
+            publicId: result.public_id,
+            width: result.width,
+            height: result.height,
+            format: result.format,
+            bytes: result.bytes,
+            resourceType: result.resource_type,
+            pages: result.pages,
+            originalFilename: result.original_filename,
           });
         }
       }

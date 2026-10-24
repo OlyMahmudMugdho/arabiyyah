@@ -10,6 +10,8 @@ import {
   deleteNoteAction,
 } from "@/actions/note-actions";
 import { DeleteConfirmModal } from "@/components/admin/DeleteConfirmModal";
+import { NoteFileUploader } from "@/components/admin/CloudinaryFileUploader";
+import { NotePreviewUploader } from "@/components/admin/CourseThumbnailUploader";
 
 interface NoteManagerProps {
   initialNotes: Note[];
@@ -21,6 +23,8 @@ export function NoteManager({ initialNotes }: NoteManagerProps) {
   const [modalOpen, setModalOpen] = useState(false);
   const [editingNote, setEditingNote] = useState<Note | null>(null);
   const [loading, setLoading] = useState(false);
+  const [uploadingFile, setUploadingFile] = useState(false);
+  const [uploadingPreview, setUploadingPreview] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   // Delete modal state
@@ -240,7 +244,7 @@ export function NoteManager({ initialNotes }: NoteManagerProps) {
 
       {modalOpen && (
         <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
-          <div className="bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800 rounded-3xl max-w-xl w-full p-6 md:p-8 space-y-5 shadow-2xl">
+          <div className="bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800 rounded-3xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 md:p-8 space-y-5 shadow-2xl">
             <div className="flex items-center justify-between">
               <h2 className="text-xl font-bold text-slate-900 dark:text-white">
                 {editingNote ? "Edit Study Note" : "Add Study Note"}
@@ -336,16 +340,27 @@ export function NoteManager({ initialNotes }: NoteManagerProps) {
                 </div>
               </div>
 
-              <div className="space-y-1">
+              <div className="space-y-1.5">
                 <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">
-                  File Download URL
+                  Study Note File (Upload to Cloudinary or Paste URL)
                 </label>
-                <input
-                  type="url"
+                <NoteFileUploader
                   value={fileUrl}
-                  onChange={(e) => setFileUrl(e.target.value)}
-                  placeholder="https://example.com/notes/sample.pdf"
-                  className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 dark:bg-slate-900 dark:border-slate-700 dark:text-white text-xs focus:outline-none focus:border-emerald-500"
+                  onChange={setFileUrl}
+                  onUploadStateChange={setUploadingFile}
+                  disabled={loading}
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+                  Preview Thumbnail Image (Optional)
+                </label>
+                <NotePreviewUploader
+                  value={previewUrl}
+                  onChange={setPreviewUrl}
+                  onUploadStateChange={setUploadingPreview}
+                  disabled={loading}
                 />
               </div>
 
@@ -372,10 +387,16 @@ export function NoteManager({ initialNotes }: NoteManagerProps) {
                 </button>
                 <button
                   type="submit"
-                  disabled={loading}
+                  disabled={loading || uploadingFile || uploadingPreview}
                   className="px-5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold disabled:opacity-50 shadow-md shadow-emerald-950/20"
                 >
-                  {loading ? "Saving..." : editingNote ? "Update Note" : "Create Note"}
+                  {loading
+                    ? "Saving..."
+                    : uploadingFile || uploadingPreview
+                    ? "Uploading..."
+                    : editingNote
+                    ? "Update Note"
+                    : "Create Note"}
                 </button>
               </div>
             </form>

@@ -14,6 +14,8 @@ import {
 } from "lucide-react";
 import { createBookAction } from "@/actions/book-actions";
 import { createCategoryAction } from "@/actions/category-actions";
+import { BookFileUploader } from "@/components/admin/CloudinaryFileUploader";
+import { BookCoverUploader } from "@/components/admin/CourseThumbnailUploader";
 
 interface BookCreateFormProps {
   initialCategories: string[];
@@ -37,6 +39,8 @@ export function BookCreateForm({ initialCategories }: BookCreateFormProps) {
   const [isPublished, setIsPublished] = useState(true);
 
   const [loading, setLoading] = useState(false);
+  const [uploadingFile, setUploadingFile] = useState(false);
+  const [uploadingCover, setUploadingCover] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const existingCategories = useMemo(() => {
@@ -276,31 +280,30 @@ export function BookCreateForm({ initialCategories }: BookCreateFormProps) {
           </div>
         </div>
 
-        {/* File URL and Cover Image URL */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* File Upload and Cover Image Upload */}
+        <div className="space-y-6">
           <div className="space-y-1.5">
             <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
-              PDF Document Download / Read URL
+              Book File / PDF (Upload to Cloudinary or Paste URL)
             </label>
-            <input
-              type="url"
-              placeholder="https://archive.org/download/... or cloud URL"
+            <BookFileUploader
               value={fileUrl}
-              onChange={(e) => setFileUrl(e.target.value)}
-              className="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 dark:bg-slate-900 dark:border-slate-700 dark:text-white text-xs placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-emerald-500"
+              onChange={setFileUrl}
+              onUploadStateChange={setUploadingFile}
+              onPagesDetected={(detectedPages) => setPages(detectedPages)}
+              disabled={loading}
             />
           </div>
 
           <div className="space-y-1.5">
             <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
-              Cover Image URL (Optional)
+              Book Cover Image (Optional — Upload to Cloudinary or Paste URL)
             </label>
-            <input
-              type="url"
-              placeholder="https://images.unsplash.com/..."
+            <BookCoverUploader
               value={coverUrl}
-              onChange={(e) => setCoverUrl(e.target.value)}
-              className="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 dark:bg-slate-900 dark:border-slate-700 dark:text-white text-xs placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-emerald-500"
+              onChange={setCoverUrl}
+              onUploadStateChange={setUploadingCover}
+              disabled={loading}
             />
           </div>
         </div>
@@ -354,13 +357,18 @@ export function BookCreateForm({ initialCategories }: BookCreateFormProps) {
 
           <button
             type="submit"
-            disabled={loading}
+            disabled={loading || uploadingFile || uploadingCover}
             className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white font-bold text-xs transition-colors shadow-md shadow-emerald-950/20"
           >
             {loading ? (
               <>
                 <Loader2 className="w-4 h-4 animate-spin" />
                 <span>Creating Book...</span>
+              </>
+            ) : uploadingFile || uploadingCover ? (
+              <>
+                <Loader2 className="w-4 h-4 animate-spin" />
+                <span>Uploading to Cloudinary...</span>
               </>
             ) : (
               <>
